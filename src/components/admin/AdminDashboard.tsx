@@ -39,6 +39,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Product CRUD Modal state
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
 
   // Tracking number editing per order
   const [trackingInputs, setTrackingInputs] = useState<{ [orderId: string]: string }>({});
@@ -251,11 +252,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* TAB 1: Products Management */}
         {activeTab === 'products' && (
           <div className="glass-card" style={{ background: '#FFFFFF', borderRadius: '20px', padding: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>รายการสินค้าในระบบ (Products Catalog)</h3>
-              <button onClick={handleOpenAddProduct} className="btn btn-primary btn-sm">
-                <Plus size={16} /> เพิ่มสินค้าใหม่
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', gap: '1rem', flexWrap: 'wrap' }}>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>รายการสินค้าในระบบ ({products.length} รายการ)</h3>
+                <span style={{ fontSize: '0.8rem', color: '#64748B' }}>จัดการสต็อก ราคา และข้อมูลสินค้า</span>
+              </div>
+              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="ค้นหาชื่อ หรือหมวดหมู่..."
+                  value={productSearch}
+                  onChange={(e) => setProductSearch(e.target.value)}
+                  style={{
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '9999px',
+                    border: '1px solid #CBD5E1',
+                    fontSize: '0.82rem',
+                    outline: 'none',
+                    width: '220px',
+                  }}
+                />
+                <button onClick={handleOpenAddProduct} className="btn btn-primary btn-sm">
+                  <Plus size={16} /> เพิ่มสินค้าใหม่
+                </button>
+              </div>
             </div>
 
             <div style={{ overflowX: 'auto' }}>
@@ -271,7 +291,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => (
+                  {products
+                    .filter((p) => {
+                      if (!productSearch.trim()) return true;
+                      const q = productSearch.toLowerCase();
+                      const catName = categories.find((c) => c.id === p.category_id)?.name.toLowerCase() || '';
+                      return p.name.toLowerCase().includes(q) || catName.includes(q);
+                    })
+                    .map((p) => (
                     <tr key={p.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                       <td style={{ padding: '0.75rem 1rem' }}>
                         <img

@@ -70,8 +70,13 @@ export const fetchCategories = async (): Promise<Category[]> => {
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase.from('categories').select('*').order('name');
-      if (error) throw error;
-      if (data && data.length > 0) return data as Category[];
+      if (!error && data && data.length > 0) {
+        // Merge Supabase categories with INITIAL_CATEGORIES to ensure all 9 categories are always available
+        const catMap = new Map<string, Category>();
+        INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, c));
+        (data as Category[]).forEach((c) => catMap.set(c.id, c));
+        return Array.from(catMap.values());
+      }
     } catch (err) {
       console.warn('Supabase fetchCategories error, falling back to local:', err);
     }
@@ -94,13 +99,37 @@ export const fetchProducts = async (): Promise<Product[]> => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      if (data && data.length > 0) return data as Product[];
+      if (!error && data && data.length > 0) {
+        // Merge Supabase products with INITIAL_PRODUCTS to guarantee all 112 products are loaded
+        const prodMap = new Map<string, Product>();
+        INITIAL_PRODUCTS.forEach((p) => prodMap.set(p.id, p));
+        (data as Product[]).forEach((p) => prodMap.set(p.id, p));
+        
+        // Attach category object if not populated
+        const catMap = new Map<string, Category>();
+        INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, c));
+        
+        return Array.from(prodMap.values()).map((p) => {
+          if (!p.category && catMap.has(p.category_id)) {
+            return { ...p, category: catMap.get(p.category_id) };
+          }
+          return p;
+        });
+      }
     } catch (err) {
       console.warn('Supabase fetchProducts error, falling back to local:', err);
     }
   }
-  return getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+  
+  const catMap = new Map<string, Category>();
+  INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, c));
+  const localList = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+  return localList.map((p) => {
+    if (!p.category && catMap.has(p.category_id)) {
+      return { ...p, category: catMap.get(p.category_id) };
+    }
+    return p;
+  });
 };
 
 export const fetchProductById = async (id: string): Promise<Product | null> => {

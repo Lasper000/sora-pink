@@ -64,6 +64,7 @@ const MainStore: React.FC = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isSupabaseGuideOpen, setIsSupabaseGuideOpen] = useState(false);
   const [isSkinQuizOpen, setIsSkinQuizOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState<number>(24);
 
   // Automated Seasonal Festival Engine (7 days before to 7 days after)
   const activeSeasonalFestival = useMemo(() => getActiveSeasonalFestival(), []);
@@ -89,6 +90,10 @@ const MainStore: React.FC = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [filters, showcaseTab]);
 
   // Filter and Sort Engine
   const filteredProducts = useMemo(() => {
@@ -409,18 +414,94 @@ const MainStore: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div
-                key={showcaseTab}
-                className="animate-pop products-grid"
-              >
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onClick={() => setSelectedProduct(product)}
-                  />
-                ))}
-              </div>
+              <>
+                <div
+                  key={showcaseTab}
+                  className="animate-pop products-grid"
+                >
+                  {filteredProducts.slice(0, visibleCount).map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onClick={() => setSelectedProduct(product)}
+                    />
+                  ))}
+                </div>
+
+                {/* Load More & Catalog Progress */}
+                {filteredProducts.length > visibleCount && (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      marginTop: '3rem',
+                      padding: '2rem 1.5rem',
+                      background: 'rgba(255, 240, 243, 0.45)',
+                      borderRadius: '24px',
+                      border: '1px solid rgba(255, 209, 220, 0.6)',
+                      maxWidth: '560px',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    }}
+                  >
+                    <div style={{ marginBottom: '0.85rem' }}>
+                      <span style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                        กำลังแสดง <strong>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong>{filteredProducts.length}</strong> รายการ
+                      </span>
+                      {/* Progress bar */}
+                      <div
+                        style={{
+                          height: '6px',
+                          background: 'rgba(0, 0, 0, 0.08)',
+                          borderRadius: '9999px',
+                          overflow: 'hidden',
+                          marginTop: '0.5rem',
+                          maxWidth: '280px',
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${(Math.min(visibleCount, filteredProducts.length) / filteredProducts.length) * 100}%`,
+                            background: 'linear-gradient(90deg, #F43F5E 0%, #EC4899 100%)',
+                            borderRadius: '9999px',
+                            transition: 'width 0.4s ease',
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => setVisibleCount((prev) => prev + 24)}
+                        className="btn btn-primary"
+                        style={{
+                          borderRadius: '9999px',
+                          padding: '0.65rem 1.5rem',
+                          fontWeight: 700,
+                          fontSize: '0.9rem',
+                          boxShadow: '0 4px 14px rgba(244, 63, 94, 0.3)',
+                        }}
+                      >
+                        โหลดสินค้าเพิ่มเติม (+24 ชิ้น)
+                      </button>
+                      <button
+                        onClick={() => setVisibleCount(filteredProducts.length)}
+                        className="btn btn-outline"
+                        style={{
+                          borderRadius: '9999px',
+                          padding: '0.65rem 1.25rem',
+                          fontWeight: 600,
+                          fontSize: '0.88rem',
+                        }}
+                      >
+                        แสดงทั้งหมด ({filteredProducts.length})
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
