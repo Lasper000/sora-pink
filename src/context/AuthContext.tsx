@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Profile, UserRole } from '../types';
-import { supabase, isSupabaseConfigured, signInWithGoogle, signOut } from '../lib/supabase';
+import { supabase, isSupabaseConfigured, signInWithGoogle, signInWithFacebook, signOut } from '../lib/supabase';
 
 interface AuthContextType {
   user: any | null;
@@ -9,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   isConfigured: boolean;
   loginWithGoogle: () => Promise<void>;
+  loginWithFacebook: () => Promise<void>;
   loginWithEmailMock: (email: string, name?: string) => void;
   logout: () => Promise<void>;
   toggleRole: (targetRole?: UserRole) => void;
@@ -137,6 +138,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithFacebook = async () => {
+    if (isConfigured) {
+      await signInWithFacebook();
+    } else {
+      // Demo simulated Facebook login
+      const facebookMockUser: Profile = {
+        id: 'usr-fb-' + Date.now().toString().slice(-4),
+        full_name: 'Sora Facebook User (มินตรา สดใส)',
+        avatar_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
+        phone: '083-456-7890',
+        address: '99/1 ซอยอารีย์ ถนนพหลโยธิน แขวงพญาไท เขตพญาไท กรุงเทพฯ 10400',
+        role: 'customer',
+      };
+      setProfile(facebookMockUser);
+      setRole('customer');
+      localStorage.setItem('sora_current_profile', JSON.stringify(facebookMockUser));
+    }
+  };
+
   const loginWithEmailMock = (email: string, name?: string) => {
     const mockUser: Profile = {
       id: 'usr-email-' + Date.now().toString().slice(-4),
@@ -192,6 +212,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         isConfigured,
         loginWithGoogle,
+        loginWithFacebook,
         loginWithEmailMock,
         logout,
         toggleRole,

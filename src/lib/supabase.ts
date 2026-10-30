@@ -59,6 +59,25 @@ export const signInWithGoogle = async () => {
 };
 
 /**
+ * เข้าสู่ระบบด้วย Facebook OAuth ผ่าน Supabase
+ */
+export const signInWithFacebook = async () => {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase is not configured. Falling back to simulated login.');
+    return { data: null, error: new Error('Supabase URL/Key missing') };
+  }
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+    options: {
+      redirectTo: window.location.origin,
+    },
+  });
+
+  return { data, error };
+};
+
+/**
  * เข้าสู่ระบบด้วย Email และ Password
  */
 export const signInWithEmail = async (email: string, password: string) => {
