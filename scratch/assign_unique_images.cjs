@@ -142,3 +142,4 @@ productRecordList.forEach(p => {
 
 fs.writeFileSync(sqlPath, sqlContent, 'utf8');
 console.log('Successfully updated supabase_insert_100_products.sql with the unique images!');
+

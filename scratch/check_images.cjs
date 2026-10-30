@@ -15,3 +15,4 @@ const dups = Object.entries(counts).filter(([k, v]) => v > 1);
 console.log('Unique images:', Object.keys(counts).length);
 console.log('Number of repeated image URLs:', dups.length);
 dups.forEach(([url, count]) => console.log(count, 'times:', url));
+
