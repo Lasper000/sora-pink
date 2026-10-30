@@ -7,8 +7,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { HeroBanner } from './components/home/HeroBanner';
+import { BrandTrustBadges } from './components/home/BrandTrustBadges';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { FlashSale } from './components/home/FlashSale';
+import { ShopByRoutine } from './components/home/ShopByRoutine';
+import { CustomerReviewsWall } from './components/home/CustomerReviewsWall';
+import { InstagramCommunityWall } from './components/home/InstagramCommunityWall';
+import { FAQSection } from './components/home/FAQSection';
 import { SkinQuizModal } from './components/home/SkinQuizModal';
 import { ProductCard } from './components/product/ProductCard';
 import { ProductFilter } from './components/product/ProductFilter';
@@ -234,6 +239,9 @@ const MainStore: React.FC = () => {
           isHalloweenMode={isHalloweenMode}
         />
 
+        {/* 1. Brand Trust & Safety Badges */}
+        <BrandTrustBadges />
+
         {/* 4 Primary Categories Grid */}
         <CategoryGrid
           categories={categories}
@@ -247,6 +255,12 @@ const MainStore: React.FC = () => {
 
         {/* Flash Sale Section */}
         <FlashSale
+          products={products}
+          onSelectProduct={(p) => setSelectedProduct(p)}
+        />
+
+        {/* 2. Shop by Routine / Bundle Deals */}
+        <ShopByRoutine
           products={products}
           onSelectProduct={(p) => setSelectedProduct(p)}
         />
@@ -410,6 +424,18 @@ const MainStore: React.FC = () => {
             )}
           </div>
         </section>
+
+        {/* 3. Real Customer Reviews & Social Proof Wall */}
+        <CustomerReviewsWall />
+
+        {/* 4. Instagram / Community Aesthetics Wall */}
+        <InstagramCommunityWall
+          products={products}
+          onSelectProduct={(p) => setSelectedProduct(p)}
+        />
+
+        {/* 5. Interactive FAQ Accordion */}
+        <FAQSection onOpenSkinQuiz={() => setIsSkinQuizOpen(true)} />
       </main>
 
       {/* Brand Footer */}
