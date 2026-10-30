@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Product } from '../../types';
-import { Star, Heart, ShoppingBag } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
@@ -8,11 +8,13 @@ import { showToast } from '../common/Toast';
 interface ProductCardProps {
   product: Product;
   onClick: () => void;
+  onQuickView?: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQuickView }) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const [selectedShade, setSelectedShade] = useState(0);
 
   const isFavorited = isInWishlist(product.id);
   const isOutOfStock = product.stock_quantity <= 0;
@@ -170,6 +172,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
               className={isFavorited ? 'animate-heart' : ''}
             />
           </button>
+
+          {/* Quick View Button on Image */}
+          {onQuickView && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onQuickView(product);
+              }}
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(8px)',
+                color: '#E11D48',
+                border: '1px solid rgba(255, 209, 220, 0.8)',
+                padding: '0.32rem 0.85rem',
+                borderRadius: '9999px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                cursor: 'pointer',
+              }}
+            >
+              <Eye size={13} /> ดูด่วน
+            </button>
+          )}
         </div>
 
         {/* Content Details */}
@@ -207,6 +240,31 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
               </span>
             ))}
           </div>
+
+          {/* Makeup Shades Swatch Preview */}
+          {product.category_id === 'c1000000-0000-0000-0000-000000000001' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', margin: '2px 0 6px 0' }}>
+              <span style={{ fontSize: '0.68rem', color: '#94A3B8' }}>เฉดสี:</span>
+              {['#E11D48', '#FB7185', '#F43F5E', '#FDA4AF'].map((color, idx) => (
+                <span
+                  key={color}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedShade(idx);
+                  }}
+                  style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: color,
+                    border: selectedShade === idx ? '2px solid #0F172A' : '1px solid #FFFFFF',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                    cursor: 'pointer',
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
           <h3
             className="product-card-title"

@@ -541,6 +541,60 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                 />
               </button>
             </div>
+
+            {/* Live Delivery & Rewards Info Box */}
+            <div
+              style={{
+                marginTop: '1.1rem',
+                padding: '0.85rem 1rem',
+                background: 'linear-gradient(135deg, #FFF5F8 0%, #F8FAFC 100%)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 209, 220, 0.7)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.45rem',
+                fontSize: '0.78rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0F172A' }}>
+                <span style={{ color: '#E11D48', fontWeight: 800 }}>⚡ Fast Dispatch:</span>
+                <span>สั่งซื้อภายใน 14:00 น. วันนี้ จัดส่งออกรอบบ่ายทันที ได้รับของใน 1-2 วันทำการ</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#64748B', flexWrap: 'wrap', gap: '4px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <Sparkles size={13} color="#F59E0B" /> รับ <strong>+{Math.round((product.discount_price || product.price) / 10)} คะแนนสะสม</strong> เข้า Sora Club VIP
+                </span>
+                <span style={{ color: '#059669', fontWeight: 700 }}>การันตีแท้ 100% คืนเงินได้ใน 7 วัน</span>
+              </div>
+            </div>
+
+            {/* Clean Beauty Safety Badges */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '1rem',
+                marginTop: '0.85rem',
+                flexWrap: 'wrap',
+                fontSize: '0.72rem',
+                color: '#64748B',
+                fontWeight: 600,
+              }}
+            >
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle2 size={13} color="#10B981" /> Clean Beauty
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle2 size={13} color="#10B981" /> 0% Alcohol & Paraben
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle2 size={13} color="#10B981" /> Non-Comedogenic
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <CheckCircle2 size={13} color="#10B981" /> Dermatologist Tested
+              </span>
+            </div>
           </div>
         </div>
       </div>

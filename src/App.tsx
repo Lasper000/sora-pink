@@ -8,6 +8,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { HeroBanner } from './components/home/HeroBanner';
 import { BrandTrustBadges } from './components/home/BrandTrustBadges';
+import { ClinicalResultsSlider } from './components/home/ClinicalResultsSlider';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { FlashSale } from './components/home/FlashSale';
 import { ShopByRoutine } from './components/home/ShopByRoutine';
@@ -18,6 +19,10 @@ import { SkinQuizModal } from './components/home/SkinQuizModal';
 import { ProductCard } from './components/product/ProductCard';
 import { ProductFilter } from './components/product/ProductFilter';
 import { ProductDetailModal } from './components/product/ProductDetailModal';
+import { QuickViewModal } from './components/product/QuickViewModal';
+import { SkeletonProductCard } from './components/common/SkeletonProductCard';
+import { LiveSalesNotification } from './components/common/LiveSalesNotification';
+import { BeautyConciergeFloat } from './components/common/BeautyConciergeFloat';
 import { CartDrawer } from './components/cart/CartDrawer';
 import { CheckoutModal } from './components/cart/CheckoutModal';
 import { AuthModal } from './components/user/AuthModal';
@@ -55,6 +60,7 @@ const MainStore: React.FC = () => {
 
   // Modals & Panels State
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [pendingCheckout, setPendingCheckout] = useState(false);
@@ -247,6 +253,9 @@ const MainStore: React.FC = () => {
         {/* 1. Brand Trust & Safety Badges */}
         <BrandTrustBadges />
 
+        {/* Clinical Proven Results & Interactive Before/After Slider */}
+        <ClinicalResultsSlider />
+
         {/* 4 Primary Categories Grid */}
         <CategoryGrid
           categories={categories}
@@ -389,8 +398,10 @@ const MainStore: React.FC = () => {
 
             {/* Products Grid */}
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '4rem 1rem', color: '#9CA3AF' }}>
-                <p>กำลังโหลดสินค้า...</p>
+              <div className="products-grid">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <SkeletonProductCard key={i} />
+                ))}
               </div>
             ) : filteredProducts.length === 0 ? (
               <div
@@ -424,6 +435,7 @@ const MainStore: React.FC = () => {
                       key={product.id}
                       product={product}
                       onClick={() => setSelectedProduct(product)}
+                      onQuickView={(p) => setQuickViewProduct(p)}
                     />
                   ))}
                 </div>
@@ -526,6 +538,26 @@ const MainStore: React.FC = () => {
       <ProductDetailModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
+      />
+
+      <QuickViewModal
+        product={quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onOpenFullDetail={(p) => setSelectedProduct(p)}
+      />
+
+      {/* Floating Concierge & Live Sales Social Proof Toast */}
+      <LiveSalesNotification
+        products={products}
+        onSelectProduct={(p) => setSelectedProduct(p)}
+      />
+
+      <BeautyConciergeFloat
+        onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
+        onOpenProfile={() => {
+          setProfileTab('orders');
+          setIsProfileOpen(true);
+        }}
       />
 
       <CartDrawer

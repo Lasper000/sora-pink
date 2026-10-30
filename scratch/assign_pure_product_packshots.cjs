@@ -227,3 +227,4 @@ ON CONFLICT (id) DO UPDATE SET
 const sqlPath = path.resolve('supabase_insert_100_products.sql');
 fs.writeFileSync(sqlPath, sql, 'utf8');
 console.log('Successfully saved supabase_insert_100_products.sql!');
+

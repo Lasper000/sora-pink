@@ -36,10 +36,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
     if (res.success) setPromoInput('');
   };
 
-  const freeShippingThreshold = 500;
-  const freeShippingRemaining = Math.max(0, freeShippingThreshold - subtotal);
-  const freeShippingProgress = Math.min(100, (subtotal / freeShippingThreshold) * 100);
-
   return (
     <div className="drawer-overlay" onClick={onClose}>
       <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
@@ -64,31 +60,54 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
           </button>
         </div>
 
-        {/* Free Shipping Progress Indicator */}
-        <div style={{ padding: '0.75rem 1.5rem', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px' }}>
-            {freeShippingRemaining > 0 ? (
+        {/* Tiered Free Gifts Progress Bar */}
+        <div style={{ padding: '0.85rem 1.5rem', background: '#FFF5F8', borderBottom: '1px solid #FFE4E8' }}>
+          {/* Status Message */}
+          <div style={{ fontSize: '0.82rem', marginBottom: '0.5rem', fontWeight: 600 }}>
+            {subtotal < 500 ? (
               <span style={{ color: '#4B5563' }}>
-                ซื้อเพิ่มอีก <strong>฿{freeShippingRemaining.toLocaleString()}</strong> เพื่อส่งฟรี!
+                ช้อปเพิ่มอีก <strong style={{ color: '#E11D48' }}>฿{(500 - subtotal).toLocaleString()}</strong> เพื่อรับสิทธิ์ <strong>จัดส่งฟรี! 🚚</strong>
+              </span>
+            ) : subtotal < 800 ? (
+              <span style={{ color: '#BE123C' }}>
+                ✨ ส่งฟรีแล้ว! ช้อปเพิ่มอีก <strong>฿{(800 - subtotal).toLocaleString()}</strong> รับฟรี <strong>ฟองน้ำแต่งหน้ามาร์ชแมลโลว์ 🎁</strong>
+              </span>
+            ) : subtotal < 1200 ? (
+              <span style={{ color: '#9D174D' }}>
+                🎁 ได้ฟองน้ำแล้ว! ช้อปเพิ่มอีก <strong>฿{(1200 - subtotal).toLocaleString()}</strong> รับฟรี <strong>กระเป๋าพาสเทลลิมิเต็ด 🌸</strong>
               </span>
             ) : (
               <span className="animate-breathe" style={{ color: '#059669', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <Sparkles size={15} color="#059669" /> ยินดีด้วยนะคะ! ได้รับสิทธิ์จัดส่งฟรีแล้ว
+                <Sparkles size={15} color="#059669" /> ยินดีด้วยค่ะ! คุณปลดล็อคของแถม VIP และส่งฟรีครบทุกสิทธิ์แล้ว 🎉
               </span>
             )}
-            <span style={{ fontWeight: 700, color: '#E11D48' }}>฿500</span>
           </div>
-          <div style={{ height: '7px', background: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
+
+          {/* Progress Bar Container */}
+          <div style={{ position: 'relative', height: '8px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
             <div
               className="striped-bar"
               style={{
                 height: '100%',
-                width: `${freeShippingProgress}%`,
-                background: 'linear-gradient(90deg, #FFB3C6 0%, #38BDF8 100%)',
+                width: `${Math.min(100, (subtotal / 1200) * 100)}%`,
+                background: 'linear-gradient(90deg, #FF9BB2 0%, #E11D48 50%, #A855F7 100%)',
                 borderRadius: '9999px',
                 transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             />
+          </div>
+
+          {/* Milestones Labels */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: '#64748B' }}>
+            <span style={{ color: subtotal >= 500 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 500 ? 700 : 500 }}>
+              {subtotal >= 500 ? '✓' : '○'} ส่งฟรี (฿500)
+            </span>
+            <span style={{ color: subtotal >= 800 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 800 ? 700 : 500 }}>
+              {subtotal >= 800 ? '✓' : '○'} ฟองน้ำฟรี (฿800)
+            </span>
+            <span style={{ color: subtotal >= 1200 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 1200 ? 700 : 500 }}>
+              {subtotal >= 1200 ? '✓' : '○'} กระเป๋าฟรี (฿1,200)
+            </span>
           </div>
         </div>
 
