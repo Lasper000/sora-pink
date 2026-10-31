@@ -37,13 +37,37 @@ const setStoredData = <T>(key: string, val: T): void => {
   }
 };
 
+const BROKEN_CATEGORY_URLS: Record<string, string> = {
+  'photo-1608248597359-5776d655f464': 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80',
+  'photo-1567928815116-2c6f6004dc5c': 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
+};
+
+export const sanitizeCategory = (cat: Category): Category => {
+  let url = cat.image_url;
+  for (const [brokenKey, validUrl] of Object.entries(BROKEN_CATEGORY_URLS)) {
+    if (url && url.includes(brokenKey)) {
+      url = validUrl;
+      // Auto-heal Supabase database in background if connected
+      if (isSupabaseConfigured()) {
+        try {
+          supabase.from('categories').update({ image_url: validUrl }).eq('id', cat.id).then();
+        } catch {
+          // ignore
+        }
+      }
+      break;
+    }
+  }
+  return { ...cat, image_url: url };
+};
+
 // Initialize Mock store in browser if not already there
 if (typeof window !== 'undefined') {
   // Categories sync
   const existingCats = getStoredData<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
   const catMap = new Map<string, Category>();
-  existingCats.forEach((c) => catMap.set(c.id, c));
-  INITIAL_CATEGORIES.forEach((ic) => catMap.set(ic.id, ic));
+  existingCats.forEach((c) => catMap.set(c.id, sanitizeCategory(c)));
+  INITIAL_CATEGORIES.forEach((ic) => catMap.set(ic.id, sanitizeCategory(ic)));
   setStoredData(STORAGE_KEYS.CATEGORIES, Array.from(catMap.values()));
 
   const existingProds = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
@@ -73,15 +97,16 @@ export const fetchCategories = async (): Promise<Category[]> => {
       if (!error && data && data.length > 0) {
         // Merge Supabase categories with INITIAL_CATEGORIES to ensure all 9 categories are always available
         const catMap = new Map<string, Category>();
-        INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, c));
-        (data as Category[]).forEach((c) => catMap.set(c.id, c));
+        INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, sanitizeCategory(c)));
+        (data as Category[]).forEach((c) => catMap.set(c.id, sanitizeCategory(c)));
         return Array.from(catMap.values());
       }
     } catch (err) {
       console.warn('Supabase fetchCategories error, falling back to local:', err);
     }
   }
-  return getStoredData<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
+  const local = getStoredData<Category[]>(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
+  return local.map(sanitizeCategory);
 };
 
 // ----------------------------------------------------------------------------

@@ -284,13 +284,21 @@ CREATE POLICY "Users Upload own avatar" ON storage.objects FOR INSERT WITH CHECK
 -- SEED DATA (ข้อมูลเริ่มต้นสำหรับทดสอบ)
 -- ============================================================================
 
--- เพิ่มหมวดหมู่สินค้า 4 กลุ่มหลัก
+-- เพิ่มหมวดหมู่สินค้าครบทั้ง 9 กลุ่มหลัก
 INSERT INTO public.categories (id, name, slug, description, image_url) VALUES
 ('c1000000-0000-0000-0000-000000000001', 'เครื่องสำอาง (Cosmetics)', 'cosmetics', 'เมคอัพ ลิปสติก บลัชออน คุชชั่น และแป้งผสมรองพื้น ให้ลุคผิวสวยฉ่ำโกลว์สไตล์เกาหลี', 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=600&q=80'),
 ('c1000000-0000-0000-0000-000000000002', 'ดูแลผิวหน้า (Facial Skincare)', 'facial-skincare', 'เซรั่ม มอยส์เจอไรเซอร์ โทนเนอร์ และครีมกันแดด ฟื้นบำรุงลึกถึงชั้นผิว', 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80'),
-('c1000000-0000-0000-0000-000000000003', 'ดูแลผิวกาย (Body & Personal Care)', 'body-care', 'โลชั่นผิวกาย เจลอาบน้ำน้ำหอม สครับผิว และครีมทามือ ให้ผิวนุ่มเนียนกลิ่นหอมละมุน', 'https://images.unsplash.com/photo-1608248597359-5776d655f464?auto=format&fit=crop&w=600&q=80'),
-('c1000000-0000-0000-0000-000000000004', 'ดูแลเส้นผมและอื่นๆ (Hair & Wellness)', 'hair-wellness', 'เซรั่มบำรุงผม ทรีตเมนต์ และผลิตภัณฑ์สปาเพื่อการผ่อนคลายอย่างสมบูรณ์แบบ', 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80')
-ON CONFLICT (id) DO NOTHING;
+('c1000000-0000-0000-0000-000000000003', 'ดูแลผิวกาย (Body & Personal Care)', 'body-care', 'โลชั่นผิวกาย เจลอาบน้ำน้ำหอม สครับผิว และครีมทามือ ให้ผิวนุ่มเนียนกลิ่นหอมละมุน', 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000004', 'ดูแลเส้นผมและอื่นๆ (Hair & Wellness)', 'hair-wellness', 'เซรั่มบำรุงผม ทรีตเมนต์ และผลิตภัณฑ์สปาเพื่อการผ่อนคลายอย่างสมบูรณ์แบบ', 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000005', 'น้ำหอม & กลิ่นอโรมา (Perfume & Fragrance)', 'fragrance', 'น้ำหอม EDP พรีเมียม บอดี้มิสต์ กลิ่นหอมติดทนนาน สเปรย์ฉีดหมอน และก้านไม้หอมอโรมาปรับอากาศ', 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000006', 'อุปกรณ์แต่งหน้า & บิวตี้ทูลส์ (Beauty Tools)', 'beauty-tools', 'เซ็ตแปรงแต่งหน้านุ่มพิเศษ ฟองน้ำเกลี่ยรองพื้น กัวซายกกระชับ และลูกกลิ้งหินโรสควอตซ์แท้', 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000007', 'ครีมกันแดด & ปกป้องผิว (Sun Protection)', 'sun-protection', 'กันแดดเนื้อน้ำนม ซันสติ๊กพกพา ครีมกันแดดโทนอัพปรับผิวไบรท์ ปกป้องสูงสุด SPF50+ PA++++ ไม่เหนียวเหนอะหนะ', 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000008', 'มาสก์ & สปาบำรุงผิว (Masks & Spa)', 'masks-spa', 'แผ่นมาสก์หน้าไฮโดรเจล สลีปปิ้งมาสก์ข้ามคืน บับเบิ้ลโคลนดีท็อกซ์ และมาสก์บำรุงรอบดวงตาสดใส', 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80'),
+('c1000000-0000-0000-0000-000000000009', 'เซ็ตของขวัญ & ลิมิเต็ด (Gift Sets & Limited)', 'gift-sets', 'บ็อกซ์เซ็ตของขวัญสุดน่ารัก คอลเลกชันพิเศษสำหรับโอกาสสำคัญ และเซ็ตทดลองพกพาสุดคุ้ม', 'https://images.unsplash.com/photo-1513094735237-8f2714d57c13?auto=format&fit=crop&w=600&q=80')
+ON CONFLICT (id) DO UPDATE SET 
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  image_url = EXCLUDED.image_url;
 
 -- เพิ่มสินค้าตัวอย่างที่มีข้อมูลครบครัน
 INSERT INTO public.products (id, category_id, name, description, ingredients, how_to_use, skin_types, skin_concerns, price, discount_price, stock_quantity, images, is_active) VALUES

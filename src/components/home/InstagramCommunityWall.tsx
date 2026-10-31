@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Product } from '../../types';
 import { Heart, MessageCircle, ExternalLink, ShoppingBag } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
 
 const InstagramIcon: React.FC<{ size?: number; color?: string }> = ({ size = 20, color = 'currentColor' }) => (
   <svg
@@ -67,7 +68,7 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
     {
       id: 'ig-4',
       author: '@nicha_pastel',
-      image: 'https://images.unsplash.com/photo-1608248597359-5776d655f464?auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80',
       likes: '960',
       comments: '62',
       productId: 'a1000000-0000-0000-0000-000000000006', // Sakura Body Wash
@@ -146,6 +147,7 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
                 <img
                   src={post.image}
                   alt={post.author}
+                  onError={handleImageError}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
                   className="community-img"
                 />

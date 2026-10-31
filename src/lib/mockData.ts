@@ -23,7 +23,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     "name": "ดูแลผิวกาย (Body & Personal Care)",
     "slug": "body-care",
     "description": "โลชั่นผิวกาย เจลอาบน้ำน้ำหอม สครับผิว และครีมทามือ ให้ผิวนุ่มเนียนกลิ่นหอมละมุนน่ากอด",
-    "image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80"
+    "image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80"
   },
   {
     "id": "c1000000-0000-0000-0000-000000000004",
@@ -58,7 +58,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     "name": "มาสก์ & สปาบำรุงผิว (Masks & Spa)",
     "slug": "masks-spa",
     "description": "แผ่นมาสก์หน้าไฮโดรเจล สลีปปิ้งมาสก์ข้ามคืน บับเบิ้ลโคลนดีท็อกซ์ และมาสก์บำรุงรอบดวงตาสดใส",
-    "image_url": "https://images.unsplash.com/photo-1567928815116-2c6f6004dc5c?auto=format&fit=crop&w=600&q=80"
+    "image_url": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80"
   },
   {
     "id": "c1000000-0000-0000-0000-000000000009",

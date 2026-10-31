@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Category } from '../../types';
 import { Sparkles } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface CategoryGridProps {
   categories: Category[];
@@ -61,6 +62,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                 <img
                   src={cat.image_url}
                   alt={cat.name}
+                  onError={handleImageError}
                   style={{
                     position: 'absolute',
                     inset: 0,
