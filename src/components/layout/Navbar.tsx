@@ -14,6 +14,7 @@ import {
   Layers,
   Sun,
   Moon,
+  Ticket,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -27,6 +28,7 @@ interface NavbarProps {
   onOpenAuth: () => void;
   onOpenProfile: () => void;
   onOpenAdmin: () => void;
+  onOpenCouponCenter?: () => void;
   onOpenSkinQuiz: () => void;
   onOpenTrickOrTreat: () => void;
   isHalloweenMode: boolean;
@@ -41,6 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuth,
   onOpenProfile,
   onOpenAdmin,
+  onOpenCouponCenter,
   onOpenSkinQuiz,
   onOpenTrickOrTreat,
   isHalloweenMode,
@@ -139,6 +142,31 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <CutePumpkinIcon size={14} />
             <span>สุ่มโค้ดลับ</span>
+          </button>
+        )}
+
+        {onOpenCouponCenter && (
+          <button
+            onClick={onOpenCouponCenter}
+            className="desktop-only"
+            style={{
+              background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
+              color: '#BE123C',
+              border: '1px solid #FECDD3',
+              borderRadius: '9999px',
+              padding: '2px 9px',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              marginLeft: '6px',
+              boxShadow: '0 2px 6px rgba(225, 29, 72, 0.12)',
+            }}
+          >
+            <Ticket size={12} color="#E11D48" />
+            <span>เก็บคูปองส่วนลด</span>
           </button>
         )}
       </div>
@@ -605,6 +633,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <Package size={16} /> คำสั่งซื้อและโปรไฟล์
                     </button>
+
+                    {onOpenCouponCenter && (
+                      <button
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          onOpenCouponCenter();
+                        }}
+                        className="btn btn-ghost"
+                        style={{
+                          justifyContent: 'flex-start',
+                          padding: '0.5rem 0.75rem',
+                          fontSize: '0.88rem',
+                          color: '#BE123C',
+                          fontWeight: 600,
+                        }}
+                      >
+                        <Ticket size={16} /> กระเป๋าคูปองส่วนลด
+                      </button>
+                    )}
 
                     <button
                       onClick={() => {

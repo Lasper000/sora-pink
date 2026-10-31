@@ -9,6 +9,7 @@ import {
   Copy,
   Check,
   ShoppingBag,
+  Truck,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -22,6 +23,7 @@ interface UserProfileModalProps {
   initialTab?: 'orders' | 'profile' | 'wishlist';
   onSelectProduct?: (product: Product) => void;
   onOpenAuth?: () => void;
+  onTrackOrder?: (order: Order) => void;
 }
 
 export const UserProfileModal: React.FC<UserProfileModalProps> = ({
@@ -30,6 +32,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   initialTab = 'orders',
   onSelectProduct,
   onOpenAuth,
+  onTrackOrder,
 }) => {
   const { profile, updateProfile } = useAuth();
   const { wishlist, toggleWishlist } = useWishlist();
@@ -281,9 +284,33 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                         </div>
                       )}
 
-                      {/* Shipping Address mini info */}
-                      <div style={{ fontSize: '0.82rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <MapPin size={14} color="#9CA3AF" /> ผู้รับ: {order.shipping_address.fullName} ({order.shipping_address.phone}), {order.shipping_address.address} จ.{order.shipping_address.province} {order.shipping_address.postalCode}
+                      {/* Action & Tracking Button */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div style={{ fontSize: '0.82rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MapPin size={14} color="#9CA3AF" /> ผู้รับ: {order.shipping_address.fullName} ({order.shipping_address.phone})
+                        </div>
+                        {onTrackOrder && (
+                          <button
+                            onClick={() => onTrackOrder(order)}
+                            className="btn btn-sm"
+                            style={{
+                              background: 'linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '0.35rem 0.8rem',
+                              fontSize: '0.78rem',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              cursor: 'pointer',
+                              fontWeight: 700,
+                              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+                            }}
+                          >
+                            <Truck size={13} /> ติดตามพัสดุเรียลไทม์
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

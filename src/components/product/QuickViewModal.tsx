@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Product } from '../../types';
-import { X, Star, ShoppingBag, Heart, ArrowRight } from 'lucide-react';
+import { X, Star, ShoppingBag, Heart, ArrowRight, Copy } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
@@ -38,6 +38,22 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
       added ? `เพิ่ม "${product.name}" ในรายการที่ชอบแล้วค่ะ` : `นำออกจากรายการที่ชอบแล้วค่ะ`,
       'info'
     );
+  };
+
+  const handleShareLine = () => {
+    const url = window.location.origin;
+    const text = `ดูสินค้าชิ้นนี้บน Sora Pink: ${product.name} ✨ ${url}`;
+    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleShareFacebook = () => {
+    const url = window.location.origin;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.origin);
+    showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ!', 'success');
   };
 
   return (
@@ -119,16 +135,46 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                 {product.name}
               </h3>
 
-              {/* Price */}
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.85rem' }}>
-                <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#E11D48' }}>
-                  ฿{(product.discount_price || product.price).toLocaleString()}
-                </span>
-                {product.discount_price && (
-                  <span style={{ fontSize: '0.92rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
-                    ฿{product.price.toLocaleString()}
+              {/* Price & Share */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+                  <span style={{ fontSize: '1.45rem', fontWeight: 900, color: '#E11D48' }}>
+                    ฿{(product.discount_price || product.price).toLocaleString()}
                   </span>
-                )}
+                  {product.discount_price && (
+                    <span style={{ fontSize: '0.92rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                      ฿{product.price.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+
+                {/* Social Share Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={handleShareLine}
+                    style={{ background: '#06C755', color: '#fff', border: 'none', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
+                    title="แชร์ลง LINE"
+                  >
+                    LINE
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleShareFacebook}
+                    style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
+                    title="แชร์ลง FB"
+                  >
+                    FB
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px' }}
+                    title="คัดลอกลิงก์"
+                  >
+                    <Copy size={11} />
+                  </button>
+                </div>
               </div>
 
               {/* Description preview */}

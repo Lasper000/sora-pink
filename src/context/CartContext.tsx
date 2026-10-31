@@ -16,11 +16,16 @@ interface CartContextType {
   appliedPromo: PromoCode | null;
   applyPromoCode: (code: string) => { success: boolean; message: string };
   removePromoCode: () => void;
+  collectedVouchers: string[];
+  collectVoucher: (code: string) => { success: boolean; message: string };
+  isVoucherCollected: (code: string) => boolean;
+  availableVouchers: PromoCode[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'sora_pink_cart';
+const VOUCHER_STORAGE_KEY = 'sora_pink_vouchers';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -33,6 +38,37 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+
+  const [collectedVouchers, setCollectedVouchers] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(VOUCHER_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : ['WELCOMEPINK', 'SPOOKY31']; // Pre-grant popular welcoming vouchers
+    } catch {
+      return ['WELCOMEPINK', 'SPOOKY31'];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VOUCHER_STORAGE_KEY, JSON.stringify(collectedVouchers));
+    } catch (e) {
+      console.warn('Failed to save vouchers:', e);
+    }
+  }, [collectedVouchers]);
+
+  const collectVoucher = (code: string): { success: boolean; message: string } => {
+    const cleanCode = code.trim().toUpperCase();
+    if (collectedVouchers.includes(cleanCode)) {
+      return { success: false, message: 'คุณเก็บคูปองนี้ไปแล้วค่ะ' };
+    }
+    const updated = [...collectedVouchers, cleanCode];
+    setCollectedVouchers(updated);
+    return { success: true, message: `เก็บคูปอง "${cleanCode}" เข้ากระเป๋าเรียบร้อยแล้วค่ะ!` };
+  };
+
+  const isVoucherCollected = (code: string): boolean => {
+    return collectedVouchers.includes(code.trim().toUpperCase());
+  };
 
   useEffect(() => {
     try {
@@ -179,6 +215,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         appliedPromo,
         applyPromoCode,
         removePromoCode,
+        collectedVouchers,
+        collectVoucher,
+        isVoucherCollected,
+        availableVouchers: PROMO_CODES,
       }}
     >
       {children}

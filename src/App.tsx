@@ -27,6 +27,8 @@ import { CheckoutModal } from './components/cart/CheckoutModal';
 import { AuthModal } from './components/user/AuthModal';
 import { UserProfileModal } from './components/user/UserProfileModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { CouponCenterModal } from './components/common/CouponCenterModal';
+import { OrderTrackingModal } from './components/common/OrderTrackingModal';
 import { ToastContainer, showToast } from './components/common/Toast';
 import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
@@ -67,6 +69,8 @@ const MainStore: React.FC = () => {
   const [profileTab, setProfileTab] = useState<'orders' | 'profile' | 'wishlist'>('orders');
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isSkinQuizOpen, setIsSkinQuizOpen] = useState(false);
+  const [isCouponCenterOpen, setIsCouponCenterOpen] = useState(false);
+  const [trackingOrder, setTrackingOrder] = useState<Order | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(24);
 
   // Allow store owner to open admin panel via URL hash #admin
@@ -239,6 +243,7 @@ const MainStore: React.FC = () => {
           setIsProfileOpen(true);
         }}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
         onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
         onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
         isHalloweenMode={isHalloweenMode}
@@ -568,6 +573,7 @@ const MainStore: React.FC = () => {
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
+        onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
         onCheckout={() => {
           setIsCartOpen(false);
           if (!profile) {
@@ -607,6 +613,18 @@ const MainStore: React.FC = () => {
         initialTab={profileTab}
         onSelectProduct={(p) => setSelectedProduct(p)}
         onOpenAuth={() => setIsAuthOpen(true)}
+        onTrackOrder={(o) => setTrackingOrder(o)}
+      />
+
+      <CouponCenterModal
+        isOpen={isCouponCenterOpen}
+        onClose={() => setIsCouponCenterOpen(false)}
+        onOpenCart={() => setIsCartOpen(true)}
+      />
+
+      <OrderTrackingModal
+        order={trackingOrder}
+        onClose={() => setTrackingOrder(null)}
       />
 
       <AdminDashboard

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles } from 'lucide-react';
+import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, Ticket } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
@@ -8,9 +8,10 @@ interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onCheckout: () => void;
+  onOpenCouponCenter?: () => void;
 }
 
-export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheckout }) => {
+export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheckout, onOpenCouponCenter }) => {
   const {
     cart,
     updateQuantity,
@@ -23,6 +24,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
     appliedPromo,
     applyPromoCode,
     removePromoCode,
+    collectedVouchers,
   } = useCart();
 
   const [promoInput, setPromoInput] = useState('');
@@ -326,6 +328,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     ใช้โค้ด
                   </button>
                 </form>
+              )}
+
+              {onOpenCouponCenter && (
+                <button
+                  type="button"
+                  onClick={onOpenCouponCenter}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#E11D48',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    marginTop: '6px',
+                    padding: 0,
+                  }}
+                >
+                  <Ticket size={13} /> เลือกคูปองจากกระเป๋าของคุณ ({collectedVouchers.length} ใบ)
+                </button>
               )}
             </div>
 

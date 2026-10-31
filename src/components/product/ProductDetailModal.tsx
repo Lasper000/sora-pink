@@ -11,6 +11,11 @@ import {
   Send,
   CheckCircle2,
   Edit3,
+  Copy,
+  Plus,
+  Gift,
+  Palette,
+  Check,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -37,6 +42,82 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  // Feature 3: Swatch visualizer state
+  const isCosmeticOrShadeProduct =
+    Boolean(
+      product?.category?.slug === 'cosmetics' ||
+      product?.category_id === 'c1000000-0000-0000-0000-000000000001' ||
+      /lip|tint|blush|cushion|powder|shimmer|glow|ลิป|บลัช|คุชชั่น|แป้ง/i.test(product?.name || '')
+    );
+  const [selectedSkinTone, setSelectedSkinTone] = useState<'fair' | 'natural' | 'tan'>('fair');
+  const [selectedSwatchIdx, setSelectedSwatchIdx] = useState(0);
+
+  const sampleSwatches = [
+    { name: '#01 Sakura Pink', hex: '#FF6B8B', undertone: 'Cool Rosy Pink (ชมพูซากุระระเรื่อ)', finish: 'Dewy Jelly Glow' },
+    { name: '#02 Muted Peach', hex: '#FB923C', undertone: 'Warm Peach Coral (พีชคอรัลละมุน)', finish: 'Velvet Satin' },
+    { name: '#03 Berry Glass', hex: '#BE123C', undertone: 'Deep Berry Wine (กุหลาบเบอร์รี่ฉ่ำ)', finish: 'Glass Shimmer' },
+    { name: '#04 Nude Almond', hex: '#C2847A', undertone: 'MLBB Nude (นู้ดธรรมชาติ)', finish: 'Soft Matte' },
+  ];
+
+  // Feature 4: Frequently Bought Together bundle
+  const complementaryBundle = {
+    id: 'bundle-comp-1',
+    name: 'Sora Cloud Barrier Moisture Cream (50ml)',
+    price: 490,
+    discountPrice: 390,
+    image: 'https://images.unsplash.com/photo-1608248597359-5776d655f464?auto=format&fit=crop&w=400&q=80',
+  };
+
+  const handleAddBundle = () => {
+    if (!product) return;
+    const currentPrice = product.discount_price || product.price;
+    const bundleItemPrice = complementaryBundle.discountPrice;
+    const totalOriginal = currentPrice + bundleItemPrice;
+    const discountedBundleTotal = Math.round(totalOriginal * 0.85); // 15% OFF bundle
+    const savings = totalOriginal - discountedBundleTotal;
+
+    // Add current product
+    addToCart(product, 1);
+    // Add bundled complementary product
+    const mockBundleProduct: Product = {
+      id: 'bundle-item-' + Date.now(),
+      category_id: product.category_id,
+      name: complementaryBundle.name,
+      description: 'คู่หูฟื้นฟูผิวสวยฉ่ำน้ำ สั่งซื้อเป็นเซ็ตสุดคุ้มรับส่วนลด 15%',
+      ingredients: 'Ceramide Complex, Hyaluronic Acid, Squalane, Vitamin E',
+      how_to_use: 'ทาบำรุงหลังเซรั่ม',
+      skin_types: ['ทุกสภาพผิว'],
+      skin_concerns: ['ความชุ่มชื้น'],
+      price: complementaryBundle.price,
+      discount_price: Math.round(complementaryBundle.discountPrice * 0.85),
+      stock_quantity: 50,
+      images: [complementaryBundle.image],
+      is_active: true,
+    };
+    addToCart(mockBundleProduct, 1);
+
+    showToast(`เพิ่มเซ็ตคู่ใจลงในตะกร้าแล้วค่ะ! คุณประหยัดทันที ฿${savings.toLocaleString()}`, 'success');
+  };
+
+  // Feature 5: 1-Click Social Sharing
+  const handleShareLine = () => {
+    if (!product) return;
+    const url = window.location.origin;
+    const text = `แนะนำสินค้าสวยๆ จาก Sora Pink: ${product.name} ✨ ช้อปเลยที่ ${url}`;
+    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleShareFacebook = () => {
+    if (!product) return;
+    const url = window.location.origin;
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.origin);
+    showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ พร้อมส่งต่อให้เพื่อนได้เลย!', 'success');
+  };
 
   useEffect(() => {
     if (product) {
@@ -231,10 +312,201 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     ฿{product.price.toLocaleString()}
                   </div>
                 )}
-                <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 600, marginLeft: 'auto' }}>
+                <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 600 }}>
                   ✓ รวมภาษีมูลค่าเพิ่มแล้ว
                 </span>
+
+                {/* Feature 5: 1-Click Social Sharing */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginLeft: 'auto' }}>
+                  <button
+                    type="button"
+                    onClick={handleShareLine}
+                    style={{
+                      background: '#06C755',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                    title="แชร์สินค้าลง LINE"
+                  >
+                    LINE
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleShareFacebook}
+                    style={{
+                      background: '#1877F2',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                    title="แชร์ลง Facebook"
+                  >
+                    FB
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    style={{
+                      background: '#FFFFFF',
+                      color: '#4B5563',
+                      border: '1px solid #CBD5E1',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                    title="คัดลอกลิงก์"
+                  >
+                    <Copy size={11} /> คัดลอก
+                  </button>
+                </div>
               </div>
+
+              {/* Feature 3: Virtual Shade Swatches Visualizer */}
+              {isCosmeticOrShadeProduct && (
+                <div
+                  style={{
+                    background: '#FFF8FA',
+                    borderRadius: '16px',
+                    border: '1px solid #FFE4E6',
+                    padding: '1rem',
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem', flexWrap: 'wrap', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 700, color: '#BE123C' }}>
+                      <Palette size={16} /> สวอชสีบนโทนสีผิว (Shade Studio)
+                    </div>
+
+                    {/* Skin Tone Selector */}
+                    <div style={{ display: 'flex', gap: '3px', background: '#FCE7D4', padding: '2px', borderRadius: '9999px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSkinTone('fair')}
+                        style={{
+                          background: selectedSkinTone === 'fair' ? '#FFFFFF' : 'transparent',
+                          border: 'none',
+                          borderRadius: '9999px',
+                          padding: '2px 8px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          color: '#BE123C',
+                        }}
+                      >
+                        ผิวขาว
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSkinTone('natural')}
+                        style={{
+                          background: selectedSkinTone === 'natural' ? '#FFFFFF' : 'transparent',
+                          border: 'none',
+                          borderRadius: '9999px',
+                          padding: '2px 8px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          color: '#9A3412',
+                        }}
+                      >
+                        ผิวสองสี
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSkinTone('tan')}
+                        style={{
+                          background: selectedSkinTone === 'tan' ? '#FFFFFF' : 'transparent',
+                          border: 'none',
+                          borderRadius: '9999px',
+                          padding: '2px 8px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          color: '#7C2D12',
+                        }}
+                      >
+                        ผิวแทน
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Arm Swatch Visualizer Strip */}
+                  <div
+                    style={{
+                      height: '52px',
+                      borderRadius: '12px',
+                      background:
+                        selectedSkinTone === 'fair'
+                          ? 'linear-gradient(90deg, #FDE8E8 0%, #FED7AA 100%)'
+                          : selectedSkinTone === 'natural'
+                          ? 'linear-gradient(90deg, #FDBA74 0%, #FB923C 100%)'
+                          : 'linear-gradient(90deg, #C2410C 0%, #9A3412 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      padding: '0 1rem',
+                      boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.08)',
+                      marginBottom: '0.65rem',
+                    }}
+                  >
+                    {sampleSwatches.map((swatch, idx) => (
+                      <div
+                        key={swatch.name}
+                        onClick={() => setSelectedSwatchIdx(idx)}
+                        style={{
+                          width: '42px',
+                          height: '30px',
+                          borderRadius: '8px',
+                          background: swatch.hex,
+                          boxShadow: selectedSwatchIdx === idx ? '0 0 0 3px #FFFFFF, 0 4px 10px rgba(0,0,0,0.3)' : '0 2px 5px rgba(0,0,0,0.15)',
+                          transform: selectedSwatchIdx === idx ? 'scale(1.15)' : 'scale(1)',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        title={swatch.name}
+                      >
+                        {selectedSwatchIdx === idx && <Check size={14} color="#FFFFFF" strokeWidth={3} />}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem' }}>
+                    <div>
+                      <strong style={{ color: '#1F2937' }}>{sampleSwatches[selectedSwatchIdx].name}:</strong>{' '}
+                      <span style={{ color: '#6B7280' }}>{sampleSwatches[selectedSwatchIdx].undertone}</span>
+                    </div>
+                    <span
+                      style={{
+                        background: '#FFE4E6',
+                        color: '#BE123C',
+                        padding: '1px 8px',
+                        borderRadius: '9999px',
+                        fontWeight: 600,
+                        fontSize: '0.72rem',
+                      }}
+                    >
+                      {sampleSwatches[selectedSwatchIdx].finish}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Tabs: Description, Ingredients, How to Use, Reviews */}
               <div style={{ marginBottom: '1.5rem' }}>
@@ -460,6 +732,73 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Feature 4: Frequently Bought Together (Bundle & Save 15%) */}
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #FFF0F5 0%, #F5F3FF 100%)',
+                  borderRadius: '16px',
+                  border: '1.5px solid #FFD1DC',
+                  padding: '1rem',
+                  marginBottom: '1.25rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 800, color: '#BE123C', marginBottom: '0.65rem' }}>
+                  <Gift size={16} /> ซื้อคู่กันประหยัดกว่า (Frequently Bought Together)
+                  <span style={{ background: '#E11D48', color: '#FFFFFF', fontSize: '0.68rem', fontWeight: 800, padding: '1px 6px', borderRadius: '9999px', marginLeft: 'auto' }}>
+                    ลด 15% เซ็ตคู่
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {/* Item 1 (Current) */}
+                  <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+                    <img src={product.images[0]} alt="Current" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+
+                  <Plus size={16} color="#94A3B8" />
+
+                  {/* Item 2 (Complementary) */}
+                  <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+                    <img src={complementaryBundle.image} alt="Complementary" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+
+                  {/* Pricing info */}
+                  <div style={{ flex: 1, minWidth: '140px' }}>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1F2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      + {complementaryBundle.name}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                      <span style={{ fontSize: '1rem', fontWeight: 800, color: '#E11D48' }}>
+                        ฿{Math.round(((product.discount_price || product.price) + complementaryBundle.discountPrice) * 0.85).toLocaleString()}
+                      </span>
+                      <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                        ฿{((product.discount_price || product.price) + complementaryBundle.discountPrice).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddBundle}
+                    className="btn btn-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, #BE123C 0%, #E11D48 100%)',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '0.45rem 0.85rem',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      boxShadow: '0 4px 12px rgba(190, 18, 60, 0.25)',
+                    }}
+                  >
+                    + ซื้อทั้งเซ็ต
+                  </button>
+                </div>
               </div>
             </div>
 
