@@ -231,7 +231,7 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
         </div>
 
         {/* Instagram Follow Bar */}
-        <div style={{ textAlign: 'center', marginTop: '2.25rem' }}>
+        <div style={{ textAlign: 'center', marginTop: '2.25rem', padding: '0 0.5rem' }}>
           <a
             href="https://instagram.com"
             target="_blank"
@@ -240,16 +240,20 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
             style={{
               display: 'inline-flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '0.6rem',
               padding: '0.65rem 1.4rem',
               borderRadius: '9999px',
               fontSize: '0.92rem',
               fontWeight: 700,
               textDecoration: 'none',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              flexWrap: 'wrap',
             }}
           >
             <InstagramIcon size={18} color="#E11D48" />
-            <span>ติดตาม @sorapink.official บน Instagram (128K Followers)</span>
+            <span style={{ wordBreak: 'break-word' }}>ติดตาม @sorapink.official บน Instagram (128K Followers)</span>
             <ExternalLink size={14} />
           </a>
         </div>
@@ -258,8 +262,15 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
       <style>{`
         .community-grid {
           display: grid;
-          grid-template-columns: repeat(6, 1fr);
+          grid-template-columns: repeat(6, minmax(0, 1fr));
           gap: 1rem;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .community-card {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
         }
         .community-card:hover .community-img {
           transform: scale(1.08);
@@ -283,12 +294,12 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
         }
         @media (max-width: 1024px) {
           .community-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
           }
         }
         @media (max-width: 640px) {
           .community-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.65rem;
           }
         }

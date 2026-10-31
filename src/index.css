@@ -1128,19 +1128,36 @@ body.spooky-theme .glass-card:hover {
     box-sizing: border-box !important;
   }
   .products-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
     width: 100% !important;
+    box-sizing: border-box !important;
   }
   .category-grid-container {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
     width: 100% !important;
+    box-sizing: border-box !important;
   }
   .flash-sale-grid-container {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .reviews-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .review-card {
+    padding: 1rem 0.9rem !important;
+    border-radius: 18px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   /* Live Sales Toast hidden on mobile to avoid covering header/search/reviews */
@@ -1390,8 +1407,10 @@ body.spooky-theme .glass-card:hover {
   }
   /* 2-column mobile product cards (standard e-commerce layout) */
   .products-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .product-card-image-box {
     height: 155px !important;
@@ -1482,10 +1501,10 @@ body.spooky-theme .glass-card:hover {
 /* Extra small mobile screens (max-width: 340px) */
 @media (max-width: 340px) {
   .products-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
   .category-grid-container {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
 

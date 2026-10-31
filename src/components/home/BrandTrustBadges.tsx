@@ -137,8 +137,15 @@ export const BrandTrustBadges: React.FC = () => {
       <style>{`
         .trust-badges-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(4, minmax(0, 1fr));
           gap: 1rem;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .trust-badge-card {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
         }
         .trust-badge-card:hover {
           transform: translateY(-4px);
@@ -146,13 +153,13 @@ export const BrandTrustBadges: React.FC = () => {
         }
         @media (max-width: 992px) {
           .trust-badges-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.85rem;
           }
         }
         @media (max-width: 640px) {
           .trust-badges-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.6rem;
           }
           .trust-badge-card {

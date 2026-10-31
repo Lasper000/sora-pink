@@ -220,23 +220,58 @@ export const CustomerReviewsWall: React.FC = () => {
                   gap: '1rem',
                   transition: 'all 0.3s ease',
                   position: 'relative',
+                  width: '100%',
+                  maxWidth: '100%',
+                  minWidth: 0,
+                  boxSizing: 'border-box',
                 }}
               >
                 {/* Header: User Info & Stars */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div style={{ minWidth: 0, width: '100%' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '0.75rem',
+                      gap: '0.5rem',
+                      minWidth: 0,
+                      width: '100%',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1 }}>
                       <img
                         src={rev.avatar}
                         alt={rev.name}
-                        style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }}
+                        style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
                       />
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{rev.name}</span>
-                          <CheckCircle size={14} color="#059669" />
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
+                          <span
+                            style={{
+                              fontWeight: 700,
+                              fontSize: '0.9rem',
+                              color: 'var(--text-primary)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: 'block',
+                              minWidth: 0,
+                            }}
+                          >
+                            {rev.name}
+                          </span>
+                          <CheckCircle size={14} color="#059669" style={{ flexShrink: 0 }} />
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                        <div
+                          style={{
+                            fontSize: '0.75rem',
+                            color: 'var(--text-secondary)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {rev.skinType} • {rev.date}
                         </div>
                       </div>
@@ -251,6 +286,8 @@ export const CustomerReviewsWall: React.FC = () => {
                         background: '#FFF1F2',
                         color: '#E11D48',
                         border: '1px solid #FFE4E6',
+                        flexShrink: 0,
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       {rev.highlightTag}
@@ -271,6 +308,8 @@ export const CustomerReviewsWall: React.FC = () => {
                       lineHeight: 1.55,
                       color: 'var(--text-primary)',
                       margin: 0,
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word',
                     }}
                   >
                     "{rev.comment}"
@@ -285,9 +324,12 @@ export const CustomerReviewsWall: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    minWidth: 0,
+                    width: '100%',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', maxWidth: '75%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', minWidth: 0, flex: 1 }}>
                     <img
                       src={rev.productImage}
                       alt={rev.productName}
@@ -301,6 +343,7 @@ export const CustomerReviewsWall: React.FC = () => {
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
                         fontWeight: 500,
+                        minWidth: 0,
                       }}
                     >
                       ซื้อสินค้า: <strong>{rev.productName}</strong>
@@ -321,6 +364,7 @@ export const CustomerReviewsWall: React.FC = () => {
                       padding: '0.25rem 0.5rem',
                       borderRadius: '9999px',
                       transition: 'all 0.2s ease',
+                      flexShrink: 0,
                     }}
                   >
                     <ThumbsUp size={14} fill={isLiked ? '#E11D48' : 'none'} />
@@ -336,8 +380,17 @@ export const CustomerReviewsWall: React.FC = () => {
       <style>{`
         .reviews-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 1.25rem;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+        .review-card {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+          min-width: 0 !important;
         }
         .review-card:hover {
           transform: translateY(-4px);
@@ -345,15 +398,33 @@ export const CustomerReviewsWall: React.FC = () => {
         }
         @media (max-width: 992px) {
           .reviews-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
         @media (max-width: 640px) {
           .reviews-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 0.85rem !important;
+            width: 100% !important;
+          }
+          .review-card {
+            padding: 1rem 0.9rem !important;
+            border-radius: 18px !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
           }
           .trust-divider {
             display: none;
+          }
+          .trust-score-banner {
+            border-radius: 18px !important;
+            padding: 0.65rem 0.85rem !important;
+            gap: 0.6rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
         }
         [data-theme="dark"] .trust-score-banner {
