@@ -13,3 +13,4 @@ export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event
     target.src = DEFAULT_FALLBACK_IMAGE;
   }
 };
+

@@ -28,7 +28,6 @@ import { CheckoutModal } from './components/cart/CheckoutModal';
 import { AuthModal } from './components/user/AuthModal';
 import { UserProfileModal } from './components/user/UserProfileModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
-import { SupabaseGuideModal } from './components/common/SupabaseGuideModal';
 import { ToastContainer, showToast } from './components/common/Toast';
 import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
@@ -68,9 +67,20 @@ const MainStore: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [profileTab, setProfileTab] = useState<'orders' | 'profile' | 'wishlist'>('orders');
   const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [isSupabaseGuideOpen, setIsSupabaseGuideOpen] = useState(false);
   const [isSkinQuizOpen, setIsSkinQuizOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState<number>(24);
+
+  // Allow store owner to open admin panel via URL hash #admin
+  useEffect(() => {
+    const checkHash = () => {
+      if (window.location.hash === '#admin') {
+        setIsAdminOpen(true);
+      }
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
   // Automated Seasonal Festival Engine (7 days before to 7 days after)
   const activeSeasonalFestival = useMemo(() => getActiveSeasonalFestival(), []);
@@ -230,7 +240,6 @@ const MainStore: React.FC = () => {
           setIsProfileOpen(true);
         }}
         onOpenAdmin={() => setIsAdminOpen(true)}
-        onOpenSupabaseGuide={() => setIsSupabaseGuideOpen(true)}
         onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
         onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
         isHalloweenMode={isHalloweenMode}
@@ -532,7 +541,7 @@ const MainStore: React.FC = () => {
       </main>
 
       {/* Brand Footer */}
-      <Footer />
+      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
 
       {/* Modals & Drawers */}
       <ProductDetailModal
@@ -610,11 +619,6 @@ const MainStore: React.FC = () => {
         products={products}
         categories={categories}
         onRefreshProducts={loadData}
-      />
-
-      <SupabaseGuideModal
-        isOpen={isSupabaseGuideOpen}
-        onClose={() => setIsSupabaseGuideOpen(false)}
       />
 
       <SkinQuizModal

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, ArrowRight, Shield, Zap } from 'lucide-react';
+import { X, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { signInWithEmail, signUpWithEmail } from '../../lib/supabase';
 import { showToast } from '../common/Toast';
@@ -11,7 +11,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const { loginWithGoogle, loginWithFacebook, loginWithEmailMock, isConfigured, toggleRole } = useAuth();
+  const { loginWithGoogle, loginWithEmailMock, isConfigured } = useAuth();
   const [tab, setTab] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,20 +29,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
       onClose();
     } catch {
       showToast('ไม่สามารถเข้าสู่ระบบด้วย Google ได้', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    setLoading(true);
-    try {
-      await loginWithFacebook();
-      showToast('เข้าสู่ระบบด้วย Facebook สำเร็จ!', 'success');
-      onSuccess?.();
-      onClose();
-    } catch {
-      showToast('ไม่สามารถเข้าสู่ระบบด้วย Facebook ได้', 'error');
     } finally {
       setLoading(false);
     }
@@ -76,18 +62,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickDemo = (role: 'customer' | 'admin') => {
-    if (role === 'admin') {
-      toggleRole('admin');
-      showToast('เข้าสู่ระบบในฐานะ Admin เรียบร้อยแล้วค่ะ', 'success');
-    } else {
-      toggleRole('customer');
-      showToast('เข้าสู่ระบบในฐานะ Customer เรียบร้อยแล้วค่ะ', 'success');
-    }
-    onSuccess?.();
-    onClose();
   };
 
   return (
@@ -168,37 +142,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               />
             </svg>
             ดำเนินการต่อด้วย Google
-          </button>
-
-          {/* Facebook OAuth Button */}
-          <button
-            onClick={handleFacebookLogin}
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '0.7rem',
-              borderRadius: '14px',
-              border: '1.5px solid #1877F2',
-              background: '#1877F2',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.75rem',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              color: '#FFFFFF',
-              boxShadow: '0 2px 8px rgba(24, 119, 242, 0.25)',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#166FE5')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#1877F2')}
-          >
-            {/* Facebook Official SVG Icon */}
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="#FFFFFF">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            ดำเนินการต่อด้วย Facebook
           </button>
         </div>
 
@@ -306,38 +249,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             {tab === 'login' ? 'เข้าสู่ระบบ' : 'ยืนยันการสมัครสมาชิก'} <ArrowRight size={16} />
           </button>
         </form>
-
-        {/* 1-Click Quick Demo Login Box */}
-        <div
-          style={{
-            marginTop: '1.5rem',
-            padding: '1rem',
-            background: '#F8FAFC',
-            borderRadius: '14px',
-            border: '1px dashed #CBD5E1',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-            <Zap size={14} color="#F59E0B" /> ทางลัดสำหรับทดสอบระบบ (1-Click Quick Demo):
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-            <button
-              onClick={() => handleQuickDemo('customer')}
-              className="btn btn-sm"
-              style={{ background: '#FFE8EF', color: '#BE123C', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            >
-              <Sparkles size={13} color="#BE123C" /> เข้าเป็น Customer
-            </button>
-            <button
-              onClick={() => handleQuickDemo('admin')}
-              className="btn btn-sm"
-              style={{ background: '#E0F4FF', color: '#0369A1', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            >
-              <Shield size={13} color="#0369A1" /> เข้าเป็น Admin
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

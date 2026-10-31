@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check } from 'lucide-react';
 import { showToast } from '../common/Toast';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenAdmin?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -231,6 +235,26 @@ export const Footer: React.FC = () => {
         >
           <div>
             © 2026 SORA PINK Co., Ltd. All rights reserved. ออกแบบและพัฒนาด้วยความใส่ใจเพื่อคุณ
+            {onOpenAdmin && (
+              <button
+                onClick={onOpenAdmin}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#CBD5E1',
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  marginLeft: '8px',
+                  padding: 0,
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#F43F5E')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}
+                title="เข้าสู่ระบบจัดการร้านค้าสำหรับเจ้าหน้าที่"
+              >
+                • จัดการร้านค้า
+              </button>
+            )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span>ช่องทางชำระเงินที่รองรับ:</span>

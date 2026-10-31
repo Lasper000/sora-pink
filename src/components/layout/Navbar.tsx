@@ -8,7 +8,6 @@ import {
   Sparkles,
   Menu,
   X,
-  Database,
   LogOut,
   Package,
   Flame,
@@ -28,7 +27,6 @@ interface NavbarProps {
   onOpenAuth: () => void;
   onOpenProfile: () => void;
   onOpenAdmin: () => void;
-  onOpenSupabaseGuide: () => void;
   onOpenSkinQuiz: () => void;
   onOpenTrickOrTreat: () => void;
   isHalloweenMode: boolean;
@@ -43,14 +41,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuth,
   onOpenProfile,
   onOpenAdmin,
-  onOpenSupabaseGuide,
   onOpenSkinQuiz,
   onOpenTrickOrTreat,
   isHalloweenMode,
   searchQuery,
   onSearchChange,
 }) => {
-  const { profile, role, isConfigured, logout, toggleRole } = useAuth();
+  const { profile, role, logout, toggleRole } = useAuth();
   const { itemCount, subtotal } = useCart();
   const { wishlistCount } = useWishlist();
   const { isDark, toggleTheme } = useTheme();
@@ -144,27 +141,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>สุ่มโค้ดลับ</span>
           </button>
         )}
-
-        <button
-          onClick={onOpenSupabaseGuide}
-          className="desktop-only"
-          style={{
-            background: 'rgba(255, 255, 255, 0.7)',
-            border: 'none',
-            borderRadius: '9999px',
-            padding: '2px 8px',
-            fontSize: '0.72rem',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            color: '#1F2937',
-            fontWeight: 600,
-          }}
-        >
-          <Database size={11} color={isConfigured ? '#10B981' : '#F59E0B'} />
-          {isConfigured ? 'Supabase Live' : 'Demo Mode'}
-        </button>
       </div>
 
       <div className="container" style={{ padding: '0.65rem 1rem', width: '100%', boxSizing: 'border-box' }}>
@@ -628,22 +604,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                     >
                       <Package size={16} /> คำสั่งซื้อและโปรไฟล์
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        onOpenSupabaseGuide();
-                      }}
-                      className="btn btn-ghost"
-                      style={{
-                        justifyContent: 'flex-start',
-                        padding: '0.5rem 0.75rem',
-                        fontSize: '0.88rem',
-                        color: isConfigured ? '#059669' : '#D97706',
-                      }}
-                    >
-                      <Database size={16} /> การตั้งค่า Supabase
                     </button>
 
                     <button
