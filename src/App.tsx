@@ -8,7 +8,6 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { HeroBanner } from './components/home/HeroBanner';
 import { BrandTrustBadges } from './components/home/BrandTrustBadges';
-import { ClinicalResultsSlider } from './components/home/ClinicalResultsSlider';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { FlashSale } from './components/home/FlashSale';
 import { ShopByRoutine } from './components/home/ShopByRoutine';
@@ -261,9 +260,6 @@ const MainStore: React.FC = () => {
 
         {/* 1. Brand Trust & Safety Badges */}
         <BrandTrustBadges />
-
-        {/* Clinical Proven Results & Interactive Before/After Slider */}
-        <ClinicalResultsSlider />
 
         {/* 4 Primary Categories Grid */}
         <CategoryGrid
