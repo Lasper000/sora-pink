@@ -323,7 +323,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
         <button
           onClick={handleAddToCartClick}
           disabled={isOutOfStock}
-          className="btn btn-primary btn-sm"
+          className="btn btn-primary btn-sm product-card-buy-btn"
           style={{
             padding: '0.55rem 0.95rem',
             opacity: isOutOfStock ? 0.5 : 1,
@@ -332,7 +332,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           title={isOutOfStock ? 'สินค้าหมดชั่วคราว' : 'เพิ่มลงตะกร้า'}
         >
           <ShoppingBag size={15} />
-          {isOutOfStock ? 'หมด' : 'ใส่ตะกร้า'}
+          <span className="product-card-btn-text">{isOutOfStock ? 'หมด' : 'ใส่ตะกร้า'}</span>
         </button>
       </div>
     </div>

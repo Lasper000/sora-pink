@@ -40,7 +40,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
     <section id="flash-sale" style={{ padding: '2rem 0' }}>
       <div className="container">
         <div
-          className="glass-card"
+          className="glass-card flash-sale-main-card"
           style={{
             background: 'linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 40%, #EBF8FF 100%)',
             borderRadius: '24px',
@@ -294,6 +294,20 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .flash-sale-main-card {
+            padding: 1.15rem 0.85rem !important;
+            border-radius: 18px !important;
+          }
+          .flash-sale-header {
+            gap: 0.85rem !important;
+            margin-bottom: 1.15rem !important;
+            padding-bottom: 0.95rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

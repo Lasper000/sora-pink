@@ -332,6 +332,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
 
                       {/* Floating Product Badge on image */}
                       <div
+                        className="hero-image-badge"
                         style={{
                           position: 'absolute',
                           bottom: '1rem',

@@ -299,25 +299,28 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   padding: '1rem',
                   borderRadius: '16px',
                   display: 'flex',
-                  alignItems: 'baseline',
+                  alignItems: 'center',
                   gap: '0.75rem',
+                  flexWrap: 'wrap',
                   marginBottom: '1.5rem',
                 }}
               >
-                <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#E11D48' }}>
-                  ฿{(product.discount_price || product.price).toLocaleString()}
-                </div>
-                {product.discount_price && (
-                  <div style={{ fontSize: '1.05rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
-                    ฿{product.price.toLocaleString()}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#E11D48' }}>
+                    ฿{(product.discount_price || product.price).toLocaleString()}
                   </div>
-                )}
+                  {product.discount_price && (
+                    <div style={{ fontSize: '1.05rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                      ฿{product.price.toLocaleString()}
+                    </div>
+                  )}
+                </div>
                 <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 600 }}>
-                  ✓ รวมภาษีมูลค่าเพิ่มแล้ว
+                  ✓ รวมภาษีแล้ว
                 </span>
 
                 {/* Feature 5: 1-Click Social Sharing */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginLeft: 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginLeft: 'auto', flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     onClick={handleShareLine}

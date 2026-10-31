@@ -74,6 +74,7 @@ export const BrandTrustBadges: React.FC = () => {
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div
+                  className="trust-badge-icon-box"
                   style={{
                     width: '46px',
                     height: '46px',
@@ -88,6 +89,7 @@ export const BrandTrustBadges: React.FC = () => {
                   {item.icon}
                 </div>
                 <span
+                  className="trust-badge-pill"
                   style={{
                     fontSize: '0.72rem',
                     fontWeight: 700,
@@ -104,6 +106,7 @@ export const BrandTrustBadges: React.FC = () => {
 
               <div>
                 <h4
+                  className="trust-badge-title"
                   style={{
                     fontSize: '0.96rem',
                     fontWeight: 700,
@@ -115,6 +118,7 @@ export const BrandTrustBadges: React.FC = () => {
                   {item.title}
                 </h4>
                 <p
+                  className="trust-badge-subtitle"
                   style={{
                     fontSize: '0.8rem',
                     color: 'var(--text-secondary)',
@@ -146,10 +150,40 @@ export const BrandTrustBadges: React.FC = () => {
             gap: 0.85rem;
           }
         }
-        @media (max-width: 540px) {
+        @media (max-width: 640px) {
           .trust-badges-grid {
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+          }
+          .trust-badge-card {
+            padding: 0.85rem 0.75rem !important;
+            border-radius: 14px !important;
+            gap: 0.5rem !important;
+          }
+          .trust-badge-icon-box {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 10px !important;
+          }
+          .trust-badge-icon-box svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .trust-badge-pill {
+            font-size: 0.65rem !important;
+            padding: 0.15rem 0.45rem !important;
+          }
+          .trust-badge-title {
+            font-size: 0.84rem !important;
+            margin-bottom: 0.15rem !important;
+          }
+          .trust-badge-subtitle {
+            font-size: 0.72rem !important;
+            line-height: 1.35 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
           }
         }
         [data-theme="dark"] .trust-badge-card {

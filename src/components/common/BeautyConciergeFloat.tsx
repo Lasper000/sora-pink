@@ -23,6 +23,7 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
     <>
       {/* Floating Action Button */}
       <div
+        className="beauty-concierge-floating-wrapper"
         style={{
           position: 'fixed',
           bottom: '24px',
@@ -32,6 +33,7 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
       >
         <button
           onClick={() => setIsOpen(!isOpen)}
+          className="beauty-concierge-fab"
           style={{
             width: '56px',
             height: '56px',
@@ -71,7 +73,7 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
       {/* Floating Concierge Drawer / Popup */}
       {isOpen && (
         <div
-          className="glass-card animate-pop"
+          className="glass-card animate-pop beauty-concierge-drawer"
           style={{
             position: 'fixed',
             bottom: '90px',

@@ -228,6 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
                 {isHalloweenMode && (
                   <span
+                    className="brand-spooky-badge"
                     style={{
                       fontSize: '0.72rem',
                       background: '#FDF4FF',
@@ -247,6 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
               <span
+                className="brand-subtitle"
                 style={{
                   display: 'block',
                   fontSize: '0.62rem',
@@ -344,7 +346,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
             {/* Theme Toggle Button (Light/Dark Mode) */}
             <button
               onClick={toggleTheme}
@@ -957,7 +959,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           .auth-btn-text { display: none !important; }
         }
         @media (max-width: 640px) {
-          .brand-title { font-size: 1.25rem !important; }
+          .brand-title { font-size: 1.18rem !important; }
+          .brand-subtitle { display: none !important; }
+          .brand-spooky-badge span { display: none !important; }
+          .brand-spooky-badge { padding: 2px 4px !important; }
+          .navbar-right-actions { gap: 0.25rem !important; }
+          .cart-btn-main { padding: 0.42rem 0.65rem !important; }
+          .theme-toggle-btn { width: 34px !important; height: 34px !important; }
+        }
+        @media (max-width: 380px) {
+          .brand-title { font-size: 1.05rem !important; }
+          .brand-spooky-badge { display: none !important; }
         }
       `}</style>
     </header>

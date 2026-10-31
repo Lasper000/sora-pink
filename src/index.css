@@ -1071,6 +1071,27 @@ body.spooky-theme .glass-card:hover {
   gap: 0.65rem;
 }
 
+/* Live Sales Proof Notification (Desktop Base) */
+.live-sales-notification-wrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 990;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.live-sales-notification-wrapper.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.live-sales-notification-wrapper.is-hidden {
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+  pointer-events: none;
+}
+.live-sales-notification-card {
+  max-width: 340px;
+}
+
 /* --------------------------------------------------------------------------
    TABLET & MOBILE BREAKPOINTS (max-width: 992px)
    -------------------------------------------------------------------------- */
@@ -1222,12 +1243,13 @@ body.spooky-theme .glass-card:hover {
     display: none !important;
   }
   .trick-or-treat-floating-widget {
-    bottom: 1rem !important;
-    right: 76px !important;
+    bottom: 68px !important;
+    right: 16px !important;
   }
   .trick-or-treat-btn {
-    padding: 0.45rem 0.85rem !important;
-    font-size: 0.8rem !important;
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.78rem !important;
+    box-shadow: 0 4px 15px rgba(217, 70, 239, 0.35) !important;
   }
   .trick-or-treat-text-desktop {
     display: none !important;
@@ -1241,6 +1263,54 @@ body.spooky-theme .glass-card:hover {
    SMALL MOBILE PHONES (max-width: 640px)
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
+  /* Live Sales Toast on Mobile: Position at TOP below Navbar (iOS toast style) */
+  .live-sales-notification-wrapper {
+    top: 68px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    width: calc(100% - 1.5rem) !important;
+    max-width: 360px !important;
+  }
+  .live-sales-notification-wrapper.is-visible {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) scale(1) !important;
+  }
+  .live-sales-notification-wrapper.is-hidden {
+    opacity: 0 !important;
+    transform: translateX(-50%) translateY(-24px) scale(0.95) !important;
+    pointer-events: none !important;
+  }
+  .live-sales-notification-card {
+    padding: 0.55rem 0.85rem !important;
+    border-radius: 14px !important;
+    gap: 0.65rem !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  }
+  .live-sales-notification-card img {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Floating Buttons Stack on Mobile: Right thumb zone, zero horizontal clash! */
+  .beauty-concierge-floating-wrapper {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+  .beauty-concierge-fab {
+    width: 46px !important;
+    height: 46px !important;
+  }
+  .beauty-concierge-drawer {
+    bottom: 68px !important;
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+  }
+
   /* Hero slide compact typography for mobile */
   .hero-slide-item {
     padding: 1.25rem 0.85rem 3.25rem 0.85rem !important;
@@ -1274,6 +1344,25 @@ body.spooky-theme .glass-card:hover {
     padding: 0.65rem 1.25rem !important;
     font-size: 0.9rem !important;
   }
+  .hero-image-card {
+    width: 100% !important;
+    max-width: 220px !important;
+    height: 200px !important;
+    margin: 0 auto !important;
+    border-radius: 18px !important;
+  }
+  .hero-image-badge {
+    padding: 0.4rem 0.7rem !important;
+    bottom: 0.5rem !important;
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    border-radius: 12px !important;
+  }
+  .hero-image-badge button {
+    padding: 0.25rem 0.55rem !important;
+    font-size: 0.72rem !important;
+  }
+
   .product-filter-card {
     padding: 1rem 0.85rem !important;
     border-radius: 18px !important;
@@ -1284,10 +1373,10 @@ body.spooky-theme .glass-card:hover {
     gap: 0.65rem !important;
   }
   .product-card-image-box {
-    height: 160px !important;
+    height: 155px !important;
   }
   .product-card-body {
-    padding: 0.65rem !important;
+    padding: 0.55rem 0.65rem !important;
   }
   .product-card-title {
     font-size: 0.82rem !important;
@@ -1298,7 +1387,14 @@ body.spooky-theme .glass-card:hover {
     padding: 0 0.65rem 0.65rem 0.65rem !important;
   }
   .product-card-price {
-    font-size: 1.05rem !important;
+    font-size: 0.98rem !important;
+  }
+  .product-card-btn-text {
+    display: none !important;
+  }
+  .product-card-buy-btn {
+    padding: 0.42rem 0.55rem !important;
+    border-radius: 9999px !important;
   }
 
   /* Category Grid 2-columns on mobile */
@@ -1307,8 +1403,8 @@ body.spooky-theme .glass-card:hover {
     gap: 0.65rem !important;
   }
   .category-card-item {
-    height: 140px !important;
-    border-radius: 14px !important;
+    height: 150px !important;
+    border-radius: 16px !important;
   }
 
   /* Flash Sale 2-columns on mobile */
@@ -1349,9 +1445,11 @@ body.spooky-theme .glass-card:hover {
 
   /* Modals padding on mobile */
   .modal-content {
-    padding: 1.5rem 1.15rem !important;
+    padding: 1.25rem 1rem !important;
     border-radius: 20px !important;
     max-height: 92vh !important;
+    width: calc(100% - 1.5rem) !important;
+    margin: auto !important;
   }
 
   /* Skin Quiz 1-column on mobile */

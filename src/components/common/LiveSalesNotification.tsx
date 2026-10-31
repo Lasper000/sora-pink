@@ -97,30 +97,27 @@ export const LiveSalesNotification: React.FC<LiveSalesNotificationProps> = ({
 
   return (
     <div
+      className={`live-sales-notification-wrapper ${isVisible ? 'is-visible' : 'is-hidden'}`}
       style={{
         position: 'fixed',
-        bottom: '24px',
-        left: '24px',
         zIndex: 990,
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.96)',
-        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
         pointerEvents: isVisible ? 'auto' : 'none',
+        transition: 'all 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <div
+        className="live-sales-notification-card"
         onClick={() => onSelectProduct(linkedProduct)}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: '0.85rem',
-          background: 'rgba(255, 255, 255, 0.94)',
+          background: 'rgba(255, 255, 255, 0.96)',
           backdropFilter: 'blur(12px)',
           padding: '0.75rem 1rem 0.75rem 0.75rem',
           borderRadius: '18px',
           boxShadow: '0 12px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(225, 29, 72, 0.08)',
-          border: '1.5px solid rgba(255, 209, 220, 0.75)',
-          maxWidth: '340px',
+          border: '1.5px solid rgba(255, 209, 220, 0.85)',
           cursor: 'pointer',
           position: 'relative',
         }}

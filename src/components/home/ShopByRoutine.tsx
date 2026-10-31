@@ -393,6 +393,34 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
             grid-template-columns: 1fr;
           }
         }
+        @media (max-width: 640px) {
+          .routine-tabs-container {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            justify-content: flex-start !important;
+            padding: 0.25rem 0.25rem 0.75rem 0.25rem !important;
+            scrollbar-width: none !important;
+          }
+          .routine-tabs-container::-webkit-scrollbar {
+            display: none !important;
+          }
+          .routine-tab-btn {
+            flex-shrink: 0 !important;
+            padding: 0.5rem 0.95rem !important;
+            font-size: 0.82rem !important;
+          }
+          .routine-bundle-card {
+            padding: 1.15rem 0.85rem !important;
+            border-radius: 18px !important;
+          }
+          .bundle-cta-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            font-size: 0.92rem !important;
+            padding: 0.75rem 1rem !important;
+          }
+        }
         [data-theme="dark"] .routine-tab-btn {
           background: rgba(24, 29, 43, 0.8) !important;
         }

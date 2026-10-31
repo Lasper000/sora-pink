@@ -82,10 +82,9 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-content modal-content-lg"
+        className="modal-content modal-content-lg coupon-modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
-          padding: '2rem',
           maxWidth: '680px',
           borderRadius: '24px',
           background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF8FA 100%)',
@@ -143,6 +142,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
 
         {/* Tab Filters */}
         <div
+          className="coupon-tabs-bar"
           style={{
             display: 'flex',
             gap: '0.5rem',
@@ -239,6 +239,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
               >
                 {/* Left Ticket Stub */}
                 <div
+                  className="coupon-ticket-stub"
                   style={{
                     width: '120px',
                     background: promo.freeShipping
@@ -285,6 +286,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
 
                 {/* Right Voucher Content */}
                 <div
+                  className="coupon-ticket-body"
                   style={{
                     flex: 1,
                     padding: '0.9rem 1.15rem',
@@ -451,6 +453,44 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
           )}
         </div>
       </div>
+
+      <style>{`
+        .coupon-modal-content {
+          padding: 2rem;
+        }
+        @media (max-width: 640px) {
+          .coupon-modal-content {
+            padding: 1.25rem 1rem !important;
+            border-radius: 20px !important;
+          }
+          .coupon-tabs-bar {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: none !important;
+            padding-bottom: 0.5rem !important;
+          }
+          .coupon-tabs-bar::-webkit-scrollbar {
+            display: none !important;
+          }
+          .coupon-tabs-bar button {
+            flex-shrink: 0 !important;
+            font-size: 0.78rem !important;
+            padding: 0.35rem 0.75rem !important;
+          }
+          .coupon-ticket-stub {
+            width: 85px !important;
+            padding: 0.5rem 0.35rem !important;
+          }
+          .coupon-ticket-stub span:first-child {
+            font-size: 1.25rem !important;
+          }
+          .coupon-ticket-body {
+            padding: 0.75rem 0.85rem !important;
+            gap: 0.5rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

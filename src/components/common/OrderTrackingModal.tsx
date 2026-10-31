@@ -84,10 +84,9 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-content modal-content-lg"
+        className="modal-content modal-content-lg order-tracking-modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
-          padding: '2rem',
           maxWidth: '680px',
           borderRadius: '24px',
           background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF9FA 100%)',
@@ -329,6 +328,18 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
           </a>
         </div>
       </div>
+
+      <style>{`
+        .order-tracking-modal-content {
+          padding: 2rem;
+        }
+        @media (max-width: 640px) {
+          .order-tracking-modal-content {
+            padding: 1.25rem 1rem !important;
+            border-radius: 20px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

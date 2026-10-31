@@ -85,6 +85,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
 
                 {/* Content */}
                 <div
+                  className="category-card-content"
                   style={{
                     position: 'absolute',
                     bottom: 0,
@@ -96,6 +97,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   }}
                 >
                   <span
+                    className="category-card-badge"
                     style={{
                       background: isSelected ? '#F43F5E' : 'rgba(255, 255, 255, 0.25)',
                       backdropFilter: 'blur(4px)',
@@ -109,10 +111,11 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   >
                     {isSelected ? 'กำลังเลือกอยู่' : 'คลิกเพื่อดูสินค้า'}
                   </span>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.2rem' }}>
+                  <h3 className="category-card-title" style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.2rem' }}>
                     {cat.name}
                   </h3>
                   <p
+                    className="category-card-desc"
                     style={{
                       fontSize: '0.78rem',
                       color: 'rgba(255, 255, 255, 0.85)',
@@ -131,6 +134,27 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
           })}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .category-card-content {
+            padding: 0.75rem 0.85rem !important;
+          }
+          .category-card-title {
+            font-size: 0.96rem !important;
+            margin-bottom: 0.1rem !important;
+          }
+          .category-card-desc {
+            -webkit-line-clamp: 1 !important;
+            font-size: 0.72rem !important;
+          }
+          .category-card-badge {
+            font-size: 0.65rem !important;
+            padding: 1px 6px !important;
+            margin-bottom: 0.25rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };
