@@ -1223,7 +1223,7 @@ body.spooky-theme .glass-card:hover {
   }
   .trick-or-treat-floating-widget {
     bottom: 1rem !important;
-    right: 0.75rem !important;
+    right: 76px !important;
   }
   .trick-or-treat-btn {
     padding: 0.45rem 0.85rem !important;

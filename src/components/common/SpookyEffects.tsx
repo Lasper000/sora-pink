@@ -106,9 +106,9 @@ export const SpookyEffects: React.FC<SpookyEffectsProps> = ({
         className="trick-or-treat-floating-widget"
         style={{
           position: 'fixed',
-          bottom: '2rem',
-          right: '1.5rem',
-          zIndex: 900,
+          bottom: '24px',
+          right: '88px',
+          zIndex: 990,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-end',
