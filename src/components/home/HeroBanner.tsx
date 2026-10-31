@@ -330,6 +330,28 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         }}
                       />
 
+                      {/* Minimal Mobile Price Chip */}
+                      <span
+                        className="hero-mobile-price-chip"
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          background: 'rgba(255, 255, 255, 0.95)',
+                          backdropFilter: 'blur(8px)',
+                          color: '#E11D48',
+                          fontWeight: 800,
+                          fontSize: '0.85rem',
+                          padding: '3px 10px',
+                          borderRadius: '9999px',
+                          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.12)',
+                          display: 'none',
+                          zIndex: 5,
+                        }}
+                      >
+                        {slide.productPrice}
+                      </span>
+
                       {/* Floating Product Badge on image */}
                       <div
                         className="hero-image-badge"

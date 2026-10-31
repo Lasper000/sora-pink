@@ -111,7 +111,7 @@ html {
   -webkit-tap-highlight-color: transparent;
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden !important;
 }
 
 body {
@@ -127,14 +127,14 @@ body {
   line-height: 1.6;
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden !important;
   position: relative;
 }
 
 #root {
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden !important;
 }
 
 /* Custom Scrollbar */
@@ -974,6 +974,12 @@ body.spooky-theme .glass-card:hover {
   padding-bottom: 1rem;
 }
 
+.category-filter-bar .filter-pill,
+.category-tab-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .skin-filter-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1108,7 +1114,7 @@ body.spooky-theme .glass-card:hover {
   html, body, #root, main, section, footer {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: clip !important;
+    overflow-x: hidden !important;
   }
   header {
     width: 100% !important;
@@ -1135,6 +1141,11 @@ body.spooky-theme .glass-card:hover {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.65rem !important;
     width: 100% !important;
+  }
+
+  /* Live Sales Toast hidden on mobile to avoid covering header/search/reviews */
+  .live-sales-notification-wrapper {
+    display: none !important;
   }
 
   /* Navbar */
@@ -1169,9 +1180,9 @@ body.spooky-theme .glass-card:hover {
   .hero-image-card {
     width: 100% !important;
     max-width: 200px !important;
-    height: 200px !important;
+    height: 190px !important;
     margin: 0 auto !important;
-    border-radius: 18px !important;
+    border-radius: 20px !important;
   }
   /* Hide the big desktop side arrows on mobile (swiping and dots mini arrows are active) */
   .hero-nav-btn {
@@ -1181,16 +1192,29 @@ body.spooky-theme .glass-card:hover {
     display: inline-flex !important;
   }
 
-  /* Category Filter Mobile Horizontal Scroll */
+  /* Category Filter Mobile Horizontal Scroll - Clean single-line pills */
   .category-filter-bar {
+    display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
     padding-bottom: 0.65rem !important;
+    gap: 0.5rem !important;
   }
   .category-filter-bar::-webkit-scrollbar {
     display: none !important;
+  }
+  .category-filter-bar .filter-pill,
+  .category-tab-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 38px !important;
+    padding: 0.35rem 0.95rem !important;
+    font-size: 0.84rem !important;
+    border-radius: 9999px !important;
   }
 
   .skin-filter-row {
@@ -1243,12 +1267,13 @@ body.spooky-theme .glass-card:hover {
     display: none !important;
   }
   .trick-or-treat-floating-widget {
-    bottom: 68px !important;
+    bottom: 78px !important;
     right: 16px !important;
+    display: flex !important;
   }
   .trick-or-treat-btn {
-    padding: 0.4rem 0.8rem !important;
-    font-size: 0.78rem !important;
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.76rem !important;
     box-shadow: 0 4px 15px rgba(217, 70, 239, 0.35) !important;
   }
   .trick-or-treat-text-desktop {
@@ -1263,52 +1288,27 @@ body.spooky-theme .glass-card:hover {
    SMALL MOBILE PHONES (max-width: 640px)
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  /* Live Sales Toast on Mobile: Position at TOP below Navbar (iOS toast style) */
-  .live-sales-notification-wrapper {
-    top: 68px !important;
-    bottom: auto !important;
-    left: 50% !important;
-    right: auto !important;
-    width: calc(100% - 1.5rem) !important;
-    max-width: 360px !important;
-  }
-  .live-sales-notification-wrapper.is-visible {
-    opacity: 1 !important;
-    transform: translateX(-50%) translateY(0) scale(1) !important;
-  }
-  .live-sales-notification-wrapper.is-hidden {
-    opacity: 0 !important;
-    transform: translateX(-50%) translateY(-24px) scale(0.95) !important;
-    pointer-events: none !important;
-  }
-  .live-sales-notification-card {
-    padding: 0.55rem 0.85rem !important;
-    border-radius: 14px !important;
-    gap: 0.65rem !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-  }
-  .live-sales-notification-card img {
-    width: 44px !important;
-    height: 44px !important;
-    border-radius: 10px !important;
-  }
-
-  /* Floating Buttons Stack on Mobile: Right thumb zone, zero horizontal clash! */
+  /* Floating Buttons Stack on Mobile: 14px clear vertical gap, zero overlap! */
   .beauty-concierge-floating-wrapper {
     bottom: 16px !important;
     right: 16px !important;
   }
   .beauty-concierge-fab {
-    width: 46px !important;
-    height: 46px !important;
+    width: 48px !important;
+    height: 48px !important;
   }
   .beauty-concierge-drawer {
-    bottom: 68px !important;
+    bottom: 72px !important;
     right: 16px !important;
     left: 16px !important;
     width: auto !important;
     max-width: 360px !important;
     margin: 0 auto !important;
+  }
+  .trick-or-treat-floating-widget {
+    bottom: 78px !important;
+    right: 16px !important;
+    display: flex !important;
   }
 
   /* Hero slide compact typography for mobile */
@@ -1346,26 +1346,47 @@ body.spooky-theme .glass-card:hover {
   }
   .hero-image-card {
     width: 100% !important;
-    max-width: 220px !important;
-    height: 200px !important;
+    max-width: 200px !important;
+    height: 190px !important;
     margin: 0 auto !important;
-    border-radius: 18px !important;
+    border-radius: 20px !important;
   }
+  /* On mobile: hide clumsy cramped duplicate card inside image, show sleek corner price chip */
   .hero-image-badge {
-    padding: 0.4rem 0.7rem !important;
-    bottom: 0.5rem !important;
-    left: 0.5rem !important;
-    right: 0.5rem !important;
-    border-radius: 12px !important;
+    display: none !important;
   }
-  .hero-image-badge button {
-    padding: 0.25rem 0.55rem !important;
-    font-size: 0.72rem !important;
+  .hero-mobile-price-chip {
+    display: inline-flex !important;
+  }
+
+  /* Showcase Sub-tabs Horizontal Swiping */
+  .showcase-tabs-container {
+    justify-content: flex-start !important;
+    padding: 4px 0.25rem 8px 0.25rem !important;
+  }
+  .showcase-tabs-pill {
+    padding: 3px !important;
+  }
+  .showcase-tabs-pill .btn {
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.8rem !important;
   }
 
   .product-filter-card {
     padding: 1rem 0.85rem !important;
     border-radius: 18px !important;
+  }
+  /* Category Filter Pills: ensure horizontal pill shape on small screens */
+  .category-filter-bar .filter-pill,
+  .category-tab-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 36px !important;
+    padding: 0.35rem 0.95rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 9999px !important;
   }
   /* 2-column mobile product cards (standard e-commerce layout) */
   .products-grid {

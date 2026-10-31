@@ -60,8 +60,14 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
       <div className="category-filter-bar">
         <button
           onClick={() => onFilterChange({ categoryId: '' })}
-          className={`filter-pill ${filters.categoryId === '' ? 'active' : ''}`}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          className={`filter-pill category-tab-btn ${filters.categoryId === '' ? 'active' : ''}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+          }}
         >
           <Sparkles size={14} color="#F43F5E" /> สินค้าทั้งหมด
         </button>
@@ -69,7 +75,11 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
           <button
             key={cat.id}
             onClick={() => onFilterChange({ categoryId: cat.id })}
-            className={`filter-pill ${filters.categoryId === cat.id ? 'active' : ''}`}
+            className={`filter-pill category-tab-btn ${filters.categoryId === cat.id ? 'active' : ''}`}
+            style={{
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+            }}
           >
             {cat.name.split(' (')[0]}
           </button>

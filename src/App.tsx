@@ -316,15 +316,20 @@ const MainStore: React.FC = () => {
 
               {/* Showcase Sub-tabs: ทั้งหมด, สินค้าขายดี, สินค้ามาใหม่ */}
               <div
+                className="showcase-tabs-container"
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
                   maxWidth: '100%',
                   marginTop: '1.25rem',
-                  overflow: 'hidden',
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
+                  padding: '4px 0',
                 }}
               >
                 <div
+                  className="showcase-tabs-pill"
                   style={{
                     display: 'inline-flex',
                     background: 'rgba(255, 255, 255, 0.85)',
@@ -337,6 +342,7 @@ const MainStore: React.FC = () => {
                     WebkitOverflowScrolling: 'touch',
                     scrollbarWidth: 'none',
                     whiteSpace: 'nowrap',
+                    flexShrink: 0,
                   }}
                 >
                   <button
