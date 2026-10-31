@@ -4,6 +4,7 @@ import { X, Star, ShoppingBag, Heart, ArrowRight } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -70,6 +71,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
             <img
               src={product.images[0]}
               alt={product.name}
+              onError={handleImageError}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
             {product.discount_price && (

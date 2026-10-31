@@ -17,6 +17,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import { fetchReviewsByProductId, submitProductReview } from '../../services/api';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -124,6 +125,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
               <img
                 src={product.images[activeImageIndex] || product.images[0]}
                 alt={product.name}
+                onError={handleImageError}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
 
@@ -165,7 +167,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                       flexShrink: 0,
                     }}
                   >
-                    <img src={img} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={img} alt="thumb" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </button>
                 ))}
               </div>

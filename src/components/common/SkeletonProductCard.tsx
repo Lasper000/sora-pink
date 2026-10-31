@@ -85,3 +85,4 @@ export const SkeletonProductCard: React.FC = () => {
     </div>
   );
 };
+

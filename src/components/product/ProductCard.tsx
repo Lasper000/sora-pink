@@ -4,6 +4,7 @@ import { Star, Heart, ShoppingBag, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface ProductCardProps {
   product: Product;
@@ -70,6 +71,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           <img
             src={product.images[0]}
             alt={product.name}
+            loading="lazy"
+            onError={handleImageError}
             style={{
               width: '100%',
               height: '100%',

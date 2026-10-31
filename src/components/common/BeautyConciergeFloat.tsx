@@ -258,3 +258,4 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
     </>
   );
 };
+

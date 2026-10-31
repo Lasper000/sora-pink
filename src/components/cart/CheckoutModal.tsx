@@ -58,8 +58,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     e.preventDefault();
     if (cart.length === 0) return;
 
-    if (!address.fullName || !address.phone || !address.address) {
-      showToast('กรุณากรอกข้อมูลที่อยู่จัดส่งให้ครบถ้วน', 'error');
+    if (!address.fullName.trim() || !address.phone.trim() || !address.address.trim()) {
+      showToast('กรุณากรอกข้อมูลชื่อ ที่อยู่ และเบอร์โทรศัพท์ให้ครบถ้วน', 'error');
+      return;
+    }
+
+    const cleanPhone = address.phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 9 || cleanPhone.length > 10) {
+      showToast('กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง (9-10 หลัก)', 'error');
       return;
     }
 

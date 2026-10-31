@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -170,6 +171,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
+                        onError={handleImageError}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </div>
