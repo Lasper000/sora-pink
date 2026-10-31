@@ -1175,38 +1175,70 @@ body.spooky-theme .glass-card:hover {
   /* Hero Banner Mobile */
   .hero-carousel-wrapper {
     min-height: auto !important;
-    border-radius: 20px !important;
+    border-radius: 24px !important;
   }
   .hero-slide-item {
-    padding: 1.5rem 1rem 3.5rem 1rem !important;
+    padding: 1.25rem 0.85rem 2.85rem 0.85rem !important;
   }
   .hero-slide-grid {
     display: flex !important;
     flex-direction: column-reverse !important;
-    gap: 1.25rem !important;
+    gap: 1rem !important;
     text-align: center !important;
   }
   .hero-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
     justify-content: center !important;
-  }
-  .hero-actions .btn {
     width: 100% !important;
-    max-width: 320px;
-    justify-content: center !important;
+    max-width: 330px !important;
+    margin: 0 auto !important;
+  }
+  .hero-btn-shop {
+    flex: 1.25 !important;
+    width: auto !important;
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.86rem !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+  }
+  .hero-btn-quiz {
+    flex: 1 !important;
+    width: auto !important;
+    padding: 0.65rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+    background: rgba(255, 255, 255, 0.85) !important;
   }
   .hero-image-card {
     width: 100% !important;
-    max-width: 200px !important;
-    height: 190px !important;
+    max-width: 290px !important;
+    height: 195px !important;
     margin: 0 auto !important;
-    border-radius: 20px !important;
+    border-radius: 22px !important;
+    border: 3px solid rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 14px 30px rgba(255, 141, 168, 0.22), 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
   }
-  /* Hide the big desktop side arrows on mobile (swiping and dots mini arrows are active) */
+  .hero-mobile-photo-tag {
+    display: flex !important;
+  }
+  .hero-image-badge {
+    display: none !important;
+  }
+  /* Hide the big desktop side arrows on mobile (swiping is active) */
   .hero-nav-btn {
     display: none !important;
   }
   .hero-mobile-arrow {
-    display: inline-flex !important;
+    display: none !important;
+  }
+  .hero-dots-container {
+    padding: 4px 8px !important;
+    gap: 0.35rem !important;
+    bottom: 0.85rem !important;
   }
 
   /* Category Filter Mobile Horizontal Scroll - Clean single-line pills */
@@ -1315,7 +1347,7 @@ body.spooky-theme .glass-card:hover {
     height: 48px !important;
   }
   .beauty-concierge-drawer {
-    bottom: 72px !important;
+    bottom: 68px !important;
     right: 16px !important;
     left: 16px !important;
     width: auto !important;
@@ -1323,57 +1355,91 @@ body.spooky-theme .glass-card:hover {
     margin: 0 auto !important;
   }
   .trick-or-treat-floating-widget {
-    bottom: 78px !important;
+    bottom: 68px !important;
     right: 16px !important;
     display: flex !important;
+  }
+  .trick-or-treat-btn {
+    padding: 0.28rem 0.65rem !important;
+    font-size: 0.72rem !important;
+    gap: 0.35rem !important;
+    border-radius: 9999px !important;
   }
 
   /* Hero slide compact typography for mobile */
   .hero-slide-item {
-    padding: 1.25rem 0.85rem 3.25rem 0.85rem !important;
+    padding: 1.25rem 0.85rem 2.85rem 0.85rem !important;
   }
   .hero-slide-title {
     font-size: 1.45rem !important;
-    line-height: 1.25 !important;
-    margin-bottom: 0.4rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.35rem !important;
   }
   .hero-slide-subtitle {
-    font-size: 0.95rem !important;
-    margin-bottom: 0.6rem !important;
+    font-size: 0.92rem !important;
+    margin-bottom: 0.5rem !important;
     line-height: 1.35 !important;
   }
   .hero-slide-desc {
-    font-size: 0.82rem !important;
-    line-height: 1.5 !important;
-    margin-bottom: 0.95rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 0.85rem !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
   }
   .hero-promo-pill {
-    padding: 0.35rem 0.65rem !important;
+    padding: 0.35rem 0.5rem 0.35rem 0.85rem !important;
     font-size: 0.78rem !important;
-    margin-bottom: 1.15rem !important;
-    gap: 0.45rem !important;
+    margin-bottom: 1rem !important;
+    gap: 0.5rem !important;
+    border-radius: 9999px !important;
+    display: inline-flex !important;
+    max-width: 100% !important;
+    border: 1px solid rgba(255, 141, 168, 0.45) !important;
   }
-  .hero-actions .btn {
-    padding: 0.65rem 1.25rem !important;
-    font-size: 0.9rem !important;
+  .hero-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 330px !important;
+    margin: 0 auto !important;
+  }
+  .hero-btn-shop {
+    flex: 1.25 !important;
+    width: auto !important;
+    padding: 0.65rem 0.85rem !important;
+    font-size: 0.86rem !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+  }
+  .hero-btn-quiz {
+    flex: 1 !important;
+    width: auto !important;
+    padding: 0.65rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+    background: rgba(255, 255, 255, 0.85) !important;
   }
   .hero-image-card {
     width: 100% !important;
-    max-width: 200px !important;
-    height: 190px !important;
+    max-width: 290px !important;
+    height: 195px !important;
     margin: 0 auto !important;
-    border-radius: 20px !important;
+    border-radius: 22px !important;
+    border: 3px solid rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 14px 30px rgba(255, 141, 168, 0.22), 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+    overflow: hidden !important;
   }
-  /* On mobile: hide clumsy cramped duplicate card inside image, show sleek corner price chip */
+  .hero-mobile-photo-tag {
+    display: flex !important;
+  }
   .hero-image-badge {
     display: none !important;
-  }
-  .hero-mobile-price-chip {
-    display: inline-flex !important;
   }
 
   /* Showcase Sub-tabs Horizontal Swiping */
@@ -1670,6 +1736,15 @@ body.dark-theme {
 [data-theme="dark"] .hero-image-card {
   border-color: #22293b !important;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="dark"] .hero-mobile-photo-tag {
+  background: rgba(22, 27, 39, 0.94) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .hero-mobile-photo-tag span {
+  color: #f8fafc !important;
 }
 
 [data-theme="dark"] .hero-nav-btn {

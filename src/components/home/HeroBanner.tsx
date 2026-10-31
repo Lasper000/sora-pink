@@ -274,25 +274,41 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.75rem',
+                        justifyContent: 'space-between',
+                        gap: '0.65rem',
                         background: 'rgba(255, 255, 255, 0.95)',
-                        padding: '0.5rem 0.85rem',
-                        borderRadius: '14px',
-                        border: '1.5px dashed #FF8DA8',
-                        marginBottom: '1.75rem',
-                        boxShadow: '0 4px 14px rgba(255, 141, 168, 0.18)',
+                        padding: '0.35rem 0.5rem 0.35rem 0.85rem',
+                        borderRadius: '9999px',
+                        border: '1.5px solid rgba(255, 141, 168, 0.45)',
+                        marginBottom: '1.25rem',
+                        boxShadow: '0 4px 14px rgba(255, 141, 168, 0.16)',
                         maxWidth: '100%',
-                        flexWrap: 'wrap',
                       }}
                     >
-                      <Tag size={18} color="#F43F5E" className="animate-breathe" />
-                      <span style={{ fontSize: '0.85rem', color: '#4B5563' }}>
-                        โค้ด: <strong>{slide.promoCode}</strong> ({slide.promoText})
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, overflow: 'hidden' }}>
+                        <Tag size={15} color="#F43F5E" className="animate-breathe" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.82rem', color: '#4B5563', whiteSpace: 'nowrap' }}>
+                          โค้ด: <strong style={{ color: '#E11D48', fontWeight: 800 }}>{slide.promoCode}</strong>
+                          <span className="hero-promo-text-extra" style={{ color: '#6B7280', fontSize: '0.78rem' }}> ({slide.promoText})</span>
+                        </span>
+                      </div>
                       <button
                         onClick={() => copyCode(slide.promoCode)}
-                        className="btn btn-sm btn-outline"
-                        style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}
+                        className="hero-copy-btn"
+                        style={{
+                          background: 'linear-gradient(135deg, #FFE4E8 0%, #FFD1DC 100%)',
+                          color: '#E11D48',
+                          border: 'none',
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '9999px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          boxShadow: '0 2px 6px rgba(225, 29, 72, 0.15)',
+                          transition: 'all 0.2s ease',
+                        }}
                       >
                         คัดลอกโค้ด
                       </button>
@@ -300,10 +316,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
 
                     {/* Action Buttons */}
                     <div className="hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
-                      <button onClick={onShopNow} className="btn btn-primary btn-lg">
+                      <button onClick={onShopNow} className="btn btn-primary btn-lg hero-btn-shop">
                         ช้อปเลยตอนนี้ <ArrowRight size={18} />
                       </button>
-                      <button onClick={onOpenSkinQuiz} className="btn btn-outline btn-lg">
+                      <button onClick={onOpenSkinQuiz} className="btn btn-outline btn-lg hero-btn-quiz">
                         <Sparkles size={18} /> ทำแบบประเมินผิว
                       </button>
                     </div>
@@ -330,27 +346,48 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         }}
                       />
 
-                      {/* Minimal Mobile Price Chip */}
-                      <span
-                        className="hero-mobile-price-chip"
+                      {/* Chic Mobile Floating Chip on Photo */}
+                      <div
+                        className="hero-mobile-photo-tag"
                         style={{
                           position: 'absolute',
-                          top: '10px',
+                          bottom: '10px',
+                          left: '10px',
                           right: '10px',
-                          background: 'rgba(255, 255, 255, 0.95)',
-                          backdropFilter: 'blur(8px)',
-                          color: '#E11D48',
-                          fontWeight: 800,
-                          fontSize: '0.85rem',
-                          padding: '3px 10px',
-                          borderRadius: '9999px',
-                          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.12)',
+                          background: 'rgba(255, 255, 255, 0.94)',
+                          backdropFilter: 'blur(10px)',
+                          padding: '0.45rem 0.85rem',
+                          borderRadius: '14px',
                           display: 'none',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.12)',
+                          border: '1px solid rgba(255, 255, 255, 0.9)',
                           zIndex: 5,
                         }}
                       >
-                        {slide.productPrice}
-                      </span>
+                        <span
+                          style={{
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            color: '#1F2937',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '62%',
+                          }}
+                        >
+                          {slide.productName}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+                          <span style={{ fontSize: '0.88rem', fontWeight: 900, color: '#E11D48' }}>
+                            {slide.productPrice}
+                          </span>
+                          <span style={{ fontSize: '0.72rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                            {slide.originalPrice}
+                          </span>
+                        </div>
+                      </div>
 
                       {/* Floating Product Badge on image */}
                       <div
