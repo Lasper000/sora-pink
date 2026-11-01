@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import type { Product } from '../../types';
-import { X, Star, ShoppingBag, Heart, ArrowRight, Copy } from 'lucide-react';
+import { X, Star, ShoppingBag, Heart, ArrowRight, Copy, Check } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
+import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -40,20 +41,27 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
     );
   };
 
+  const [isCopied, setIsCopied] = useState(false);
+
   const handleShareLine = () => {
-    const url = window.location.origin;
+    const url = getProductShareUrl(product.id);
     const text = `ดูสินค้าชิ้นนี้บน Sora Pink: ${product.name} ✨ ${url}`;
     window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const handleShareFacebook = () => {
-    const url = window.location.origin;
+    const url = getProductShareUrl(product.id);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(window.location.origin);
-    showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ!', 'success');
+  const handleCopy = async () => {
+    const url = getProductShareUrl(product.id);
+    const success = await copyToClipboard(url);
+    if (success) {
+      setIsCopied(true);
+      showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ!', 'success');
+      setTimeout(() => setIsCopied(false), 2500);
+    }
   };
 
   return (
@@ -169,10 +177,24 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   <button
                     type="button"
                     onClick={handleCopy}
-                    style={{ background: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '3px' }}
-                    title="คัดลอกลิงก์"
+                    style={{
+                      background: isCopied ? '#ECFDF5' : '#F1F5F9',
+                      color: isCopied ? '#059669' : '#475569',
+                      border: isCopied ? '1px solid #10B981' : '1px solid #CBD5E1',
+                      borderRadius: '6px',
+                      padding: '2px 7px',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                      transition: 'all 0.2s ease',
+                    }}
+                    title={isCopied ? 'คัดลอกลิงก์แล้ว' : 'คัดลอกลิงก์สินค้านี้'}
                   >
-                    <Copy size={11} />
+                    {isCopied ? <Check size={11} color="#059669" /> : <Copy size={11} />}
+                    {isCopied ? 'คัดลอกแล้ว' : ''}
                   </button>
                 </div>
               </div>

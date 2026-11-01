@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -34,6 +34,12 @@ import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
 import { TrickOrTreatModal } from './components/home/TrickOrTreatModal';
 import { getActiveSeasonalFestival } from './utils/seasonalTheme';
+import {
+  getProductIdFromUrl,
+  findProductFromList,
+  setDocumentProductTitle,
+  resetDocumentTitle,
+} from './utils/productRouting';
 
 import { fetchProducts, fetchCategories } from './services/api';
 import type { Product, Category, FilterState, Order } from './types';
@@ -72,6 +78,79 @@ const MainStore: React.FC = () => {
   const [isCouponCenterOpen, setIsCouponCenterOpen] = useState(false);
   const [trackingOrder, setTrackingOrder] = useState<Order | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(24);
+
+  // Synchronize product selection with browser address bar and history
+  const handleSelectProduct = (product: Product | null, pushHistory = true) => {
+    if (product) {
+      setSelectedProduct(product);
+      setDocumentProductTitle(product.name);
+      if (pushHistory) {
+        const targetPath = `/product/${product.id}`;
+        // Push state only if URL isn't already pointing to this product
+        if (window.location.pathname !== targetPath && !window.location.search.includes(`product=${product.id}`)) {
+          window.history.pushState({ productId: product.id, isProductModal: true }, '', targetPath);
+        }
+      }
+    } else {
+      handleCloseProduct();
+    }
+  };
+
+  const handleCloseProduct = () => {
+    setSelectedProduct(null);
+    resetDocumentTitle();
+    // If the modal was opened via in-app navigation and pushed history:
+    if (window.history.state?.isProductModal) {
+      window.history.back();
+    } else if (
+      window.location.pathname.startsWith('/product') ||
+      window.location.pathname.startsWith('/products') ||
+      window.location.search.includes('product=')
+    ) {
+      // Direct landing: replace state to home route cleanly without leaving the app
+      window.history.replaceState({}, '', '/');
+    }
+  };
+
+  // Check URL on initial load when products finish fetching (deep link support)
+  const initialUrlCheckedRef = useRef(false);
+  useEffect(() => {
+    if (products.length === 0 || initialUrlCheckedRef.current) return;
+    initialUrlCheckedRef.current = true;
+
+    const targetParam = getProductIdFromUrl();
+    if (targetParam) {
+      const matched = findProductFromList(products, targetParam);
+      if (matched) {
+        setSelectedProduct(matched);
+        setDocumentProductTitle(matched.name);
+      } else {
+        showToast('ไม่พบสินค้าที่ระบุ หรือสินค้านี้อาจหมดหรือสิ้นสุดการจำหน่ายแล้ว', 'info');
+        window.history.replaceState({}, '', '/');
+        resetDocumentTitle();
+      }
+    }
+  }, [products]);
+
+  // Browser Back / Forward navigation sync (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const targetParam = getProductIdFromUrl();
+      if (targetParam && products.length > 0) {
+        const matched = findProductFromList(products, targetParam);
+        if (matched) {
+          setSelectedProduct(matched);
+          setDocumentProductTitle(matched.name);
+          return;
+        }
+      }
+      setSelectedProduct(null);
+      resetDocumentTitle();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [products]);
 
   // Allow store owner to open admin panel via URL hash #admin
   useEffect(() => {
@@ -280,13 +359,13 @@ const MainStore: React.FC = () => {
         {/* Flash Sale Section */}
         <FlashSale
           products={products}
-          onSelectProduct={(p) => setSelectedProduct(p)}
+          onSelectProduct={(p) => handleSelectProduct(p)}
         />
 
         {/* 2. Shop by Routine / Bundle Deals */}
         <ShopByRoutine
           products={products}
-          onSelectProduct={(p) => setSelectedProduct(p)}
+          onSelectProduct={(p) => handleSelectProduct(p)}
         />
 
         {/* All Products Showcase with Smart Filters */}
@@ -450,7 +529,7 @@ const MainStore: React.FC = () => {
                     <ProductCard
                       key={product.id}
                       product={product}
-                      onClick={() => setSelectedProduct(product)}
+                      onClick={() => handleSelectProduct(product)}
                       onQuickView={(p) => setQuickViewProduct(p)}
                     />
                   ))}
@@ -540,7 +619,7 @@ const MainStore: React.FC = () => {
         {/* 4. Instagram / Community Aesthetics Wall */}
         <InstagramCommunityWall
           products={products}
-          onSelectProduct={(p) => setSelectedProduct(p)}
+          onSelectProduct={(p) => handleSelectProduct(p)}
         />
 
         {/* 5. Interactive FAQ Accordion */}
@@ -553,19 +632,19 @@ const MainStore: React.FC = () => {
       {/* Modals & Drawers */}
       <ProductDetailModal
         product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
+        onClose={handleCloseProduct}
       />
 
       <QuickViewModal
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
-        onOpenFullDetail={(p) => setSelectedProduct(p)}
+        onOpenFullDetail={(p) => handleSelectProduct(p)}
       />
 
       {/* Floating Concierge & Live Sales Social Proof Toast */}
       <LiveSalesNotification
         products={products}
-        onSelectProduct={(p) => setSelectedProduct(p)}
+        onSelectProduct={(p) => handleSelectProduct(p)}
       />
 
       <BeautyConciergeFloat
@@ -617,7 +696,7 @@ const MainStore: React.FC = () => {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         initialTab={profileTab}
-        onSelectProduct={(p) => setSelectedProduct(p)}
+        onSelectProduct={(p) => handleSelectProduct(p)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onTrackOrder={(o) => setTrackingOrder(o)}
       />

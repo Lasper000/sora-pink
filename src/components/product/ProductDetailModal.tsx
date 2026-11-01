@@ -16,6 +16,7 @@ import {
   Gift,
   Palette,
   Check,
+  Share2,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -23,6 +24,7 @@ import { useAuth } from '../../context/AuthContext';
 import { fetchReviewsByProductId, submitProductReview } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
+import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -100,23 +102,51 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     showToast(`เพิ่มเซ็ตคู่ใจลงในตะกร้าแล้วค่ะ! คุณประหยัดทันที ฿${savings.toLocaleString()}`, 'success');
   };
 
-  // Feature 5: 1-Click Social Sharing
+  // Feature 5: 1-Click Social Sharing with Product Deep Link
+  const [isCopied, setIsCopied] = useState(false);
+
   const handleShareLine = () => {
     if (!product) return;
-    const url = window.location.origin;
+    const url = getProductShareUrl(product.id);
     const text = `แนะนำสินค้าสวยๆ จาก Sora Pink: ${product.name} ✨ ช้อปเลยที่ ${url}`;
     window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const handleShareFacebook = () => {
     if (!product) return;
-    const url = window.location.origin;
+    const url = getProductShareUrl(product.id);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.origin);
-    showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ พร้อมส่งต่อให้เพื่อนได้เลย!', 'success');
+  const handleCopyLink = async () => {
+    if (!product) return;
+    const url = getProductShareUrl(product.id);
+    const success = await copyToClipboard(url);
+    if (success) {
+      setIsCopied(true);
+      showToast('คัดลอกลิงก์สินค้านี้แล้วค่ะ พร้อมส่งต่อให้เพื่อนเปิดดูได้ทันที!', 'success');
+      setTimeout(() => setIsCopied(false), 2500);
+    } else {
+      showToast('ไม่สามารถคัดลอกได้ กรุณาคัดลอกจากแถบ URL ด้านบนนะคะ', 'info');
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (!product) return;
+    const url = getProductShareUrl(product.id);
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `${product.name} | SORA PINK`,
+          text: `ดูสินค้าชิ้นนี้บน Sora Pink: ${product.name} ✨`,
+          url: url,
+        });
+      } catch {
+        // User closed native share sheet
+      }
+    } else {
+      handleCopyLink();
+    }
   };
 
   useEffect(() => {
@@ -319,8 +349,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   ✓ รวมภาษีแล้ว
                 </span>
 
-                {/* Feature 5: 1-Click Social Sharing */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginLeft: 'auto', flexWrap: 'wrap' }}>
+                {/* Feature 5: 1-Click Social Sharing with Product Deep Link */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginLeft: 'auto', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.74rem', color: '#6B7280', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                    <Share2 size={12} /> แชร์:
+                  </span>
                   <button
                     type="button"
                     onClick={handleShareLine}
@@ -329,11 +362,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                       color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '8px',
-                      padding: '3px 8px',
+                      padding: '4px 9px',
                       fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer',
+                      transition: 'transform 0.15s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                     title="แชร์สินค้าลง LINE"
                   >
                     LINE
@@ -346,34 +382,61 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                       color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '8px',
-                      padding: '3px 8px',
+                      padding: '4px 9px',
                       fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer',
+                      transition: 'transform 0.15s ease',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                     title="แชร์ลง Facebook"
                   >
                     FB
                   </button>
+                  {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
+                    <button
+                      type="button"
+                      onClick={handleNativeShare}
+                      style={{
+                        background: 'linear-gradient(135deg, #FF6B8B 0%, #E11D48 100%)',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '4px 9px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}
+                      title="แชร์ไปยังแอปในอุปกรณ์"
+                    >
+                      <Share2 size={11} /> แชร์
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handleCopyLink}
                     style={{
-                      background: '#FFFFFF',
-                      color: '#4B5563',
-                      border: '1px solid #CBD5E1',
+                      background: isCopied ? '#ECFDF5' : '#FFFFFF',
+                      color: isCopied ? '#059669' : '#4B5563',
+                      border: isCopied ? '1px solid #10B981' : '1px solid #CBD5E1',
                       borderRadius: '8px',
-                      padding: '3px 8px',
-                      fontSize: '0.72rem',
+                      padding: '4px 10px',
+                      fontSize: '0.74rem',
                       fontWeight: 600,
                       cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '3px',
+                      gap: '4px',
+                      transition: 'all 0.2s ease',
                     }}
-                    title="คัดลอกลิงก์"
+                    title="คัดลอกลิงก์สินค้านี้"
                   >
-                    <Copy size={11} /> คัดลอก
+                    {isCopied ? <Check size={11} color="#059669" /> : <Copy size={11} />}
+                    {isCopied ? 'คัดลอกแล้ว!' : 'คัดลอกลิงก์'}
                   </button>
                 </div>
               </div>
