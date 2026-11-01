@@ -111,6 +111,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       <div
         className="modal-content modal-content-lg"
         onClick={(e) => e.stopPropagation()}
+        style={{ padding: '2rem' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>

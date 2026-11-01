@@ -66,7 +66,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-content auth-modal-content"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: '440px',
+          width: '100%',
+          padding: '2.25rem 2rem',
+          borderRadius: '24px',
+          boxShadow: '0 25px 60px -12px rgba(0, 0, 0, 0.25), 0 0 35px rgba(255, 180, 200, 0.2)',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <div
@@ -201,10 +214,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         </div>
 
         {/* Email & Password Form */}
-        <form onSubmit={handleEmailAuth} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <form onSubmit={handleEmailAuth} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', width: '100%', boxSizing: 'border-box' }}>
           {tab === 'register' && (
-            <div>
-              <label className="form-label">ชื่อ - นามสกุล</label>
+            <div style={{ width: '100%' }}>
+              <label className="form-label" style={{ fontWeight: 600, fontSize: '0.86rem', color: 'var(--text-primary)', marginBottom: '0.4rem', display: 'block' }}>
+                ชื่อ - นามสกุล
+              </label>
               <input
                 type="text"
                 required
@@ -212,12 +227,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="form-input"
+                style={{ width: '100%', borderRadius: '12px', fontSize: '0.9rem', padding: '0.7rem 0.95rem', boxSizing: 'border-box' }}
               />
             </div>
           )}
 
-          <div>
-            <label className="form-label">อีเมล (Email)</label>
+          <div style={{ width: '100%' }}>
+            <label className="form-label" style={{ fontWeight: 600, fontSize: '0.86rem', color: 'var(--text-primary)', marginBottom: '0.4rem', display: 'block' }}>
+              อีเมล (Email)
+            </label>
             <input
               type="email"
               required
@@ -225,11 +243,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-input"
+              style={{ width: '100%', borderRadius: '12px', fontSize: '0.9rem', padding: '0.7rem 0.95rem', boxSizing: 'border-box' }}
             />
           </div>
 
-          <div>
-            <label className="form-label">รหัสผ่าน (Password)</label>
+          <div style={{ width: '100%' }}>
+            <label className="form-label" style={{ fontWeight: 600, fontSize: '0.86rem', color: 'var(--text-primary)', marginBottom: '0.4rem', display: 'block' }}>
+              รหัสผ่าน (Password)
+            </label>
             <input
               type="password"
               required
@@ -237,6 +258,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="form-input"
+              style={{ width: '100%', borderRadius: '12px', fontSize: '0.9rem', padding: '0.7rem 0.95rem', boxSizing: 'border-box' }}
             />
           </div>
 
@@ -244,12 +266,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             type="submit"
             disabled={loading}
             className="btn btn-primary"
-            style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem' }}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              marginTop: '0.5rem',
+              borderRadius: '14px',
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              boxSizing: 'border-box',
+            }}
           >
             {tab === 'login' ? 'เข้าสู่ระบบ' : 'ยืนยันการสมัครสมาชิก'} <ArrowRight size={16} />
           </button>
         </form>
       </div>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .auth-modal-content {
+            padding: 1.5rem 1.15rem !important;
+            border-radius: 20px !important;
+            width: calc(100% - 1.5rem) !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
