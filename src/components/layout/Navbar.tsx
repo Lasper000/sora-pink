@@ -172,8 +172,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </div>
 
-      <div className="container" style={{ padding: '0.65rem 1rem', width: '100%', boxSizing: 'border-box' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', width: '100%' }}>
+      <div className="navbar-container" style={{ padding: '0.65rem 1.5rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.25rem', width: '100%' }}>
           {/* Brand Logo */}
           <a
             href="#"
@@ -264,90 +264,129 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </a>
 
-          {/* Search Bar (Desktop) */}
-          <div
-            style={{
-              flex: '1',
-              maxWidth: '420px',
-              position: 'relative',
-              display: 'none',
-            }}
-            className="desktop-search"
-          >
-            <Search
-              size={18}
-              color="#9CA3AF"
-              style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }}
-            />
-            <input
-              type="text"
-              placeholder="ค้นหาเครื่องสำอาง, สกินแคร์, ส่วนผสม เช่น เซรั่ม, Cica..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="form-input"
-              style={{
-                paddingLeft: '2.5rem',
-                borderRadius: '9999px',
-                background: 'rgba(255, 255, 255, 0.9)',
-                borderColor: 'rgba(255, 209, 220, 0.6)',
-                fontSize: '0.88rem',
-              }}
-            />
-            {searchQuery && (
-              <button
-                onClick={() => onSearchChange('')}
-                style={{
-                  position: 'absolute',
-                  right: '0.75rem',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  color: '#9CA3AF',
-                  cursor: 'pointer',
-                }}
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-
-          {/* Quick Nav Links */}
+          {/* Quick Nav Links (Center) */}
           <nav
             style={{
               display: 'none',
               alignItems: 'center',
               gap: '1.5rem',
               fontSize: '0.92rem',
-              fontWeight: 500,
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
             }}
             className="desktop-nav"
           >
-            <a href="#categories" style={{ color: '#4B5563', transition: 'color 0.2s' }}>
+            <a
+              href="#categories"
+              style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', textDecoration: 'none', whiteSpace: 'nowrap' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#E11D48')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            >
               หมวดหมู่สินค้า
             </a>
-            <a href="#flash-sale" style={{ color: '#E11D48', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600 }}>
-              <Flame size={15} color="#E11D48" /> Flash Sale
+            <a
+              href="#flash-sale"
+              style={{
+                color: '#E11D48',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Flame size={15} color="#E11D48" /> <span>Flash Sale</span>
             </a>
-            <a href="#all-products" style={{ color: '#4B5563' }}>
+            <a
+              href="#all-products"
+              style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', textDecoration: 'none', whiteSpace: 'nowrap' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#E11D48')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            >
               สินค้าทั้งหมด
             </a>
             <button
               onClick={onOpenSkinQuiz}
-              className="btn btn-outline btn-sm"
+              className="btn btn-outline btn-sm nav-quiz-btn"
               style={{
                 borderRadius: '9999px',
                 borderColor: '#BFEFFF',
-                background: 'rgba(224, 244, 255, 0.5)',
+                background: 'rgba(224, 244, 255, 0.55)',
                 color: '#0284C7',
+                padding: '0.35rem 0.85rem',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
               }}
             >
               <Sparkles size={14} /> วิเคราะห์สภาพผิว
             </button>
           </nav>
 
-          {/* Right Action Icons */}
-          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+          {/* Right Action Icons & Search */}
+          <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexShrink: 0 }}>
+            {/* Search Bar (Desktop) */}
+            <div
+              style={{
+                width: '210px',
+                position: 'relative',
+                display: 'none',
+              }}
+              className="desktop-search"
+            >
+              <Search
+                size={16}
+                color="#9CA3AF"
+                style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+              />
+              <input
+                type="text"
+                placeholder="ค้นหาสินค้า, สกินแคร์..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="desktop-search-input"
+                style={{
+                  width: '100%',
+                  paddingLeft: '2.3rem',
+                  paddingRight: searchQuery ? '2rem' : '0.85rem',
+                  paddingTop: '0.45rem',
+                  paddingBottom: '0.45rem',
+                  borderRadius: '9999px',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: '1.5px solid rgba(255, 209, 220, 0.8)',
+                  fontSize: '0.84rem',
+                  boxSizing: 'border-box',
+                  outline: 'none',
+                  transition: 'all 0.25s ease',
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => onSearchChange('')}
+                  style={{
+                    position: 'absolute',
+                    right: '0.65rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: '#9CA3AF',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '2px',
+                  }}
+                  title="ล้างข้อความค้นหา"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
             {/* Theme Toggle Button (Light/Dark Mode) */}
             <button
               onClick={toggleTheme}
@@ -469,7 +508,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <User size={15} />
                 </div>
-                <span className="auth-btn-text">เข้าสู่ระบบ / สมัครสมาชิก</span>
+                <span className="auth-btn-text">เข้าสู่ระบบ</span>
               </button>
             ) : (
               <div style={{ position: 'relative' }} className="desktop-user-menu">
@@ -944,12 +983,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       <style>{`
-        @media (min-width: 868px) {
+        .desktop-search-input:focus {
+          border-color: #F43F5E !important;
+          box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15) !important;
+          background: #FFFFFF !important;
+        }
+        @media (min-width: 992px) {
           .desktop-search { display: block !important; }
           .desktop-nav { display: flex !important; }
           .cart-text, .cart-total { display: inline !important; }
         }
-        @media (max-width: 867px) {
+        @media (max-width: 991px) {
           .mobile-search { display: block !important; }
           .mobile-menu-btn { display: inline-flex !important; }
           .desktop-user-menu { display: none !important; }
@@ -957,15 +1001,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           .announcement-text-desktop { display: none !important; }
           .announcement-text-mobile { display: inline !important; }
         }
-        @media (max-width: 1100px) {
+        @media (max-width: 1280px) {
+          .desktop-search { width: 175px !important; }
+          .desktop-nav { gap: 1rem !important; font-size: 0.88rem !important; }
+          .nav-quiz-btn { padding: 0.3rem 0.7rem !important; font-size: 0.78rem !important; }
+        }
+        @media (max-width: 1120px) {
+          .nav-quiz-btn { display: none !important; }
           .auth-btn-text { display: none !important; }
+          .desktop-search { width: 155px !important; }
         }
         @media (max-width: 640px) {
           .brand-title { font-size: 1.18rem !important; }
           .brand-subtitle { display: none !important; }
           .brand-spooky-badge span { display: none !important; }
           .brand-spooky-badge { padding: 2px 4px !important; }
-          .navbar-right-actions { gap: 0.25rem !important; }
+          .navbar-right-actions { gap: 0.35rem !important; }
           .cart-btn-main { padding: 0.42rem 0.65rem !important; }
           .theme-toggle-btn { width: 34px !important; height: 34px !important; }
         }
