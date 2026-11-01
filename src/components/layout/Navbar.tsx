@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ShoppingBag,
   Heart,
@@ -15,6 +15,7 @@ import {
   Sun,
   Moon,
   Ticket,
+  ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -22,6 +23,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import { CutePumpkinIcon, CuteGhostIcon } from '../common/HalloweenArtwork';
 import { handleImageError } from '../../utils/imageFallback';
+import type { Product } from '../../types';
 
 interface NavbarProps {
   onOpenCart: () => void;
@@ -36,6 +38,8 @@ interface NavbarProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onCategorySelect?: (catId: string) => void;
+  products?: Product[];
+  onSelectProduct?: (product: Product) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -50,6 +54,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   isHalloweenMode,
   searchQuery,
   onSearchChange,
+  products = [],
+  onSelectProduct,
 }) => {
   const { profile, role, logout, toggleRole } = useAuth();
   const { itemCount, subtotal } = useCart();
@@ -58,6 +64,43 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const mobileSearchContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToProducts = () => {
+    const el = document.getElementById('all-products');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsSearchFocused(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const insideDesktop = searchContainerRef.current?.contains(target);
+      const insideMobile = mobileSearchContainerRef.current?.contains(target);
+      if (!insideDesktop && !insideMobile) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const cleanQ = searchQuery.toLowerCase().trim();
+  const searchResults = cleanQ
+    ? products.filter((p) => {
+        return (
+          p.name.toLowerCase().includes(cleanQ) ||
+          p.description.toLowerCase().includes(cleanQ) ||
+          p.ingredients.toLowerCase().includes(cleanQ) ||
+          p.skin_types.some((st) => st.toLowerCase().includes(cleanQ)) ||
+          p.skin_concerns.some((sc) => sc.toLowerCase().includes(cleanQ))
+        );
+      })
+    : [];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -331,23 +374,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="navbar-right-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexShrink: 0 }}>
             {/* Search Bar (Desktop) */}
             <div
+              ref={searchContainerRef}
               style={{
-                width: '210px',
+                width: isSearchFocused ? '260px' : '210px',
                 position: 'relative',
                 display: 'none',
+                transition: 'width 0.25s ease',
               }}
               className="desktop-search"
             >
               <Search
                 size={16}
-                color="#9CA3AF"
-                style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
+                color={isSearchFocused ? '#E11D48' : '#9CA3AF'}
+                style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', transition: 'color 0.2s' }}
               />
               <input
                 type="text"
                 placeholder="ค้นหาสินค้า, สกินแคร์..."
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onChange={(e) => {
+                  onSearchChange(e.target.value);
+                  setIsSearchFocused(true);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    scrollToProducts();
+                  }
+                }}
                 className="desktop-search-input"
                 style={{
                   width: '100%',
@@ -357,7 +412,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   paddingBottom: '0.45rem',
                   borderRadius: '9999px',
                   background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1.5px solid rgba(255, 209, 220, 0.8)',
+                  border: isSearchFocused ? '1.5px solid #F43F5E' : '1.5px solid rgba(255, 209, 220, 0.8)',
+                  boxShadow: isSearchFocused ? '0 0 0 3px rgba(244, 63, 94, 0.15)' : 'none',
                   fontSize: '0.84rem',
                   boxSizing: 'border-box',
                   outline: 'none',
@@ -366,7 +422,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
               {searchQuery && (
                 <button
-                  onClick={() => onSearchChange('')}
+                  onClick={() => {
+                    onSearchChange('');
+                    setIsSearchFocused(false);
+                  }}
                   style={{
                     position: 'absolute',
                     right: '0.65rem',
@@ -385,6 +444,135 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <X size={14} />
                 </button>
+              )}
+
+              {/* Desktop Live Search Dropdown */}
+              {isSearchFocused && cleanQ.length > 0 && (
+                <div
+                  className="live-search-dropdown animate-pop"
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    width: '360px',
+                    background: '#FFFFFF',
+                    borderRadius: '18px',
+                    boxShadow: '0 18px 45px rgba(0, 0, 0, 0.18), 0 0 20px rgba(255, 141, 168, 0.15)',
+                    border: '1.5px solid rgba(255, 209, 220, 0.85)',
+                    zIndex: 1200,
+                    overflow: 'hidden',
+                    padding: '0.65rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '0.35rem 0.5rem 0.5rem',
+                      fontSize: '0.76rem',
+                      color: '#6B7280',
+                      fontWeight: 600,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      borderBottom: '1px solid #F3F4F6',
+                      marginBottom: '0.4rem',
+                    }}
+                  >
+                    <span>ผลการค้นหา ({searchResults.length} ชิ้น)</span>
+                    {searchResults.length > 0 && (
+                      <span
+                        onClick={scrollToProducts}
+                        style={{ color: '#E11D48', cursor: 'pointer', fontWeight: 700 }}
+                      >
+                        ดูผลลัพธ์ทั้งหมด
+                      </span>
+                    )}
+                  </div>
+
+                  {searchResults.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', maxHeight: '310px', overflowY: 'auto' }}>
+                      {searchResults.slice(0, 5).map((prod) => (
+                        <div
+                          key={prod.id}
+                          onClick={() => {
+                            if (onSelectProduct) {
+                              onSelectProduct(prod);
+                              setIsSearchFocused(false);
+                            }
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.65rem',
+                            padding: '0.45rem 0.6rem',
+                            borderRadius: '12px',
+                            cursor: 'pointer',
+                            transition: 'background 0.15s ease',
+                          }}
+                          className="search-result-row"
+                          onMouseEnter={(e) => (e.currentTarget.style.background = '#FFF5F8')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <img
+                            src={prod.images[0]}
+                            alt={prod.name}
+                            onError={handleImageError}
+                            style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {prod.name}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#E11D48' }}>
+                                ฿{(prod.discount_price || prod.price).toLocaleString()}
+                              </span>
+                              {prod.discount_price && (
+                                <span style={{ fontSize: '0.72rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                                  ฿{prod.price.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <ArrowRight size={14} color="#9CA3AF" />
+                        </div>
+                      ))}
+
+                      {searchResults.length > 5 && (
+                        <button
+                          type="button"
+                          onClick={scrollToProducts}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            marginTop: '0.3rem',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
+                            color: '#BE123C',
+                            borderRadius: '10px',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          ดูผลลัพธ์ทั้งหมดในร้าน ({searchResults.length} ชิ้น) <ArrowRight size={13} />
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ padding: '1.25rem 0.75rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        ไม่พบสินค้าที่ตรงกับ "{searchQuery}"
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px' }}>
+                        ลองค้นหาด้วยคำอื่น เช่น เซรั่ม, ครีม, ลิป, Cica
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
             {/* Theme Toggle Button (Light/Dark Mode) */}
@@ -733,26 +921,181 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile Search Bar */}
-        <div className="mobile-search" style={{ marginTop: '0.75rem', display: 'none' }}>
+        <div ref={mobileSearchContainerRef} className="mobile-search" style={{ marginTop: '0.75rem', display: 'none', position: 'relative' }}>
           <div style={{ position: 'relative' }}>
             <Search
               size={16}
-              color="#9CA3AF"
-              style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }}
+              color={isSearchFocused ? '#E11D48' : '#9CA3AF'}
+              style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', transition: 'color 0.2s' }}
             />
             <input
               type="text"
               placeholder="ค้นหาเครื่องสำอาง, สกินแคร์, ส่วนผสม..."
               value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onChange={(e) => {
+                onSearchChange(e.target.value);
+                setIsSearchFocused(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  scrollToProducts();
+                }
+              }}
               className="form-input"
               style={{
                 paddingLeft: '2.3rem',
+                paddingRight: searchQuery ? '2.2rem' : '1rem',
                 borderRadius: '9999px',
                 fontSize: '0.85rem',
+                border: isSearchFocused ? '1.5px solid #F43F5E' : '1.5px solid #E5E7EB',
               }}
             />
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  onSearchChange('');
+                  setIsSearchFocused(false);
+                }}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: '#9CA3AF',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '2px',
+                }}
+                title="ล้างข้อความค้นหา"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
+
+          {/* Mobile Live Search Dropdown */}
+          {isSearchFocused && cleanQ.length > 0 && (
+            <div
+              className="live-search-dropdown animate-pop"
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 6px)',
+                left: 0,
+                right: 0,
+                background: '#FFFFFF',
+                borderRadius: '16px',
+                boxShadow: '0 14px 35px rgba(0, 0, 0, 0.18)',
+                border: '1.5px solid rgba(255, 209, 220, 0.85)',
+                zIndex: 1200,
+                padding: '0.55rem',
+                maxHeight: '340px',
+                overflowY: 'auto',
+              }}
+            >
+              <div
+                style={{
+                  padding: '0.3rem 0.4rem 0.4rem',
+                  fontSize: '0.74rem',
+                  color: '#6B7280',
+                  fontWeight: 600,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  borderBottom: '1px solid #F3F4F6',
+                  marginBottom: '0.35rem',
+                }}
+              >
+                <span>ผลการค้นหา ({searchResults.length} ชิ้น)</span>
+                {searchResults.length > 0 && (
+                  <span
+                    onClick={scrollToProducts}
+                    style={{ color: '#E11D48', cursor: 'pointer', fontWeight: 700 }}
+                  >
+                    ดูทั้งหมด
+                  </span>
+                )}
+              </div>
+
+              {searchResults.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  {searchResults.slice(0, 4).map((prod) => (
+                    <div
+                      key={prod.id}
+                      onClick={() => {
+                        if (onSelectProduct) {
+                          onSelectProduct(prod);
+                          setIsSearchFocused(false);
+                        }
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.65rem',
+                        padding: '0.45rem 0.5rem',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        background: '#FAF5F7',
+                      }}
+                    >
+                      <img
+                        src={prod.images[0]}
+                        alt={prod.name}
+                        onError={handleImageError}
+                        style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1F2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {prod.name}
+                        </div>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#E11D48', marginTop: '2px' }}>
+                          ฿{(prod.discount_price || prod.price).toLocaleString()}
+                        </div>
+                      </div>
+                      <ArrowRight size={13} color="#9CA3AF" />
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={scrollToProducts}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      marginTop: '0.25rem',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
+                      color: '#BE123C',
+                      borderRadius: '10px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    ดูผลลัพธ์ทั้งหมดในร้าน ({searchResults.length} ชิ้น) <ArrowRight size={13} />
+                  </button>
+                </div>
+              ) : (
+                <div style={{ padding: '1rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    ไม่พบสินค้าที่ตรงกับ "{searchQuery}"
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '3px' }}>
+                    ลองค้นหาด้วยคำอื่น เช่น เซรั่ม, ครีม, ลิป
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Slide-down Navigation Drawer */}

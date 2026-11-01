@@ -328,6 +328,8 @@ const MainStore: React.FC = () => {
         isHalloweenMode={isHalloweenMode}
         searchQuery={filters.searchQuery}
         onSearchChange={(q) => handleUpdateFilter({ searchQuery: q })}
+        products={products}
+        onSelectProduct={(p) => handleSelectProduct(p)}
       />
 
       {/* Main Content Area */}
