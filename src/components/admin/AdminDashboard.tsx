@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { adminFetchAllOrders, adminUpdateOrderStatus, adminSaveProduct, adminDeleteProduct } from '../../services/api';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -304,6 +305,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <img
                           src={p.images[0]}
                           alt={p.name}
+                          onError={handleImageError}
                           style={{ width: 48, height: 48, borderRadius: 10, objectFit: 'cover' }}
                         />
                       </td>

@@ -21,6 +21,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import { CutePumpkinIcon, CuteGhostIcon } from '../common/HalloweenArtwork';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface NavbarProps {
   onOpenCart: () => void;
@@ -486,6 +487,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <img
                       src={profile.avatar_url}
                       alt={profile.full_name}
+                      onError={handleImageError}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (

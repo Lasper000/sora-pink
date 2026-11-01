@@ -16,6 +16,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
 import { fetchOrders } from '../../services/api';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -132,6 +133,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <img
                   src={profile.avatar_url}
                   alt="avatar"
+                  onError={handleImageError}
                   style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                 />
               ) : (
@@ -346,6 +348,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                       <img
                         src={item.images[0]}
                         alt={item.name}
+                        onError={handleImageError}
                         onClick={() => {
                           if (onSelectProduct) {
                             onClose();

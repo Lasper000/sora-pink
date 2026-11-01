@@ -66,7 +66,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     name: 'Sora Cloud Barrier Moisture Cream (50ml)',
     price: 490,
     discountPrice: 390,
-    image: 'https://images.unsplash.com/photo-1608248597359-5776d655f464?auto=format&fit=crop&w=400&q=80',
+    image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=400&q=80',
   };
 
   const handleAddBundle = () => {

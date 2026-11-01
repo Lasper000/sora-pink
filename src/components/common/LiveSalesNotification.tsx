@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Product } from '../../types';
 import { CheckCircle, X } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface LiveSalesNotificationProps {
   products: Product[];
@@ -127,6 +128,7 @@ export const LiveSalesNotification: React.FC<LiveSalesNotificationProps> = ({
           <img
             src={linkedProduct.images[0]}
             alt={linkedProduct.name}
+            onError={handleImageError}
             style={{
               width: '54px',
               height: '54px',

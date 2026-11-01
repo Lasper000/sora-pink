@@ -3,6 +3,7 @@ import type { Product } from '../../types';
 import { Flame, Clock, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface FlashSaleProps {
   products: Product[];
@@ -183,6 +184,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       <img
                         src={product.images[0]}
                         alt={product.name}
+                        onError={handleImageError}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                       <span

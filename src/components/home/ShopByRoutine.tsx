@@ -3,6 +3,7 @@ import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
 import { Sparkles, Sun, Moon, Palette, ShoppingBag, ArrowRight } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface RoutineSet {
   id: string;
@@ -286,6 +287,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   <img
                     src={prod.images[0]}
                     alt={prod.name}
+                    onError={handleImageError}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>

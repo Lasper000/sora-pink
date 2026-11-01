@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, ChevronLeft, ChevronRight, Tag, ArrowRight } from 'lucide-react';
 import { showToast } from '../common/Toast';
 import { CutePumpkinIcon } from '../common/HalloweenArtwork';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface HeroBannerProps {
   onShopNow: () => void;
@@ -338,6 +339,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       <img
                         src={slide.heroImage}
                         alt={slide.productName}
+                        onError={handleImageError}
                         style={{
                           width: '100%',
                           height: '100%',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, CheckCircle, ThumbsUp, MessageCircleHeart } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
 
 interface ReviewItem {
   id: string;
@@ -72,7 +73,7 @@ export const CustomerReviewsWall: React.FC = () => {
       category: 'body',
       skinType: 'ผิวแห้ง ผิวตัวคล้ำเสีย',
       productName: 'Sakura Petal Moisturizing Body Wash',
-      productImage: 'https://images.unsplash.com/photo-1608248597359-5776d655f464?auto=format&fit=crop&w=200&q=80',
+      productImage: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=200&q=80',
       comment: 'กลิ่นหอมฟุ้งทั้งห้องน้ำ อาบแล้วผิวนุ่มลื่นไม่แห้งตึง แฟนทักว่าตัวหอมมากกก ขวดใหญ่ใช้ได้นาน คุ้มค่าเกินราคาจริงๆ ค่ะ',
       likes: 29,
       highlightTag: 'กลิ่นหอมติดผิว 🛁',
@@ -243,6 +244,7 @@ export const CustomerReviewsWall: React.FC = () => {
                       <img
                         src={rev.avatar}
                         alt={rev.name}
+                        onError={handleImageError}
                         style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
                       />
                       <div style={{ minWidth: 0, flex: 1 }}>
@@ -333,6 +335,7 @@ export const CustomerReviewsWall: React.FC = () => {
                     <img
                       src={rev.productImage}
                       alt={rev.productName}
+                      onError={handleImageError}
                       style={{ width: '28px', height: '28px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }}
                     />
                     <span
