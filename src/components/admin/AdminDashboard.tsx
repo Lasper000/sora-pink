@@ -18,6 +18,7 @@ import {
 import { adminFetchAllOrders, adminUpdateOrderStatus, adminSaveProduct, adminDeleteProduct } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -42,14 +43,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
 
+  const { role } = useAuth();
+
   // Tracking number editing per order
   const [trackingInputs, setTrackingInputs] = useState<{ [orderId: string]: string }>({});
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && role === 'admin') {
       loadOrders();
     }
-  }, [isOpen]);
+  }, [isOpen, role]);
 
   const loadOrders = async () => {
     try {
@@ -65,7 +68,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || role !== 'admin') return null;
 
   // Analytics Metrics
   const totalRevenue = orders.reduce((sum, o) => sum + o.total_amount, 0);

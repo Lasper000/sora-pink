@@ -57,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   products = [],
   onSelectProduct,
 }) => {
-  const { profile, role, logout, toggleRole } = useAuth();
+  const { profile, role, logout } = useAuth();
   const { itemCount, subtotal } = useCart();
   const { wishlistCount } = useWishlist();
   const { isDark, toggleTheme } = useTheme();
@@ -797,35 +797,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                           )}
                         </span>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Switch Role Quick Button for Pair Programming & Testing */}
-                  <div
-                    style={{
-                      background: '#FFF5F8',
-                      border: '1px dashed #FFB8C9',
-                      borderRadius: '10px',
-                      padding: '0.6rem',
-                      marginBottom: '0.75rem',
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: '#4B5563' }}>สลับโหมดทดสอบ:</span>
-                      <button
-                        onClick={() => toggleRole()}
-                        className="btn btn-sm"
-                        style={{
-                          background: role === 'admin' ? '#FFD1DC' : '#BFEFFF',
-                          color: role === 'admin' ? '#9F1239' : '#0369A1',
-                          padding: '0.2rem 0.6rem',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {role === 'admin' ? 'สลับเป็น ลูกค้า' : 'สลับเป็น แอดมิน'}
-                      </button>
                     </div>
                   </div>
 

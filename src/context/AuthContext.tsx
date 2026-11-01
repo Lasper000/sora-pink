@@ -12,21 +12,10 @@ interface AuthContextType {
   loginWithFacebook: () => Promise<void>;
   loginWithEmailMock: (email: string, name?: string) => void;
   logout: () => Promise<void>;
-  toggleRole: (targetRole?: UserRole) => void;
   updateProfile: (updated: Partial<Profile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const DEMO_USER_PROFILE: Profile = {
-  id: 'usr-demo-01',
-  full_name: 'คุณมุกดา พิรุณรัตน์ (Customer)',
-  avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-  phone: '081-234-5678',
-  address: '123/45 ซอยทองหล่อ 10 แขวงคลองตันเหนือ เขตวัฒนา กรุงเทพฯ 10110',
-  role: 'customer',
-  created_at: new Date().toISOString(),
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
@@ -47,21 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return null;
   });
-  const [role, setRole] = useState<UserRole>(() => {
-    const saved = localStorage.getItem('sora_current_profile');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed?.id === 'usr-demo-01') {
-          return 'customer';
-        }
-        return parsed.role || 'customer';
-      } catch {
-        return 'customer';
-      }
-    }
-    return 'customer';
-  });
+  const [role, setRole] = useState<UserRole>('customer');
   const [isLoading, setIsLoading] = useState(true);
   const isConfigured = isSupabaseConfigured();
 
@@ -87,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         setUser(null);
         setProfile(null);
+        setRole('customer');
+        localStorage.removeItem('sora_current_profile');
       }
     });
 
@@ -103,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (!error && data) {
         setProfile(data as Profile);
-        setRole(data.role || 'customer');
+        setRole(data.role === 'admin' ? 'admin' : 'customer');
       } else {
         // Fallback user from auth metadata
         const newProf: Profile = {
@@ -113,9 +90,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'customer',
         };
         setProfile(newProf);
+        setRole('customer');
       }
     } catch (e) {
       console.warn('Profile load error:', e);
+      setRole('customer');
     }
   };
 
@@ -177,29 +156,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setUser(null);
     setProfile(null);
+    setRole('customer');
     localStorage.removeItem('sora_current_profile');
-  };
-
-  const toggleRole = (targetRole?: UserRole) => {
-    const nextRole: UserRole = targetRole || (role === 'admin' ? 'customer' : 'admin');
-    setRole(nextRole);
-    const baseProfile = profile || DEMO_USER_PROFILE;
-    const updated: Profile = {
-      ...baseProfile,
-      role: nextRole,
-      full_name: nextRole === 'admin' ? 'แอดมินโซระ (Sora Admin)' : (profile?.full_name || 'คุณมุกดา พิรุณรัตน์ (Customer)'),
-    };
-    setProfile(updated);
-    localStorage.setItem('sora_current_profile', JSON.stringify(updated));
   };
 
   const updateProfile = (updated: Partial<Profile>) => {
     if (!profile) return;
-    const newProf = { ...profile, ...updated };
+    // Security: normal users cannot escalate their role via client updateProfile
+    const { role: _role, ...safeUpdates } = updated;
+    const newProf = { ...profile, ...safeUpdates };
     setProfile(newProf);
     localStorage.setItem('sora_current_profile', JSON.stringify(newProf));
     if (isConfigured && user) {
-      supabase.from('profiles').update(updated).eq('id', user.id).then();
+      supabase.from('profiles').update(safeUpdates).eq('id', user.id).then();
     }
   };
 
@@ -215,7 +184,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginWithFacebook,
         loginWithEmailMock,
         logout,
-        toggleRole,
         updateProfile,
       }}
     >

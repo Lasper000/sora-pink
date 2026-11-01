@@ -56,7 +56,7 @@ const initialFilters: FilterState = {
 };
 
 const MainStore: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, role } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,17 +152,22 @@ const MainStore: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [products]);
 
-  // Allow store owner to open admin panel via URL hash #admin
+  // Allow store owner to open admin panel via URL hash #admin (Admin role required)
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin') {
-        setIsAdminOpen(true);
+        if (role === 'admin') {
+          setIsAdminOpen(true);
+        } else {
+          window.location.hash = '';
+          showToast('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าใช้งานได้', 'error');
+        }
       }
     };
     checkHash();
     window.addEventListener('hashchange', checkHash);
     return () => window.removeEventListener('hashchange', checkHash);
-  }, []);
+  }, [role]);
 
   // Automated Seasonal Festival Engine (7 days before to 7 days after)
   const activeSeasonalFestival = useMemo(() => getActiveSeasonalFestival(), []);
@@ -321,7 +326,13 @@ const MainStore: React.FC = () => {
           setProfileTab('orders');
           setIsProfileOpen(true);
         }}
-        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenAdmin={() => {
+          if (role === 'admin') {
+            setIsAdminOpen(true);
+          } else {
+            showToast('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าใช้งานได้', 'error');
+          }
+        }}
         onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
         onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
         onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
@@ -629,7 +640,7 @@ const MainStore: React.FC = () => {
       </main>
 
       {/* Brand Footer */}
-      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Footer onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined} />
 
       {/* Modals & Drawers */}
       <ProductDetailModal
