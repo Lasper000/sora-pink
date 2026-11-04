@@ -4,7 +4,7 @@ import { Star, Heart, ShoppingBag, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 
 interface ProductCardProps {
   product: Product;
@@ -69,7 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           }}
         >
           <img
-            src={product.images[0]}
+            src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
             alt={product.name}
             loading="lazy"
             onError={handleImageError}
@@ -147,6 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           {/* Wishlist Heart Button */}
           <button
             onClick={handleWishlistClick}
+            className="product-card-wishlist-btn"
             style={{
               position: 'absolute',
               top: '10px',
@@ -183,6 +184,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 e.stopPropagation();
                 onQuickView(product);
               }}
+              className="product-card-quickview-btn"
               style={{
                 position: 'absolute',
                 bottom: '10px',
@@ -212,7 +214,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
         <div className="product-card-body">
           {/* Skin Type tags */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '0.5rem' }}>
-            {product.skin_types.slice(0, 2).map((st) => (
+            {(product.skin_types || []).slice(0, 2).map((st) => (
               <span
                 key={st}
                 style={{
@@ -227,7 +229,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 {st}
               </span>
             ))}
-            {product.skin_concerns.slice(0, 1).map((sc) => (
+            {(product.skin_concerns || []).slice(0, 1).map((sc) => (
               <span
                 key={sc}
                 style={{

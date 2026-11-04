@@ -23,7 +23,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 import { fetchReviewsByProductId, submitProductReview } from '../../services/api';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting';
 
 interface ProductDetailModalProps {
@@ -208,9 +208,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-content modal-content-lg"
+        className="modal-content modal-content-lg product-detail-modal-card"
         onClick={(e) => e.stopPropagation()}
-        style={{ padding: 0, overflow: 'hidden' }}
       >
         {/* Close Button */}
         <button
@@ -234,7 +233,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
             {/* Main Image */}
             <div className="product-detail-main-img-box">
               <img
-                src={product.images[activeImageIndex] || product.images[0]}
+                src={(product.images && (product.images[activeImageIndex] || product.images[0])) || DEFAULT_FALLBACK_IMAGE}
                 alt={product.name}
                 onError={handleImageError}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -260,9 +259,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
             </div>
 
             {/* Thumbnail Selectors */}
-            {product.images.length > 1 && (
+            {Boolean(product.images && product.images.length > 1) && (
               <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
-                {product.images.map((img, idx) => (
+                {(product.images || []).map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
@@ -298,7 +297,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   <span className="badge badge-success">มีสินค้าในสต็อก ({product.stock_quantity} ชิ้น)</span>
                 )}
 
-                {product.skin_types.map((st) => (
+                {(product.skin_types || []).map((st) => (
                   <span key={st} className="badge badge-blue">{st}</span>
                 ))}
               </div>
@@ -577,6 +576,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
               {/* Tabs: Description, Ingredients, How to Use, Reviews */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <div
+                  className="product-detail-tabs-bar"
                   style={{
                     display: 'flex',
                     borderBottom: '1.5px solid #F3F4F6',
@@ -658,10 +658,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     <p style={{ marginBottom: '0.75rem' }}>{product.description}</p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.5rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#047857' }}>
-                        <CheckCircle2 size={16} /> เหมาะสำหรับ: {product.skin_types.join(', ')}
+                        <CheckCircle2 size={16} /> เหมาะสำหรับ: {(product.skin_types || []).join(', ') || 'ทุกสภาพผิว'}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#BE123C' }}>
-                        <Sparkles size={16} /> แก้ปัญหาผิว: {product.skin_concerns.join(', ')}
+                        <Sparkles size={16} /> แก้ปัญหาผิว: {(product.skin_concerns || []).join(', ') || 'ฟื้นฟูผิวสวย'}
                       </div>
                     </div>
                   </div>
@@ -820,7 +820,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                   {/* Item 1 (Current) */}
                   <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
-                    <img src={product.images[0]} alt="Current" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE} alt="Current" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
 
                   <Plus size={16} color="#94A3B8" />
@@ -870,6 +870,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
 
             {/* Bottom Actions: Quantity Stepper, Add to Cart, Wishlist */}
             <div
+              className="product-detail-actions-row"
               style={{
                 borderTop: '1px solid #E5E7EB',
                 paddingTop: '1.25rem',

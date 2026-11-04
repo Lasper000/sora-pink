@@ -117,7 +117,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1F2937', margin: 0 }}>
                   ติดตามสถานะพัสดุเรียลไทม์
                 </h3>
-                <span style={{ fontSize: '0.82rem', color: '#6B7280' }}>
+                <span style={{ fontSize: '0.82rem', color: '#6B7280', wordBreak: 'break-all' }}>
                   คำสั่งซื้อ #{order.id}
                 </span>
               </div>
@@ -246,7 +246,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
 
                 {/* Step Info */}
                 <div style={{ paddingLeft: '0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
                     <h4
                       style={{
                         fontSize: '0.92rem',

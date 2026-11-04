@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Order, Product } from '../../types';
 import {
   X,
@@ -49,6 +49,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const [phone, setPhone] = useState(profile?.phone || '');
   const [address, setAddress] = useState(profile?.address || '');
 
+  const loadOrders = useCallback(async () => {
+    setLoadingOrders(true);
+    try {
+      const data = await fetchOrders(profile?.id);
+      setOrders(data);
+    } catch {
+      console.warn('Orders load error');
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, [profile?.id]);
+
   useEffect(() => {
     if (isOpen) {
       setActiveTab(initialTab);
@@ -59,19 +71,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         setAddress(profile.address || '');
       }
     }
-  }, [isOpen, initialTab, profile]);
-
-  const loadOrders = async () => {
-    setLoadingOrders(true);
-    try {
-      const data = await fetchOrders(profile?.id);
-      setOrders(data);
-    } catch {
-      console.warn('Orders load error');
-    } finally {
-      setLoadingOrders(false);
-    }
-  };
+  }, [isOpen, initialTab, profile, loadOrders]);
 
   if (!isOpen) return null;
 
@@ -154,6 +154,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
         {/* Tab Navigation */}
         <div
+          className="user-profile-tabs-bar"
           style={{
             display: 'flex',
             gap: '0.5rem',
@@ -240,7 +241,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                       >
                         <div>
                           <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1F2937' }}>
-                            หมายเลขคำสั่งซื้อ: <span style={{ color: '#0284C7' }}>{order.id}</span>
+                            หมายเลขคำสั่งซื้อ: <span style={{ color: '#0284C7', wordBreak: 'break-all' }}>{order.id}</span>
                           </div>
                           <div style={{ fontSize: '0.78rem', color: '#9CA3AF' }}>
                             วันที่สั่งซื้อ: {new Date(order.created_at).toLocaleString('th-TH')}
@@ -331,7 +332,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   <p style={{ fontSize: '0.88rem' }}>คลิกไอคอนหัวใจที่สินค้าเพื่อบันทึกรายการที่ชื่นชอบไว้ที่นี่</p>
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: '0.85rem' }}>
                   {wishlist.map((item) => (
                     <div
                       key={item.id}

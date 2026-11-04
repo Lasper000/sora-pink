@@ -33,6 +33,7 @@ import { ToastContainer, showToast } from './components/common/Toast';
 import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
 import { TrickOrTreatModal } from './components/home/TrickOrTreatModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { getActiveSeasonalFestival } from './utils/seasonalTheme';
 import {
   getProductIdFromUrl,
@@ -643,16 +644,20 @@ const MainStore: React.FC = () => {
       <Footer onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined} />
 
       {/* Modals & Drawers */}
-      <ProductDetailModal
-        product={selectedProduct}
-        onClose={handleCloseProduct}
-      />
+      <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดรายละเอียดสินค้า">
+        <ProductDetailModal
+          product={selectedProduct}
+          onClose={handleCloseProduct}
+        />
+      </ErrorBoundary>
 
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        onOpenFullDetail={(p) => handleSelectProduct(p)}
-      />
+      <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดดูด่วนสินค้า">
+        <QuickViewModal
+          product={quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+          onOpenFullDetail={(p) => handleSelectProduct(p)}
+        />
+      </ErrorBoundary>
 
       {/* Floating Concierge & Live Sales Social Proof Toast */}
       <LiveSalesNotification

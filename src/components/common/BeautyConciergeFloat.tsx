@@ -256,6 +256,34 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
         .concierge-item:hover {
           background: #FFF1F2 !important;
         }
+        [data-theme="dark"] .beauty-concierge-drawer {
+          background: #161b27 !important;
+          border-color: rgba(255, 180, 210, 0.25) !important;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+        }
+        [data-theme="dark"] .beauty-concierge-drawer > div:first-child {
+          background: linear-gradient(135deg, #2a1525 0%, #1c1527 100%) !important;
+          border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        [data-theme="dark"] .beauty-concierge-drawer h4 {
+          color: #ff9bbb !important;
+        }
+        [data-theme="dark"] .beauty-concierge-drawer span {
+          color: #cbd5e1 !important;
+        }
+        [data-theme="dark"] .concierge-item:hover {
+          background: rgba(255, 141, 168, 0.15) !important;
+        }
+        [data-theme="dark"] .concierge-item div {
+          color: #f8fafc !important;
+        }
+        [data-theme="dark"] .concierge-item div:last-child {
+          color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .beauty-concierge-drawer div[style*="background: rgb(248, 250, 252)"],
+        [data-theme="dark"] .beauty-concierge-drawer div[style*="background: #F8FAFC"] {
+          background: #1e2434 !important;
+        }
       `}</style>
     </>
   );

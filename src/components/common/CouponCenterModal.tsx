@@ -355,7 +355,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexShrink: 0 }}>
+                  <div className="coupon-ticket-actions" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexShrink: 0 }}>
                     {isApplied ? (
                       <button
                         onClick={removePromoCode}

@@ -490,9 +490,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 textAlign: 'left',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', flexWrap: 'wrap', gap: '4px' }}>
                 <span style={{ color: '#6B7280' }}>หมายเลขคำสั่งซื้อ:</span>
-                <strong style={{ color: '#0284C7' }}>{completedOrder?.id}</strong>
+                <strong style={{ color: '#0284C7', wordBreak: 'break-all' }}>{completedOrder?.id}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                 <span style={{ color: '#6B7280' }}>ยอดชำระสุทธิ:</span>

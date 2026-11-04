@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Product, Order, Category } from '../../types';
 import {
   X,
@@ -48,13 +48,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Tracking number editing per order
   const [trackingInputs, setTrackingInputs] = useState<{ [orderId: string]: string }>({});
 
-  useEffect(() => {
-    if (isOpen && role === 'admin') {
-      loadOrders();
-    }
-  }, [isOpen, role]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       const data = await adminFetchAllOrders();
       setOrders(data);
@@ -66,7 +60,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     } catch (e) {
       console.warn('Orders fetch error', e);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isOpen && role === 'admin') {
+      loadOrders();
+    }
+  }, [isOpen, role, loadOrders]);
 
   if (!isOpen || role !== 'admin') return null;
 
@@ -161,7 +161,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           zIndex: 10,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="admin-brand-header" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <button onClick={onClose} className="btn btn-outline btn-sm" style={{ gap: '6px' }}>
             <ArrowLeft size={16} /> กลับหน้าร้านค้า
           </button>
@@ -176,7 +176,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         {/* Tab Controls */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="admin-top-nav-tabs" style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={() => setActiveTab('products')}
             className={`btn btn-sm ${activeTab === 'products' ? 'btn-primary' : 'btn-ghost'}`}
@@ -261,7 +261,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>รายการสินค้าในระบบ ({products.length} รายการ)</h3>
                 <span style={{ fontSize: '0.8rem', color: '#64748B' }}>จัดการสต็อก ราคา และข้อมูลสินค้า</span>
               </div>
-              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 <input
                   type="text"
                   placeholder="ค้นหาชื่อ หรือหมวดหมู่..."

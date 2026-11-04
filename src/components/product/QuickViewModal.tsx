@@ -4,7 +4,7 @@ import { X, Star, ShoppingBag, Heart, ArrowRight, Copy, Check } from 'lucide-rea
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting';
 
 interface QuickViewModalProps {
@@ -21,6 +21,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
+  const [isCopied, setIsCopied] = useState(false);
 
   if (!product) return null;
 
@@ -40,8 +41,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
       'info'
     );
   };
-
-  const [isCopied, setIsCopied] = useState(false);
 
   const handleShareLine = () => {
     const url = getProductShareUrl(product.id);
@@ -67,7 +66,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100 }}>
       <div
-        className="glass-card animate-pop"
+        className="glass-card animate-pop quick-view-modal-card"
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '92%',
@@ -91,9 +90,9 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.2fr)' }} className="quick-view-grid">
           {/* Image */}
-          <div style={{ position: 'relative', background: '#FFF5F8', minHeight: '300px' }}>
+          <div className="quick-view-img-box" style={{ position: 'relative', background: '#FFF5F8', minHeight: '300px' }}>
             <img
-              src={product.images[0]}
+              src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
               alt={product.name}
               onError={handleImageError}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -118,7 +117,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           </div>
 
           {/* Details Content */}
-          <div style={{ padding: '1.75rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div className="quick-view-body" style={{ padding: '1.75rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               {/* Category & Rating */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
@@ -217,7 +216,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
               {/* Skin tags */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '1.25rem' }}>
-                {product.skin_types.slice(0, 3).map((st) => (
+                {(product.skin_types || []).slice(0, 3).map((st) => (
                   <span
                     key={st}
                     style={{
@@ -315,8 +314,21 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
       <style>{`
         @media (max-width: 640px) {
+          .quick-view-modal-card {
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            border-radius: 20px !important;
+          }
           .quick-view-grid {
             grid-template-columns: 1fr !important;
+          }
+          .quick-view-img-box {
+            min-height: 220px !important;
+            height: 220px !important;
+          }
+          .quick-view-body {
+            padding: 1.15rem 1rem !important;
           }
         }
       `}</style>

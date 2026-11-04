@@ -179,6 +179,10 @@ export const BrandTrustBadges: React.FC = () => {
           .trust-badge-pill {
             font-size: 0.65rem !important;
             padding: 0.15rem 0.45rem !important;
+            max-width: calc(100% - 44px) !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
           }
           .trust-badge-title {
             font-size: 0.84rem !important;

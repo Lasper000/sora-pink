@@ -256,7 +256,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div className="footer-payment-methods" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span>ช่องทางชำระเงินที่รองรับ:</span>
             <span style={{ background: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #E5E7EB', fontWeight: 600, color: '#003D79' }}>
               PromptPay QR

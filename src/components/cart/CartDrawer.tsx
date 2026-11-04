@@ -44,6 +44,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
       <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div
+          className="cart-drawer-header"
           style={{
             padding: '1.25rem 1.5rem',
             borderBottom: '1px solid #F3F4F6',
@@ -64,7 +65,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
         </div>
 
         {/* Tiered Free Gifts Progress Bar */}
-        <div style={{ padding: '0.85rem 1.5rem', background: '#FFF5F8', borderBottom: '1px solid #FFE4E8' }}>
+        <div className="cart-drawer-milestones" style={{ padding: '0.85rem 1.5rem', background: '#FFF5F8', borderBottom: '1px solid #FFE4E8' }}>
           {/* Status Message */}
           <div style={{ fontSize: '0.82rem', marginBottom: '0.5rem', fontWeight: 600 }}>
             {subtotal < 500 ? (
@@ -101,21 +102,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
           </div>
 
           {/* Milestones Labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: '#64748B' }}>
-            <span style={{ color: subtotal >= 500 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 500 ? 700 : 500 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: '#64748B', flexWrap: 'wrap', gap: '4px' }}>
+            <span style={{ color: subtotal >= 500 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 500 ? 700 : 500, whiteSpace: 'nowrap' }}>
               {subtotal >= 500 ? '✓' : '○'} ส่งฟรี (฿500)
             </span>
-            <span style={{ color: subtotal >= 800 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 800 ? 700 : 500 }}>
+            <span style={{ color: subtotal >= 800 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 800 ? 700 : 500, whiteSpace: 'nowrap' }}>
               {subtotal >= 800 ? '✓' : '○'} ฟองน้ำฟรี (฿800)
             </span>
-            <span style={{ color: subtotal >= 1200 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 1200 ? 700 : 500 }}>
+            <span style={{ color: subtotal >= 1200 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 1200 ? 700 : 500, whiteSpace: 'nowrap' }}>
               {subtotal >= 1200 ? '✓' : '○'} กระเป๋าฟรี (฿1,200)
             </span>
           </div>
         </div>
 
         {/* Cart Items List */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
+        <div className="cart-drawer-body" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
           {cart.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: '#9CA3AF' }}>
               <div
@@ -280,6 +281,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
         {/* Footer Summary & Checkout */}
         {cart.length > 0 && (
           <div
+            className="cart-drawer-footer"
             style={{
               padding: '1.25rem 1.5rem',
               borderTop: '1px solid #E5E7EB',

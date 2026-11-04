@@ -3,7 +3,7 @@ import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
 import { Sparkles, Sun, Moon, Palette, ShoppingBag, ArrowRight } from 'lucide-react';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 
 interface RoutineSet {
   id: string;
@@ -217,6 +217,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
 
             {/* Savings Callout Pill */}
             <div
+              className="routine-savings-pill"
               style={{
                 background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
                 border: '1px solid #A7F3D0',
@@ -285,7 +286,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   }}
                 >
                   <img
-                    src={prod.images[0]}
+                    src={(prod.images && prod.images[0]) || DEFAULT_FALLBACK_IMAGE}
                     alt={prod.name}
                     onError={handleImageError}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -332,8 +333,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
               <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 ราคารวมทั้งเซต 3 ชิ้น (จากปกติ ฿{originalTotalPrice.toLocaleString()})
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: 900, color: '#E11D48' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', flexWrap: 'wrap' }}>
+                <span className="routine-bundle-price" style={{ fontSize: '2rem', fontWeight: 900, color: '#E11D48' }}>
                   ฿{bundlePrice.toLocaleString()}
                 </span>
                 <span style={{ fontSize: '1rem', color: '#9CA3AF', textDecoration: 'line-through' }}>

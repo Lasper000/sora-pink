@@ -3,7 +3,7 @@ import type { Product } from '../../types';
 import { Flame, Clock, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 
 interface FlashSaleProps {
   products: Product[];
@@ -81,7 +81,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                 <Flame size={26} className="animate-fire" />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1F2937' }}>
+                <h3 className="flash-sale-title" style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1F2937' }}>
                   FLASH SALE ดีลเด็ดจำกัดเวลา
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: '#6B7280' }}>
@@ -182,7 +182,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       }}
                     >
                       <img
-                        src={product.images[0]}
+                        src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
                         alt={product.name}
                         onError={handleImageError}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -259,6 +259,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
 
                   {/* Price & Add button */}
                   <div
+                    className="flash-sale-price-row"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -268,7 +269,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#E11D48' }}>
+                      <div className="flash-sale-price" style={{ fontSize: '1.15rem', fontWeight: 800, color: '#E11D48' }}>
                         ฿{(product.discount_price || product.price).toLocaleString()}
                       </div>
                       <div
@@ -284,7 +285,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
                       disabled={product.stock_quantity <= 0}
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-primary btn-sm flash-sale-add-btn"
                       style={{ padding: '0.45rem 0.75rem' }}
                     >
                       <ShoppingBag size={14} /> เพิ่ม

@@ -503,6 +503,16 @@ button, input, select, textarea {
   max-width: 960px;
 }
 
+.product-detail-modal-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.quick-view-modal-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
 /* Drawer styles */
 .drawer-overlay {
   position: fixed;
@@ -1166,6 +1176,14 @@ body.spooky-theme .glass-card:hover {
   }
 
   /* Navbar */
+  .navbar-container {
+    padding: 0.5rem 0.75rem !important;
+  }
+  .announcement-text-mobile {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
   .top-announcement-bar {
     font-size: 0.72rem !important;
     padding: 0.35rem 0.5rem !important;
@@ -1278,19 +1296,114 @@ body.spooky-theme .glass-card:hover {
   }
 
   /* Product Detail Modal Mobile */
+  .product-detail-modal-card {
+    padding: 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
   .product-detail-modal-grid {
     grid-template-columns: 1fr !important;
   }
   .product-detail-left-col {
-    padding: 1.25rem !important;
+    padding: 1.15rem 0.95rem !important;
   }
   .product-detail-main-img-box {
-    height: 250px !important;
-    border-radius: 16px !important;
+    height: 230px !important;
+    border-radius: 14px !important;
   }
   .product-detail-right-col {
-    padding: 1.25rem !important;
+    padding: 1.15rem 1rem !important;
     max-height: none !important;
+    overflow-y: visible !important;
+  }
+  .product-detail-tabs-bar {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    gap: 0.65rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+  .product-detail-tabs-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .product-detail-tabs-bar button {
+    flex-shrink: 0 !important;
+    font-size: 0.84rem !important;
+  }
+  .product-detail-actions-row {
+    flex-wrap: wrap !important;
+    gap: 0.65rem !important;
+  }
+  .product-detail-actions-row > button {
+    flex: 1 1 180px !important;
+  }
+
+  /* Quick View Modal Mobile */
+  .quick-view-modal-card {
+    padding: 0 !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .quick-view-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .quick-view-img-box {
+    height: 220px !important;
+    min-height: 220px !important;
+  }
+  .quick-view-body {
+    padding: 1rem !important;
+  }
+
+  /* Product Card Mobile Buttons */
+  .product-card-quickview-btn {
+    display: none !important;
+  }
+  .product-card-wishlist-btn {
+    width: 32px !important;
+    height: 32px !important;
+    top: 6px !important;
+    right: 6px !important;
+  }
+
+  /* User Profile Modal Mobile */
+  .user-profile-tabs-bar {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 0.35rem !important;
+    flex-wrap: nowrap !important;
+  }
+  .user-profile-tabs-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .user-profile-tabs-bar button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 0.82rem !important;
+    padding: 0.4rem 0.85rem !important;
+  }
+
+  /* Admin Dashboard Mobile */
+  .admin-top-nav {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+  .admin-top-nav-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 2px !important;
+  }
+  .admin-top-nav-tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
   }
 
   /* Checkout Grid Mobile */
@@ -1316,8 +1429,9 @@ body.spooky-theme .glass-card:hover {
     display: none !important;
   }
   .trick-or-treat-floating-widget {
-    bottom: 78px !important;
-    right: 16px !important;
+    bottom: 16px !important;
+    left: 16px !important;
+    right: auto !important;
     display: flex !important;
   }
   .trick-or-treat-btn {
@@ -1354,9 +1468,23 @@ body.spooky-theme .glass-card:hover {
     max-width: 360px !important;
     margin: 0 auto !important;
   }
+  /* Cart Drawer Mobile */
+  .cart-drawer-header {
+    padding: 1rem 1rem !important;
+  }
+  .cart-drawer-milestones {
+    padding: 0.75rem 1rem !important;
+  }
+  .cart-drawer-body {
+    padding: 0.85rem 0.85rem !important;
+  }
+  .cart-drawer-footer {
+    padding: 1rem 1rem !important;
+  }
   .trick-or-treat-floating-widget {
-    bottom: 68px !important;
-    right: 16px !important;
+    bottom: 16px !important;
+    left: 16px !important;
+    right: auto !important;
     display: flex !important;
   }
   .trick-or-treat-btn {
@@ -1389,11 +1517,14 @@ body.spooky-theme .glass-card:hover {
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
   }
+  .hero-promo-text-extra {
+    display: none !important;
+  }
   .hero-promo-pill {
-    padding: 0.35rem 0.5rem 0.35rem 0.85rem !important;
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem !important;
     font-size: 0.78rem !important;
     margin-bottom: 1rem !important;
-    gap: 0.5rem !important;
+    gap: 0.4rem !important;
     border-radius: 9999px !important;
     display: inline-flex !important;
     max-width: 100% !important;
@@ -1549,6 +1680,60 @@ body.spooky-theme .glass-card:hover {
     margin-bottom: 0 !important;
   }
 
+  /* Flash Sale Compact Mobile Typography */
+  .flash-sale-title {
+    font-size: 1.15rem !important;
+  }
+  .flash-sale-price-row {
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+  }
+  .flash-sale-price {
+    font-size: 0.96rem !important;
+  }
+  .flash-sale-add-btn {
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.76rem !important;
+    border-radius: 9999px !important;
+  }
+
+  /* Routine & Bundle Price Mobile */
+  .routine-bundle-price {
+    font-size: 1.5rem !important;
+  }
+  .routine-savings-pill {
+    width: 100% !important;
+    text-align: left !important;
+    margin-top: 0.25rem !important;
+  }
+
+  /* Coupon Center Modal Mobile */
+  .coupon-ticket-body {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+  .coupon-ticket-actions {
+    width: 100% !important;
+  }
+  .coupon-ticket-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Footer Payment Badges Mobile Wrapping */
+  .footer-payment-methods {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+    margin-top: 0.5rem !important;
+  }
+  .footer-payment-methods span {
+    font-size: 0.74rem !important;
+    padding: 2px 6px !important;
+  }
+
   /* Modals padding on mobile */
   .modal-content {
     padding: 1.25rem 1rem !important;
@@ -1561,6 +1746,29 @@ body.spooky-theme .glass-card:hover {
   /* Skin Quiz 1-column on mobile */
   .skin-quiz-types-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Extra small mobile screens (max-width: 380px) */
+@media (max-width: 380px) {
+  .hero-actions {
+    flex-direction: column !important;
+    gap: 0.45rem !important;
+    max-width: 100% !important;
+  }
+  .hero-btn-shop,
+  .hero-btn-quiz {
+    width: 100% !important;
+    flex: none !important;
+    justify-content: center !important;
+    font-size: 0.82rem !important;
+    padding: 0.6rem 0.75rem !important;
+  }
+  .brand-title {
+    font-size: 1.05rem !important;
+  }
+  .brand-spooky-badge {
+    display: none !important;
   }
 }
 
