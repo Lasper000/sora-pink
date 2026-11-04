@@ -231,15 +231,58 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
           {/* Left Column: Image Gallery */}
           <div className="product-detail-left-col">
             {/* Main Image */}
-            <div className="product-detail-main-img-box">
+            <div className="product-detail-main-img-box" style={{ position: 'relative' }}>
               <img
                 src={(product.images && (product.images[activeImageIndex] || product.images[0])) || DEFAULT_FALLBACK_IMAGE}
                 alt={product.name}
                 onError={handleImageError}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  filter: isOutOfStock ? 'grayscale(70%) opacity(0.85)' : 'none',
+                }}
               />
 
-              {discountPercent && (
+              {/* Out of Stock Dark Overlay */}
+              {isOutOfStock && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(15, 23, 42, 0.42)',
+                    backdropFilter: 'blur(2px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                      color: '#FFFFFF',
+                      padding: '6px 16px',
+                      borderRadius: '9999px',
+                      fontWeight: 800,
+                      fontSize: '0.88rem',
+                      boxShadow: '0 4px 14px rgba(220, 38, 38, 0.45)',
+                    }}
+                  >
+                    สินค้าหมดชั่วคราว
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: '#F1F5F9', marginTop: '4px', fontWeight: 600 }}>
+                    OUT OF STOCK
+                  </span>
+                </div>
+              )}
+
+              {discountPercent && !isOutOfStock && (
                 <span
                   style={{
                     position: 'absolute',
@@ -251,6 +294,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     borderRadius: '9999px',
                     fontWeight: 700,
                     fontSize: '0.82rem',
+                    zIndex: 3,
                   }}
                 >
                   ลด {discountPercent}%
@@ -290,11 +334,47 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
               {/* Badges Bar */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
                 {isOutOfStock ? (
-                  <span className="badge badge-danger">สินค้าหมดชั่วคราว</span>
+                  <span
+                    className="badge badge-danger"
+                    style={{
+                      background: '#FEE2E2',
+                      color: '#DC2626',
+                      border: '1px solid #FCA5A5',
+                      fontWeight: 700,
+                      padding: '4px 12px',
+                      fontSize: '0.82rem',
+                    }}
+                  >
+                    ❌ สินค้าหมดชั่วคราว (Out of Stock)
+                  </span>
                 ) : isLowStock ? (
-                  <span className="badge badge-warning">เหลือเพียง {product.stock_quantity} ชิ้น</span>
+                  <span
+                    className="badge badge-warning"
+                    style={{
+                      background: '#FEF3C7',
+                      color: '#B45309',
+                      border: '1px solid #FCD34D',
+                      fontWeight: 700,
+                      padding: '4px 12px',
+                      fontSize: '0.82rem',
+                    }}
+                  >
+                    🔥 เหลือเพียง {product.stock_quantity} ชิ้นสุดท้าย!
+                  </span>
                 ) : (
-                  <span className="badge badge-success">มีสินค้าในสต็อก ({product.stock_quantity} ชิ้น)</span>
+                  <span
+                    className="badge badge-success"
+                    style={{
+                      background: '#ECFDF5',
+                      color: '#059669',
+                      border: '1px solid #A7F3D0',
+                      fontWeight: 600,
+                      padding: '4px 12px',
+                      fontSize: '0.82rem',
+                    }}
+                  >
+                    📦 มีสินค้าพร้อมส่ง (คงเหลือ {product.stock_quantity} ชิ้น)
+                  </span>
                 )}
 
                 {(product.skin_types || []).map((st) => (
@@ -848,21 +928,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   <button
                     type="button"
                     onClick={handleAddBundle}
+                    disabled={isOutOfStock}
                     className="btn btn-sm"
                     style={{
-                      background: 'linear-gradient(135deg, #BE123C 0%, #E11D48 100%)',
-                      color: '#FFFFFF',
+                      background: isOutOfStock ? '#E2E8F0' : 'linear-gradient(135deg, #BE123C 0%, #E11D48 100%)',
+                      color: isOutOfStock ? '#94A3B8' : '#FFFFFF',
                       border: 'none',
                       borderRadius: '10px',
                       padding: '0.45rem 0.85rem',
                       fontWeight: 700,
                       fontSize: '0.78rem',
-                      cursor: 'pointer',
+                      cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                       flexShrink: 0,
-                      boxShadow: '0 4px 12px rgba(190, 18, 60, 0.25)',
+                      boxShadow: isOutOfStock ? 'none' : '0 4px 12px rgba(190, 18, 60, 0.25)',
                     }}
                   >
-                    + ซื้อทั้งเซ็ต
+                    {isOutOfStock ? 'สินค้าหมด' : '+ ซื้อทั้งเซ็ต'}
                   </button>
                 </div>
               </div>
@@ -884,9 +965,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  background: '#F3F4F6',
+                  background: isOutOfStock ? '#E2E8F0' : '#F3F4F6',
                   borderRadius: '9999px',
                   padding: '4px',
+                  opacity: isOutOfStock ? 0.6 : 1,
                 }}
               >
                 <button
@@ -898,14 +980,14 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     borderRadius: '50%',
                     border: 'none',
                     background: '#fff',
-                    cursor: 'pointer',
+                    cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                     fontWeight: 700,
                   }}
                 >
                   -
                 </button>
                 <span style={{ width: '40px', textAlign: 'center', fontWeight: 700, fontSize: '0.95rem' }}>
-                  {quantity}
+                  {isOutOfStock ? 0 : quantity}
                 </span>
                 <button
                   onClick={() => setQuantity((q) => Math.min(product.stock_quantity, q + 1))}
@@ -916,7 +998,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     borderRadius: '50%',
                     border: 'none',
                     background: '#fff',
-                    cursor: 'pointer',
+                    cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                     fontWeight: 700,
                   }}
                 >
@@ -929,10 +1011,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                 onClick={handleAddToCart}
                 disabled={isOutOfStock}
                 className="btn btn-primary"
-                style={{ flex: 1, padding: '0.85rem', opacity: isOutOfStock ? 0.5 : 1 }}
+                style={{
+                  flex: 1,
+                  padding: '0.85rem',
+                  opacity: isOutOfStock ? 0.65 : 1,
+                  cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                  background: isOutOfStock ? '#E2E8F0' : undefined,
+                  color: isOutOfStock ? '#64748B' : undefined,
+                  borderColor: isOutOfStock ? '#CBD5E1' : undefined,
+                }}
               >
                 <ShoppingBag size={18} />
-                {isOutOfStock ? 'สินค้าหมดชั่วคราว' : 'เพิ่มลงตะกร้า'}
+                {isOutOfStock ? 'สินค้าหมดชั่วคราว (รอเติมสต็อก)' : 'เพิ่มลงตะกร้า'}
               </button>
 
               {/* Wishlist Button */}

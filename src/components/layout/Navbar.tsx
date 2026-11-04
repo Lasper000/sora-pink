@@ -531,6 +531,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                                   ฿{prod.price.toLocaleString()}
                                 </span>
                               )}
+                              {prod.stock_quantity <= 0 ? (
+                                <span style={{ fontSize: '0.68rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700, marginLeft: 'auto' }}>
+                                  สินค้าหมด
+                                </span>
+                              ) : prod.stock_quantity <= 5 ? (
+                                <span style={{ fontSize: '0.68rem', color: '#B45309', background: '#FEF3C7', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                                  เหลือ {prod.stock_quantity} ชิ้น
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: '0.68rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                                  คงเหลือ {prod.stock_quantity}
+                                </span>
+                              )}
                             </div>
                           </div>
                           <ArrowRight size={14} color="#9CA3AF" />
@@ -1024,8 +1037,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1F2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {prod.name}
                         </div>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#E11D48', marginTop: '2px' }}>
-                          ฿{(prod.discount_price || prod.price).toLocaleString()}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#E11D48' }}>
+                            ฿{(prod.discount_price || prod.price).toLocaleString()}
+                          </span>
+                          {prod.stock_quantity <= 0 ? (
+                            <span style={{ fontSize: '0.66rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 5px', borderRadius: '4px', fontWeight: 700, marginLeft: 'auto' }}>
+                              สินค้าหมด
+                            </span>
+                          ) : prod.stock_quantity <= 5 ? (
+                            <span style={{ fontSize: '0.66rem', color: '#B45309', background: '#FEF3C7', padding: '1px 5px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                              เหลือ {prod.stock_quantity} ชิ้น
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '0.66rem', color: '#059669', background: '#ECFDF5', padding: '1px 5px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                              คงเหลือ {prod.stock_quantity}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <ArrowRight size={13} color="#9CA3AF" />

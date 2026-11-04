@@ -71,10 +71,17 @@ if (typeof window !== 'undefined') {
   setStoredData(STORAGE_KEYS.CATEGORIES, Array.from(catMap.values()));
 
   const existingProds = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
-  // Ensure all initial products are up to date and any new products are cleanly integrated
+  // Ensure all initial products are up to date while preserving modified stock levels
   const prodMap = new Map<string, Product>();
-  existingProds.forEach((p) => prodMap.set(p.id, p));
   INITIAL_PRODUCTS.forEach((ip) => prodMap.set(ip.id, ip));
+  existingProds.forEach((p) => {
+    const existing = prodMap.get(p.id);
+    if (existing) {
+      prodMap.set(p.id, { ...existing, stock_quantity: p.stock_quantity });
+    } else {
+      prodMap.set(p.id, p);
+    }
+  });
   setStoredData(STORAGE_KEYS.PRODUCTS, Array.from(prodMap.values()));
 
   // Reviews sync
@@ -125,10 +132,29 @@ export const fetchProducts = async (): Promise<Product[]> => {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        // Merge Supabase products with INITIAL_PRODUCTS to guarantee all 112 products are loaded
+        // Read local storage to preserve any stock deductions from orders
+        const localProds = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, []);
+        const localStockMap = new Map<string, number>();
+        localProds.forEach((lp) => {
+          if (typeof lp.stock_quantity === 'number') {
+            localStockMap.set(lp.id, lp.stock_quantity);
+          }
+        });
+
+        // Merge Supabase products with INITIAL_PRODUCTS to guarantee all products are loaded
         const prodMap = new Map<string, Product>();
-        INITIAL_PRODUCTS.forEach((p) => prodMap.set(p.id, p));
-        (data as Product[]).forEach((p) => prodMap.set(p.id, p));
+        INITIAL_PRODUCTS.forEach((p) => {
+          const effectiveStock = localStockMap.has(p.id)
+            ? Math.min(p.stock_quantity, localStockMap.get(p.id)!)
+            : p.stock_quantity;
+          prodMap.set(p.id, { ...p, stock_quantity: effectiveStock });
+        });
+        (data as Product[]).forEach((p) => {
+          const effectiveStock = localStockMap.has(p.id)
+            ? Math.min(p.stock_quantity, localStockMap.get(p.id)!)
+            : p.stock_quantity;
+          prodMap.set(p.id, { ...p, stock_quantity: effectiveStock });
+        });
         
         // Attach category object if not populated
         const catMap = new Map<string, Category>();

@@ -300,9 +300,33 @@ const MainStore: React.FC = () => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleOrderSuccess = (_order: Order) => {
-    void _order;
-    loadData(); // reload product stock
+  const handleOrderSuccess = (order: Order) => {
+    // Immediately deduct stock in React state for instant UI updates
+    setProducts((prevProducts) => {
+      const updated = prevProducts.map((p) => {
+        const purchased = order.items?.find((i) => i.product_id === p.id);
+        if (purchased) {
+          return {
+            ...p,
+            stock_quantity: Math.max(0, p.stock_quantity - purchased.quantity),
+          };
+        }
+        return p;
+      });
+
+      if (selectedProduct) {
+        const found = updated.find((p) => p.id === selectedProduct.id);
+        if (found) setSelectedProduct(found);
+      }
+      if (quickViewProduct) {
+        const found = updated.find((p) => p.id === quickViewProduct.id);
+        if (found) setQuickViewProduct(found);
+      }
+
+      return updated;
+    });
+
+    loadData(); // reload product stock from storage/backend
   };
 
   return (

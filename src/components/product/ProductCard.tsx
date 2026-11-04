@@ -77,11 +77,51 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
               width: '100%',
               height: '100%',
               objectFit: 'cover',
+              filter: isOutOfStock ? 'grayscale(70%) opacity(0.85)' : 'none',
               transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08)')}
             onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           />
+
+          {/* Out of Stock Dark Overlay on Image */}
+          {isOutOfStock && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(15, 23, 42, 0.42)',
+                backdropFilter: 'blur(2px)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 3,
+                pointerEvents: 'none',
+              }}
+            >
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                  color: '#FFFFFF',
+                  padding: '5px 12px',
+                  borderRadius: '9999px',
+                  fontWeight: 800,
+                  fontSize: '0.78rem',
+                  letterSpacing: '0.4px',
+                  boxShadow: '0 4px 12px rgba(220, 38, 38, 0.45)',
+                }}
+              >
+                สินค้าหมดชั่วคราว
+              </span>
+              <span style={{ fontSize: '0.66rem', color: '#F1F5F9', marginTop: '3px', fontWeight: 600 }}>
+                OUT OF STOCK
+              </span>
+            </div>
+          )}
 
           {/* Floating Badges */}
           <div
@@ -92,9 +132,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
               display: 'flex',
               flexDirection: 'column',
               gap: '4px',
+              zIndex: 4,
             }}
           >
-            {discountPercent && (
+            {isOutOfStock && (
+              <span
+                style={{
+                  background: '#DC2626',
+                  color: '#FFFFFF',
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  boxShadow: '0 2px 6px rgba(220, 38, 38, 0.35)',
+                }}
+              >
+                สินค้าหมด
+              </span>
+            )}
+
+            {discountPercent && !isOutOfStock && (
               <span
                 style={{
                   background: 'linear-gradient(135deg, #FF6B8B 0%, #E11D48 100%)',
@@ -125,21 +182,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 }}
               >
                 เหลือเพียง {product.stock_quantity} ชิ้น!
-              </span>
-            )}
-
-            {isOutOfStock && (
-              <span
-                style={{
-                  background: '#F3F4F6',
-                  color: '#6B7280',
-                  padding: '2px 8px',
-                  borderRadius: '9999px',
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                }}
-              >
-                สินค้าหมดชั่วคราว
               </span>
             )}
           </div>
@@ -288,7 +330,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           </h3>
 
           {/* Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', color: '#F59E0B' }}>
               <Star size={14} fill="#F59E0B" />
             </div>
@@ -298,6 +340,65 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
             <span style={{ fontSize: '0.78rem', color: '#9CA3AF' }}>
               ({product.review_count || 12})
             </span>
+          </div>
+
+          {/* Stock Level Indicator */}
+          <div style={{ marginBottom: '0.65rem' }}>
+            {isOutOfStock ? (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: '#FEE2E2',
+                  color: '#DC2626',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  border: '1px solid #FCA5A5',
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#DC2626' }} />
+                สินค้าหมดชั่วคราว
+              </div>
+            ) : isLowStock ? (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: '#FEF3C7',
+                  color: '#B45309',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  border: '1px solid #FCD34D',
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#F59E0B' }} />
+                เหลือเพียง {product.stock_quantity} ชิ้นสุดท้าย!
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: '#F0FDF4',
+                  color: '#15803D',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
+                  border: '1px solid #BBF7D0',
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22C55E' }} />
+                คงเหลือ {product.stock_quantity} ชิ้น
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -328,13 +429,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           className="btn btn-primary btn-sm product-card-buy-btn"
           style={{
             padding: '0.55rem 0.95rem',
-            opacity: isOutOfStock ? 0.5 : 1,
+            opacity: isOutOfStock ? 0.6 : 1,
             cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+            background: isOutOfStock ? '#E2E8F0' : undefined,
+            color: isOutOfStock ? '#64748B' : undefined,
+            borderColor: isOutOfStock ? '#CBD5E1' : undefined,
           }}
           title={isOutOfStock ? 'สินค้าหมดชั่วคราว' : 'เพิ่มลงตะกร้า'}
         >
           <ShoppingBag size={15} />
-          <span className="product-card-btn-text">{isOutOfStock ? 'หมด' : 'ใส่ตะกร้า'}</span>
+          <span className="product-card-btn-text">{isOutOfStock ? 'สินค้าหมด' : 'ใส่ตะกร้า'}</span>
         </button>
       </div>
     </div>

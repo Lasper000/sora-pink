@@ -39,6 +39,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
     if (res.success) setPromoInput('');
   };
 
+  const hasOutOfStockItem = cart.some((item) => item.product.stock_quantity <= 0);
+
   return (
     <div className="drawer-overlay" onClick={onClose}>
       <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
@@ -212,8 +214,23 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             <Trash2 size={16} />
                           </button>
                         </div>
-                        <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E11D48', marginTop: '2px' }}>
-                          ฿{unitPrice.toLocaleString()}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E11D48' }}>
+                            ฿{unitPrice.toLocaleString()}
+                          </div>
+                          {item.product.stock_quantity <= 0 ? (
+                            <span style={{ fontSize: '0.7rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                              สินค้าหมดสต็อก
+                            </span>
+                          ) : item.product.stock_quantity <= 5 ? (
+                            <span style={{ fontSize: '0.7rem', color: '#B45309', background: '#FEF3C7', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                              เหลือ {item.product.stock_quantity} ชิ้น
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '0.7rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 500 }}>
+                              คงเหลือ {item.product.stock_quantity}
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -391,13 +408,32 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
             {/* Checkout Button */}
             <button
               onClick={() => {
+                if (hasOutOfStockItem) {
+                  showToast('มีสินค้าในตะกร้าหมดสต็อก กรุณาลบออกก่อนดำเนินการสั่งซื้อค่ะ', 'error');
+                  return;
+                }
                 onClose();
                 onCheckout();
               }}
+              disabled={hasOutOfStockItem}
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', fontSize: '1rem' }}
+              style={{
+                width: '100%',
+                padding: '0.85rem',
+                fontSize: '0.95rem',
+                opacity: hasOutOfStockItem ? 0.6 : 1,
+                cursor: hasOutOfStockItem ? 'not-allowed' : 'pointer',
+                background: hasOutOfStockItem ? '#E2E8F0' : undefined,
+                color: hasOutOfStockItem ? '#64748B' : undefined,
+              }}
             >
-              ดำเนินการสั่งซื้อ (Checkout) <ArrowRight size={18} />
+              {hasOutOfStockItem ? (
+                'มีสินค้าหมดในตะกร้า (กรุณานำออกก่อนสั่งซื้อ)'
+              ) : (
+                <>
+                  ดำเนินการสั่งซื้อ (Checkout) <ArrowRight size={18} />
+                </>
+              )}
             </button>
           </div>
         )}

@@ -89,8 +89,13 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
   const originalTotalPrice = resolvedProducts.reduce((sum, p) => sum + (p.price || 0), 0);
   const bundlePrice = Math.round(originalTotalPrice * (1 - currentRoutine.discountPercent / 100));
   const savings = originalTotalPrice - bundlePrice;
+  const hasOutOfStock = resolvedProducts.some((p) => p.stock_quantity <= 0);
 
   const handleAddBundleToCart = () => {
+    if (hasOutOfStock) {
+      showToast('ขออภัยค่ะ มีสินค้าในเซตบางรายการหมดสต็อกชั่วคราว', 'error');
+      return;
+    }
     let addedCount = 0;
     resolvedProducts.forEach((p) => {
       const res = addToCart(p, 1);
@@ -308,8 +313,19 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   >
                     {prod.name}
                   </h5>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                    ราคาปกติ: <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      ราคาปกติ: <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
+                    </div>
+                    {prod.stock_quantity <= 0 ? (
+                      <span style={{ fontSize: '0.68rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                        สินค้าหมด
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.68rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                        เหลือ {prod.stock_quantity} ชิ้น
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -357,6 +373,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
 
             <button
               onClick={handleAddBundleToCart}
+              disabled={hasOutOfStock}
               className="btn btn-primary btn-lg bundle-cta-btn"
               style={{
                 padding: '0.85rem 1.85rem',
@@ -366,11 +383,15 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 alignItems: 'center',
                 gap: '0.6rem',
                 borderRadius: '16px',
-                boxShadow: '0 8px 24px rgba(225, 29, 72, 0.35)',
+                opacity: hasOutOfStock ? 0.6 : 1,
+                cursor: hasOutOfStock ? 'not-allowed' : 'pointer',
+                background: hasOutOfStock ? '#E2E8F0' : undefined,
+                color: hasOutOfStock ? '#64748B' : undefined,
+                boxShadow: hasOutOfStock ? 'none' : '0 8px 24px rgba(225, 29, 72, 0.35)',
               }}
             >
               <ShoppingBag size={20} />
-              <span>เพิ่มทั้งเซตลงตะกร้า (3 ชิ้น)</span>
+              <span>{hasOutOfStock ? 'มีสินค้าในเซตหมดชั่วคราว' : 'เพิ่มทั้งเซตลงตะกร้า (3 ชิ้น)'}</span>
               <ArrowRight size={18} />
             </button>
           </div>

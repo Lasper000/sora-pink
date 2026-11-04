@@ -27,6 +27,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
   const isFavorited = isInWishlist(product.id);
   const isOutOfStock = product.stock_quantity <= 0;
+  const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
 
   const handleAddToCart = () => {
     const res = addToCart(product, quantity);
@@ -95,9 +96,53 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
               src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
               alt={product.name}
               onError={handleImageError}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                filter: isOutOfStock ? 'grayscale(70%) opacity(0.85)' : 'none',
+              }}
             />
-            {product.discount_price && (
+
+            {/* Out of Stock Dark Overlay */}
+            {isOutOfStock && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(15, 23, 42, 0.42)',
+                  backdropFilter: 'blur(2px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }}
+              >
+                <span
+                  style={{
+                    background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                    color: '#FFFFFF',
+                    padding: '5px 14px',
+                    borderRadius: '9999px',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    boxShadow: '0 4px 12px rgba(220, 38, 38, 0.45)',
+                  }}
+                >
+                  สินค้าหมดชั่วคราว
+                </span>
+                <span style={{ fontSize: '0.68rem', color: '#F1F5F9', marginTop: '3px', fontWeight: 600 }}>
+                  OUT OF STOCK
+                </span>
+              </div>
+            )}
+
+            {product.discount_price && !isOutOfStock && (
               <span
                 style={{
                   position: 'absolute',
@@ -109,6 +154,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   borderRadius: '9999px',
                   fontSize: '0.78rem',
                   fontWeight: 700,
+                  zIndex: 3,
                 }}
               >
                 SALE
@@ -135,6 +181,65 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                 <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.8rem', fontWeight: 700, color: '#F59E0B' }}>
                   <Star size={14} fill="#F59E0B" /> {product.rating || 5.0} ({product.review_count || 48})
                 </span>
+              </div>
+
+              {/* Stock Level Badge */}
+              <div style={{ marginBottom: '0.6rem' }}>
+                {isOutOfStock ? (
+                  <span
+                    style={{
+                      background: '#FEE2E2',
+                      color: '#DC2626',
+                      border: '1px solid #FCA5A5',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#DC2626' }} />
+                    สินค้าหมดชั่วคราว (Out of Stock)
+                  </span>
+                ) : isLowStock ? (
+                  <span
+                    style={{
+                      background: '#FEF3C7',
+                      color: '#B45309',
+                      border: '1px solid #FCD34D',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#F59E0B' }} />
+                    เหลือเพียง {product.stock_quantity} ชิ้นสุดท้าย!
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      background: '#ECFDF5',
+                      color: '#059669',
+                      border: '1px solid #A7F3D0',
+                      fontWeight: 600,
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+                    มีสินค้าพร้อมส่ง (คงเหลือ {product.stock_quantity} ชิ้น)
+                  </span>
+                )}
               </div>
 
               {/* Title */}
@@ -245,20 +350,24 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                     border: '1px solid #E2E8F0',
                     borderRadius: '12px',
                     overflow: 'hidden',
+                    background: isOutOfStock ? '#E2E8F0' : '#FFFFFF',
+                    opacity: isOutOfStock ? 0.6 : 1,
                   }}
                 >
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    style={{ width: '32px', height: '38px', border: 'none', background: '#F8FAFC', cursor: 'pointer', fontWeight: 700 }}
+                    disabled={quantity <= 1 || isOutOfStock}
+                    style={{ width: '32px', height: '38px', border: 'none', background: '#F8FAFC', cursor: isOutOfStock ? 'not-allowed' : 'pointer', fontWeight: 700 }}
                   >
                     -
                   </button>
                   <span style={{ width: '34px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 700 }}>
-                    {quantity}
+                    {isOutOfStock ? 0 : quantity}
                   </span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    style={{ width: '32px', height: '38px', border: 'none', background: '#F8FAFC', cursor: 'pointer', fontWeight: 700 }}
+                    onClick={() => setQuantity((q) => Math.min(product.stock_quantity, q + 1))}
+                    disabled={quantity >= product.stock_quantity || isOutOfStock}
+                    style={{ width: '32px', height: '38px', border: 'none', background: '#F8FAFC', cursor: isOutOfStock ? 'not-allowed' : 'pointer', fontWeight: 700 }}
                   >
                     +
                   </button>
@@ -269,9 +378,21 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
                   className="btn btn-primary"
-                  style={{ flex: 1, borderRadius: '12px', padding: '0.55rem 1rem', fontSize: '0.88rem', fontWeight: 700 }}
+                  style={{
+                    flex: 1,
+                    borderRadius: '12px',
+                    padding: '0.55rem 1rem',
+                    fontSize: '0.88rem',
+                    fontWeight: 700,
+                    opacity: isOutOfStock ? 0.65 : 1,
+                    cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                    background: isOutOfStock ? '#E2E8F0' : undefined,
+                    color: isOutOfStock ? '#64748B' : undefined,
+                    borderColor: isOutOfStock ? '#CBD5E1' : undefined,
+                  }}
                 >
-                  <ShoppingBag size={16} /> ใส่ตะกร้า
+                  <ShoppingBag size={16} />
+                  {isOutOfStock ? 'สินค้าหมดชั่วคราว' : 'ใส่ตะกร้า'}
                 </button>
 
                 {/* Wishlist */}

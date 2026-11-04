@@ -185,8 +185,47 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                         src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
                         alt={product.name}
                         onError={handleImageError}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          filter: product.stock_quantity <= 0 ? 'grayscale(70%) opacity(0.85)' : 'none',
+                        }}
                       />
+
+                      {/* Out of Stock Overlay */}
+                      {product.stock_quantity <= 0 && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'rgba(15, 23, 42, 0.42)',
+                            backdropFilter: 'blur(2px)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 2,
+                          }}
+                        >
+                          <span
+                            style={{
+                              background: '#DC2626',
+                              color: '#FFFFFF',
+                              padding: '4px 10px',
+                              borderRadius: '9999px',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                            }}
+                          >
+                            สินค้าหมด
+                          </span>
+                        </div>
+                      )}
+
                       <span
                         style={{
                           position: 'absolute',
@@ -198,6 +237,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           borderRadius: '9999px',
                           fontSize: '0.75rem',
                           fontWeight: 700,
+                          zIndex: 3,
                         }}
                       >
                         -{discountPercent}%
@@ -286,9 +326,16 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       onClick={(e) => handleAddToCart(e, product)}
                       disabled={product.stock_quantity <= 0}
                       className="btn btn-primary btn-sm flash-sale-add-btn"
-                      style={{ padding: '0.45rem 0.75rem' }}
+                      style={{
+                        padding: '0.45rem 0.75rem',
+                        opacity: product.stock_quantity <= 0 ? 0.6 : 1,
+                        cursor: product.stock_quantity <= 0 ? 'not-allowed' : 'pointer',
+                        background: product.stock_quantity <= 0 ? '#E2E8F0' : undefined,
+                        color: product.stock_quantity <= 0 ? '#64748B' : undefined,
+                        borderColor: product.stock_quantity <= 0 ? '#CBD5E1' : undefined,
+                      }}
                     >
-                      <ShoppingBag size={14} /> เพิ่ม
+                      <ShoppingBag size={14} /> {product.stock_quantity <= 0 ? 'หมด' : 'เพิ่ม'}
                     </button>
                   </div>
                 </div>
