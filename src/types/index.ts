@@ -89,6 +89,9 @@ export interface Order {
   payment_status: PaymentStatus;
   order_status: OrderStatus;
   tracking_number?: string | null;
+  slip_url?: string | null;
+  admin_verified?: boolean;
+  verified_at?: string | null;
   created_at: string;
   updated_at?: string;
   items?: OrderItem[];

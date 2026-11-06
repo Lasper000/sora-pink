@@ -81,6 +81,9 @@ CREATE TABLE IF NOT EXISTS public.orders (
     payment_status VARCHAR(30) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
     order_status VARCHAR(30) DEFAULT 'pending' CHECK (order_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
     tracking_number VARCHAR(100),
+    slip_url TEXT, -- Base64 dataURL or storage URL for bank transfer slip
+    admin_verified BOOLEAN DEFAULT FALSE, -- Must be verified by admin before processing
+    verified_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

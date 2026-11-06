@@ -14,8 +14,19 @@ import {
   Save,
   Shield,
   BarChart3,
+  CheckCircle2,
+  Clock,
+  Eye,
+  Check,
+  XCircle,
 } from 'lucide-react';
-import { adminFetchAllOrders, adminUpdateOrderStatus, adminSaveProduct, adminDeleteProduct } from '../../services/api';
+import {
+  adminFetchAllOrders,
+  adminUpdateOrderStatus,
+  adminSaveProduct,
+  adminDeleteProduct,
+  adminVerifyOrderSlip,
+} from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
 import { useAuth } from '../../context/AuthContext';
@@ -47,6 +58,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Tracking number editing per order
   const [trackingInputs, setTrackingInputs] = useState<{ [orderId: string]: string }>({});
+
+  // Slip lightbox preview & verification state
+  const [viewingSlipOrder, setViewingSlipOrder] = useState<Order | null>(null);
+  const [isVerifying, setIsVerifying] = useState<string | null>(null);
 
   const loadOrders = useCallback(async () => {
     try {
@@ -133,6 +148,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     await adminUpdateOrderStatus(orderId, order.order_status, tracking);
     showToast(`บันทึกเลขพัสดุ "${tracking}" สำเร็จ!`, 'success');
     loadOrders();
+  };
+
+  const handleVerifySlip = async (orderId: string, approved: boolean) => {
+    setIsVerifying(orderId);
+    try {
+      await adminVerifyOrderSlip(orderId, approved);
+      showToast(
+        approved
+          ? 'ยืนยันยอดเงินและอนุมัติคำสั่งซื้อเรียบร้อยแล้วค่ะ ✅'
+          : 'ปฏิเสธสลิปและยกเลิกคำสั่งซื้อแล้ว ❌',
+        approved ? 'success' : 'info'
+      );
+      if (viewingSlipOrder && viewingSlipOrder.id === orderId) {
+        setViewingSlipOrder(null);
+      }
+      await loadOrders();
+    } catch (err) {
+      console.error('Verify slip error:', err);
+      showToast('เกิดข้อผิดพลาดในการตรวจสอบสลิป', 'error');
+    } finally {
+      setIsVerifying(null);
+    }
   };
 
   return (
@@ -478,6 +515,181 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </button>
                       </div>
                     </div>
+
+                    {/* PromptPay & Slip Verification Panel */}
+                    {(order.payment_method === 'promptpay' || order.slip_url) && (
+                      <div
+                        style={{
+                          marginTop: '0.9rem',
+                          padding: '0.85rem 1rem',
+                          borderRadius: '12px',
+                          background: order.admin_verified ? '#F0FDF4' : '#FEF3C7',
+                          border: order.admin_verified ? '1.5px solid #BBF7D0' : '1.5px solid #FDE68A',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.85rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                          {order.slip_url ? (
+                            <div
+                              onClick={() => setViewingSlipOrder(order)}
+                              style={{
+                                position: 'relative',
+                                cursor: 'pointer',
+                                width: 56,
+                                height: 56,
+                                borderRadius: 10,
+                                overflow: 'hidden',
+                                border: '2px solid #0284C7',
+                                flexShrink: 0,
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                              }}
+                              title="คลิกเพื่อดูสลิปขนาดใหญ่"
+                            >
+                              <img
+                                src={order.slip_url}
+                                alt="สลิปโอนเงิน"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  inset: 0,
+                                  background: 'rgba(0,0,0,0.25)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#FFFFFF',
+                                }}
+                              >
+                                <Eye size={18} />
+                              </div>
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: 10,
+                                background: '#F1F5F9',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#94A3B8',
+                                fontSize: '0.72rem',
+                                textAlign: 'center',
+                                border: '1px dashed #CBD5E1',
+                              }}
+                            >
+                              ยังไม่พบสลิป
+                            </div>
+                          )}
+
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1F2937' }}>
+                                หลักฐานสลิปพร้อมเพย์:
+                              </span>
+                              {order.admin_verified ? (
+                                <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <CheckCircle2 size={12} /> แอดมินยืนยันยอดเงินแล้ว
+                                </span>
+                              ) : order.order_status === 'cancelled' ? (
+                                <span className="badge badge-danger">
+                                  ปฏิเสธคำสั่งซื้อ
+                                </span>
+                              ) : (
+                                <span
+                                  className="badge badge-warning"
+                                  style={{
+                                    background: '#FEF3C7',
+                                    color: '#B45309',
+                                    border: '1px solid #FDE68A',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                  }}
+                                >
+                                  <Clock size={12} /> รอตรวจสอบสลิปและยืนยันยอด
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#4B5563' }}>
+                              {order.admin_verified
+                                ? `ยอดเงินเข้าถูกต้อง อนุมัติเมื่อ: ${order.verified_at ? new Date(order.verified_at).toLocaleString('th-TH') : 'ก่อนหน้า'}`
+                                : 'โปรดตรวจสอบยอดเงินในบัญชีก่อนกดยืนยันออเดอร์ เพื่อให้ระบบส่งต่อไปยังฝ่ายจัดเตรียมพัสดุ'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {order.slip_url && (
+                            <button
+                              onClick={() => setViewingSlipOrder(order)}
+                              className="btn btn-outline btn-sm"
+                              style={{
+                                fontSize: '0.8rem',
+                                padding: '0.4rem 0.75rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                background: '#FFFFFF',
+                              }}
+                            >
+                              <Eye size={14} /> ดูสลิป
+                            </button>
+                          )}
+
+                          {!order.admin_verified && order.order_status !== 'cancelled' && (
+                            <>
+                              <button
+                                onClick={() => handleVerifySlip(order.id, true)}
+                                disabled={isVerifying === order.id}
+                                className="btn btn-sm"
+                                style={{
+                                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                                  color: '#FFFFFF',
+                                  border: 'none',
+                                  fontSize: '0.8rem',
+                                  padding: '0.4rem 0.85rem',
+                                  fontWeight: 700,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '5px',
+                                  borderRadius: '8px',
+                                  cursor: 'pointer',
+                                  boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)',
+                                }}
+                              >
+                                <Check size={14} /> ยืนยันยอดเงิน & อนุมัติ
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm('คุณต้องการปฏิเสธสลิปและยกเลิกคำสั่งซื้อนี้ใช่หรือไม่?')) {
+                                    handleVerifySlip(order.id, false);
+                                  }
+                                }}
+                                disabled={isVerifying === order.id}
+                                className="btn btn-ghost btn-sm"
+                                style={{
+                                  color: '#EF4444',
+                                  fontSize: '0.8rem',
+                                  padding: '0.4rem 0.75rem',
+                                  border: '1px solid #FECDD3',
+                                  background: '#FFFFFF',
+                                  borderRadius: '8px',
+                                }}
+                              >
+                                ปฏิเสธสลิป
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -675,6 +887,149 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Slip Lightbox Inspection Modal */}
+      {viewingSlipOrder && (
+        <div className="modal-overlay" onClick={() => setViewingSlipOrder(null)} style={{ zIndex: 1300 }}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '560px', width: '92%', padding: '1.75rem', borderRadius: '20px' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1F2937' }}>
+                  ตรวจสอบสลิปการโอนเงิน
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>
+                  คำสั่งซื้อ: <strong style={{ color: '#0284C7' }}>{viewingSlipOrder.id}</strong>
+                </p>
+              </div>
+              <button onClick={() => setViewingSlipOrder(null)} className="btn-icon btn-ghost">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Slip Meta Info Box */}
+            <div
+              style={{
+                background: '#F8FAFC',
+                border: '1px solid #E2E8F0',
+                borderRadius: '12px',
+                padding: '0.85rem 1rem',
+                marginBottom: '1rem',
+                fontSize: '0.85rem',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '0.5rem',
+              }}
+            >
+              <div>
+                <span style={{ color: '#6B7280' }}>ผู้สั่งซื้อ: </span>
+                <strong>{viewingSlipOrder.shipping_address.fullName}</strong>
+              </div>
+              <div>
+                <span style={{ color: '#6B7280' }}>เบอร์โทร: </span>
+                <strong>{viewingSlipOrder.shipping_address.phone}</strong>
+              </div>
+              <div>
+                <span style={{ color: '#6B7280' }}>ยอดเงินที่ต้องโอน: </span>
+                <strong style={{ color: '#E11D48', fontSize: '1rem' }}>
+                  ฿{viewingSlipOrder.total_amount.toLocaleString()}
+                </strong>
+              </div>
+              <div>
+                <span style={{ color: '#6B7280' }}>สถานะ: </span>
+                {viewingSlipOrder.admin_verified ? (
+                  <span className="badge badge-success">ยืนยันยอดเงินแล้ว</span>
+                ) : (
+                  <span className="badge badge-warning" style={{ background: '#FEF3C7', color: '#B45309' }}>
+                    รอตรวจสอบยอด
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* High-res Slip Image */}
+            <div
+              style={{
+                background: '#0F172A',
+                borderRadius: '14px',
+                padding: '0.75rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                maxHeight: '440px',
+                overflow: 'hidden',
+                marginBottom: '1.25rem',
+              }}
+            >
+              {viewingSlipOrder.slip_url ? (
+                <img
+                  src={viewingSlipOrder.slip_url}
+                  alt="สลิปโอนเงิน"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '420px',
+                    objectFit: 'contain',
+                    borderRadius: '8px',
+                  }}
+                />
+              ) : (
+                <div style={{ color: '#94A3B8', padding: '2rem' }}>ไม่พบไฟล์ภาพสลิป</div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setViewingSlipOrder(null)}
+                className="btn btn-ghost btn-sm"
+              >
+                ปิดหน้าต่าง
+              </button>
+
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {!viewingSlipOrder.admin_verified && viewingSlipOrder.order_status !== 'cancelled' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm('คุณต้องการปฏิเสธสลิปนี้ใช่หรือไม่?')) {
+                          handleVerifySlip(viewingSlipOrder.id, false);
+                        }
+                      }}
+                      disabled={isVerifying === viewingSlipOrder.id}
+                      className="btn btn-outline btn-sm"
+                      style={{ color: '#EF4444', borderColor: '#FECDD3' }}
+                    >
+                      <XCircle size={15} /> สลิปไม่ถูกต้อง (ปฏิเสธ)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleVerifySlip(viewingSlipOrder.id, true)}
+                      disabled={isVerifying === viewingSlipOrder.id}
+                      className="btn btn-primary btn-sm"
+                      style={{
+                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                        border: 'none',
+                        boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                      }}
+                    >
+                      <Check size={15} /> ยืนยันยอดเงิน ฿{viewingSlipOrder.total_amount.toLocaleString()} ถูกต้อง
+                    </button>
+                  </>
+                ) : (
+                  <span style={{ fontSize: '0.85rem', color: '#059669', fontWeight: 600 }}>
+                    {viewingSlipOrder.admin_verified ? '✅ สลิปนี้ได้รับการยืนยันแล้ว' : '❌ คำสั่งซื้อนี้ถูกยกเลิกแล้ว'}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

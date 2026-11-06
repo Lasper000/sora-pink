@@ -283,7 +283,8 @@ export const placeNewOrder = async (
   discountAmount: number,
   shippingFee: number,
   shippingAddress: ShippingAddress,
-  paymentMethod: Order['payment_method']
+  paymentMethod: Order['payment_method'],
+  slipUrl?: string | null
 ): Promise<Order> => {
   const orderId = 'SP-' + Date.now().toString().slice(-8);
 
@@ -304,9 +305,12 @@ export const placeNewOrder = async (
     shipping_fee: shippingFee,
     shipping_address: shippingAddress,
     payment_method: paymentMethod,
-    payment_status: paymentMethod === 'promptpay' ? 'paid' : 'pending',
-    order_status: 'processing',
+    payment_status: 'pending',
+    order_status: 'pending', // Requires admin inspection & confirmation before proceeding
     tracking_number: null,
+    slip_url: slipUrl || null,
+    admin_verified: false,
+    verified_at: null,
     created_at: new Date().toISOString(),
     items: orderItems,
   };
@@ -314,22 +318,41 @@ export const placeNewOrder = async (
   // If Supabase is connected, insert order & order_items
   if (isSupabaseConfigured() && userId && !userId.startsWith('guest-')) {
     try {
-      const { data: dbOrder, error: orderErr } = await supabase
-        .from('orders')
-        .insert({
-          user_id: userId,
-          total_amount: totalAmount,
-          discount_amount: discountAmount,
-          shipping_fee: shippingFee,
-          shipping_address: shippingAddress,
-          payment_method: paymentMethod,
-          payment_status: orderData.payment_status,
-          order_status: 'processing',
-        })
-        .select()
-        .single();
+      const basePayload: any = {
+        user_id: userId,
+        total_amount: totalAmount,
+        discount_amount: discountAmount,
+        shipping_fee: shippingFee,
+        shipping_address: shippingAddress,
+        payment_method: paymentMethod,
+        payment_status: 'pending',
+        order_status: 'pending',
+      };
 
-      if (orderErr) throw orderErr;
+      let dbOrder: any = null;
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert({
+            ...basePayload,
+            slip_url: slipUrl || null,
+            admin_verified: false,
+          })
+          .select()
+          .single();
+        if (!error && data) dbOrder = data;
+      } catch {
+        // Fallback in case slip_url column is not yet migrated in PostgreSQL
+      }
+
+      if (!dbOrder) {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert(basePayload)
+          .select()
+          .single();
+        if (!error && data) dbOrder = data;
+      }
 
       if (dbOrder) {
         orderData.id = dbOrder.id;
@@ -370,6 +393,16 @@ export const placeNewOrder = async (
 };
 
 export const fetchOrders = async (userId?: string): Promise<Order[]> => {
+  const localOrders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  const localMetaMap = new Map<string, Partial<Order>>();
+  localOrders.forEach((lo) => {
+    localMetaMap.set(lo.id, {
+      slip_url: lo.slip_url,
+      admin_verified: lo.admin_verified,
+      verified_at: lo.verified_at,
+    });
+  });
+
   if (isSupabaseConfigured() && userId && !userId.startsWith('guest-')) {
     try {
       const { data, error } = await supabase
@@ -379,17 +412,23 @@ export const fetchOrders = async (userId?: string): Promise<Order[]> => {
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (data && data.length > 0) {
-        return data.map((o: any) => ({
-          ...o,
-          items: o.order_items.map((oi: any) => ({
-            id: oi.id,
-            order_id: oi.order_id,
-            product_id: oi.product_id,
-            quantity: oi.quantity,
-            price_at_purchase: oi.price_at_purchase,
-            product: oi.products,
-          })),
-        }));
+        return data.map((o: any) => {
+          const localMeta = localMetaMap.get(o.id) || {};
+          return {
+            ...o,
+            slip_url: o.slip_url || localMeta.slip_url || null,
+            admin_verified: o.admin_verified ?? localMeta.admin_verified ?? false,
+            verified_at: o.verified_at || localMeta.verified_at || null,
+            items: (o.order_items || []).map((oi: any) => ({
+              id: oi.id,
+              order_id: oi.order_id,
+              product_id: oi.product_id,
+              quantity: oi.quantity,
+              price_at_purchase: oi.price_at_purchase,
+              product: oi.products,
+            })),
+          };
+        });
       }
     } catch (err) {
       console.warn('Supabase fetch orders error:', err);
@@ -405,6 +444,16 @@ export const fetchOrders = async (userId?: string): Promise<Order[]> => {
 // Admin Dashboard Operations (Product CRUD & Order Updates)
 // ----------------------------------------------------------------------------
 export const adminFetchAllOrders = async (): Promise<Order[]> => {
+  const localOrders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  const localMetaMap = new Map<string, Partial<Order>>();
+  localOrders.forEach((lo) => {
+    localMetaMap.set(lo.id, {
+      slip_url: lo.slip_url,
+      admin_verified: lo.admin_verified,
+      verified_at: lo.verified_at,
+    });
+  });
+
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -413,17 +462,23 @@ export const adminFetchAllOrders = async (): Promise<Order[]> => {
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (data) {
-        return data.map((o: any) => ({
-          ...o,
-          items: o.order_items.map((oi: any) => ({
-            id: oi.id,
-            order_id: oi.order_id,
-            product_id: oi.product_id,
-            quantity: oi.quantity,
-            price_at_purchase: oi.price_at_purchase,
-            product: oi.products,
-          })),
-        }));
+        return data.map((o: any) => {
+          const localMeta = localMetaMap.get(o.id) || {};
+          return {
+            ...o,
+            slip_url: o.slip_url || localMeta.slip_url || null,
+            admin_verified: o.admin_verified ?? localMeta.admin_verified ?? false,
+            verified_at: o.verified_at || localMeta.verified_at || null,
+            items: (o.order_items || []).map((oi: any) => ({
+              id: oi.id,
+              order_id: oi.order_id,
+              product_id: oi.product_id,
+              quantity: oi.quantity,
+              price_at_purchase: oi.price_at_purchase,
+              product: oi.products,
+            })),
+          };
+        });
       }
     } catch (err) {
       console.warn('Supabase admin orders error:', err);
@@ -435,12 +490,19 @@ export const adminFetchAllOrders = async (): Promise<Order[]> => {
 export const adminUpdateOrderStatus = async (
   orderId: string,
   status: Order['order_status'],
-  trackingNumber?: string
+  trackingNumber?: string,
+  paymentStatus?: Order['payment_status'],
+  adminVerified?: boolean
 ): Promise<boolean> => {
   if (isSupabaseConfigured()) {
     try {
       const updatePayload: any = { order_status: status };
       if (trackingNumber !== undefined) updatePayload.tracking_number = trackingNumber;
+      if (paymentStatus !== undefined) updatePayload.payment_status = paymentStatus;
+      if (adminVerified !== undefined) {
+        updatePayload.admin_verified = adminVerified;
+        if (adminVerified) updatePayload.verified_at = new Date().toISOString();
+      }
       await supabase.from('orders').update(updatePayload).eq('id', orderId);
     } catch (err) {
       console.warn('Supabase update order error:', err);
@@ -454,6 +516,9 @@ export const adminUpdateOrderStatus = async (
         ...o,
         order_status: status,
         tracking_number: trackingNumber !== undefined ? trackingNumber : o.tracking_number,
+        payment_status: paymentStatus !== undefined ? paymentStatus : o.payment_status,
+        admin_verified: adminVerified !== undefined ? adminVerified : o.admin_verified,
+        verified_at: adminVerified ? new Date().toISOString() : o.verified_at,
         updated_at: new Date().toISOString(),
       };
     }
@@ -461,6 +526,19 @@ export const adminUpdateOrderStatus = async (
   });
   setStoredData(STORAGE_KEYS.ORDERS, updatedOrders);
   return true;
+};
+
+export const adminVerifyOrderSlip = async (
+  orderId: string,
+  approved: boolean
+): Promise<boolean> => {
+  return adminUpdateOrderStatus(
+    orderId,
+    approved ? 'processing' : 'cancelled',
+    undefined,
+    approved ? 'paid' : 'failed',
+    approved
+  );
 };
 
 export const adminSaveProduct = async (product: Partial<Product>): Promise<Product> => {

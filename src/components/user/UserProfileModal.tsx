@@ -88,9 +88,21 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     setTimeout(() => setCopiedTracking(null), 2500);
   };
 
-  const getStatusBadge = (status: Order['order_status']) => {
-    switch (status) {
+  const getStatusBadge = (order: Order) => {
+    switch (order.order_status) {
       case 'pending':
+        if (order.payment_method === 'promptpay') {
+          return order.admin_verified ? (
+            <span className="badge badge-success">ยืนยันยอดเงินแล้ว</span>
+          ) : (
+            <span
+              className="badge badge-warning"
+              style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}
+            >
+              ⏳ รอแอดมินตรวจสอบสลิป
+            </span>
+          );
+        }
         return <span className="badge badge-warning">รอชำระเงิน</span>;
       case 'processing':
         return <span className="badge badge-blue">กำลังจัดเตรียมสินค้า</span>;
@@ -101,7 +113,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       case 'cancelled':
         return <span className="badge badge-danger">ยกเลิกแล้ว</span>;
       default:
-        return <span className="badge">{status}</span>;
+        return <span className="badge">{order.order_status}</span>;
     }
   };
 
@@ -248,7 +260,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          {getStatusBadge(order.order_status)}
+                          {getStatusBadge(order)}
                           <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#E11D48' }}>
                             ฿{order.total_amount.toLocaleString()}
                           </span>

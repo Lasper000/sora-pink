@@ -101,6 +101,14 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
   const getStatusConfig = () => {
     switch (order.order_status) {
       case 'pending':
+        if (order.payment_method === 'promptpay') {
+          return {
+            label: order.admin_verified ? '✅ ยืนยันยอดเงินแล้ว' : '⏳ รอแอดมินตรวจสอบสลิป',
+            color: order.admin_verified ? '#059669' : '#D97706',
+            bg: order.admin_verified ? '#D1FAE5' : '#FEF3C7',
+            borderColor: order.admin_verified ? '#A7F3D0' : '#FDE68A',
+          };
+        }
         return {
           label: '⏳ รอชำระเงิน',
           color: '#D97706',
@@ -179,25 +187,32 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
       },
     ];
   } else if (order.order_status === 'pending') {
+    const isPromptPay = order.payment_method === 'promptpay';
     steps = [
       {
         title: 'บันทึกคำสั่งซื้อเรียบร้อยแล้ว',
-        desc: 'ระบบได้รับคำสั่งซื้อและรอการชำระเงินหรือตรวจสอบยอด',
+        desc: isPromptPay
+          ? 'ระบบได้รับคำสั่งซื้อและหลักฐานสลิปโอนเงินของคุณแล้ว'
+          : 'ระบบได้รับคำสั่งซื้อและรอการชำระเงินหรือตรวจสอบยอด',
         time: formatDateTime(orderDate),
         done: true,
         icon: <CheckCircle2 size={18} color="#10B981" />,
       },
       {
-        title: 'รอการยืนยันชำระเงิน',
-        desc: 'กรุณาชำระเงินผ่านช่องทางที่เลือกเพื่อดำเนินการจัดส่ง',
-        time: 'กำลังรอการชำระเงิน',
-        done: false,
-        active: true,
-        icon: <Clock size={18} color="#F59E0B" />,
+        title: isPromptPay ? 'แอดมินตรวจสอบสลิปโอนเงิน' : 'รอการยืนยันชำระเงิน',
+        desc: isPromptPay
+          ? order.admin_verified
+            ? 'แอดมินตรวจสอบยอดเงินถูกต้องแล้ว กำลังส่งต่อให้ฝ่ายจัดเตรียมพัสดุ'
+            : 'แอดมินกำลังตรวจสอบความถูกต้องของสลิปและยอดเงินในระบบ'
+          : 'กรุณาชำระเงินผ่านช่องทางที่เลือกเพื่อดำเนินการจัดส่ง',
+        time: order.admin_verified ? 'ตรวจสอบแล้ว' : 'กำลังรอตรวจสอบ',
+        done: Boolean(order.admin_verified),
+        active: !order.admin_verified,
+        icon: order.admin_verified ? <CheckCircle2 size={18} color="#10B981" /> : <Clock size={18} color="#F59E0B" />,
       },
       {
         title: 'แพ็กสินค้าและบรรจุของแถม',
-        desc: 'ฝ่ายคลังสินค้าจะเริ่มจัดเตรียมสินค้าทันทีที่ได้รับการชำระเงิน',
+        desc: 'ฝ่ายคลังสินค้าจะเริ่มจัดเตรียมสินค้าทันทีที่ได้รับการยืนยันยอดเงิน',
         time: 'รอดำเนินการ',
         done: false,
         icon: <Package size={18} color="#94A3B8" />,
@@ -651,6 +666,39 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
               {order.shipping_address?.postalCode || ''}
             </div>
           </div>
+
+          {/* Attached Slip Preview */}
+          {order.slip_url && (
+            <div
+              style={{
+                marginTop: '1rem',
+                padding: '0.85rem 1rem',
+                background: '#F0F9FF',
+                borderRadius: '14px',
+                border: '1px solid #BAE6FD',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <img
+                  src={order.slip_url}
+                  alt="สลิปโอนเงิน"
+                  style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: '1px solid #38BDF8' }}
+                />
+                <div>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: '#0369A1' }}>
+                    หลักฐานสลิปพร้อมเพย์ที่คุณแนบ
+                  </div>
+                  <div style={{ fontSize: '0.76rem', color: '#0284C7' }}>
+                    {order.admin_verified ? '✅ แอดมินตรวจสอบยอดเงินเรียบร้อยแล้ว' : '⏳ รอแอดมินตรวจสอบยอดเงิน'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer Support Hotline */}
