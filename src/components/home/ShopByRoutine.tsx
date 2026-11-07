@@ -62,8 +62,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
       title: 'Luminous Velvet Everyday Edit',
       tagline: 'คอมโบเมคอัพโทนธรรมชาติ สวยละมุน สไตล์คลีนบิวตี้',
       badge: 'EVERYDAY EDIT',
-      icon: <Palette size={18} color="#DF5E7E" />,
-      themeColor: '#DF5E7E',
+      icon: <Palette size={18} color="#1C1917" />,
+      themeColor: '#1C1917',
       discountPercent: 15,
       productIds: [
         'a1000000-0000-0000-0000-000000000008', // Marshmallow Blush
@@ -134,7 +134,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
             className="font-serif"
             style={{
               fontSize: '2.3rem',
-              fontWeight: 600,
+              fontWeight: 700,
               color: '#2C2224',
               letterSpacing: '-0.02em',
               lineHeight: 1.2,
@@ -143,7 +143,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
           >
             Curated Beauty Rituals
           </h2>
-          <p style={{ color: '#78716C', fontSize: '0.95rem', maxWidth: '560px', margin: '0 auto' }}>
+          <p style={{ color: '#706064', fontSize: '0.95rem', maxWidth: '560px', margin: '0 auto' }}>
             ปรนนิบัติผิวแบบองค์รวม ผสานสกินแคร์และเมคอัพที่ทำงานเกื้อหนุนกัน พร้อมสิทธิพิเศษเมื่อเลือกซื้อยกเซต
           </p>
         </div>
@@ -161,8 +161,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.65rem',
-                  padding: '0.65rem 1.25rem',
-                  borderRadius: '8px',
+                  padding: '0.65rem 1.4rem',
+                  borderRadius: '9999px',
                   border: isActive ? '1px solid #C73D62' : '1px solid rgba(222, 83, 119, 0.18)',
                   background: isActive ? 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#706064',
@@ -178,8 +178,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 <span
                   style={{
                     fontSize: '0.7rem',
-                    padding: '0.15rem 0.5rem',
-                    borderRadius: '4px',
+                    padding: '0.15rem 0.55rem',
+                    borderRadius: '9999px',
                     background: isActive ? 'rgba(255, 255, 255, 0.25)' : '#FFF0F4',
                     color: isActive ? '#FFFFFF' : '#C73D62',
                     fontWeight: 700,
@@ -196,7 +196,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
         <div
           className="routine-bundle-card glass-card"
           style={{
-            borderRadius: '16px',
+            borderRadius: '26px',
             padding: '2.25rem',
             background: '#FFFFFF',
             border: '1px solid rgba(222, 83, 119, 0.16)',
@@ -214,11 +214,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   background: '#FFF0F4',
                   color: '#C73D62',
                   border: '1px solid #FAD1DC',
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '4px',
+                  padding: '0.25rem 0.85rem',
+                  borderRadius: '9999px',
                   fontSize: '0.7rem',
                   fontWeight: 700,
-                  letterSpacing: '0.1em',
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   marginBottom: '0.65rem',
                 }}
@@ -229,7 +229,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 className="font-serif"
                 style={{
                   fontSize: '1.65rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   color: '#2C2224',
                   margin: 0,
                   letterSpacing: '-0.01em',
@@ -248,8 +248,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
               style={{
                 background: '#FFF5F8',
                 border: '1px solid #FAD1DC',
-                padding: '0.65rem 1.15rem',
-                borderRadius: '8px',
+                padding: '0.65rem 1.25rem',
+                borderRadius: '16px',
                 textAlign: 'right',
               }}
             >
@@ -269,9 +269,9 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 className="bundle-item-box"
                 style={{
                   background: '#FFFDFE',
-                  borderRadius: '10px',
-                  padding: '1rem',
-                  border: '1px solid rgba(222, 83, 119, 0.12)',
+                  borderRadius: '18px',
+                  padding: '1.1rem',
+                  border: '1px solid rgba(222, 83, 119, 0.14)',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
@@ -285,9 +285,9 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                     position: 'absolute',
                     top: '8px',
                     left: '8px',
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '4px',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
                     background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                     color: '#FFFFFF',
                     fontSize: '0.7rem',
@@ -306,7 +306,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   style={{
                     width: '74px',
                     height: '74px',
-                    borderRadius: '8px',
+                    borderRadius: '14px',
                     overflow: 'hidden',
                     background: '#FFF5F8',
                     flexShrink: 0,
@@ -343,11 +343,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                       <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
                     </div>
                     {prod.stock_quantity <= 0 ? (
-                      <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '1px 6px', borderRadius: '3px', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
                         สินค้าหมด
                       </span>
                     ) : (
-                      <span style={{ fontSize: '0.68rem', color: '#706064', background: '#FFF0F4', padding: '1px 6px', borderRadius: '3px', fontWeight: 500 }}>
+                      <span style={{ fontSize: '0.68rem', color: '#706064', background: '#FFF0F4', padding: '2px 8px', borderRadius: '9999px', fontWeight: 500 }}>
                         สต็อก {prod.stock_quantity}
                       </span>
                     )}
@@ -388,8 +388,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                     color: '#C73D62',
                     background: '#FFF0F4',
                     border: '1px solid #FAD1DC',
-                    padding: '0.25rem 0.6rem',
-                    borderRadius: '4px',
+                    padding: '0.25rem 0.8rem',
+                    borderRadius: '9999px',
                     letterSpacing: '0.02em',
                   }}
                 >
@@ -403,14 +403,14 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
               disabled={hasOutOfStock}
               className="btn btn-primary btn-lg bundle-cta-btn"
               style={{
-                padding: '0.85rem 1.85rem',
+                padding: '0.85rem 2rem',
                 fontSize: '0.92rem',
                 fontWeight: 600,
-                letterSpacing: '0.04em',
+                letterSpacing: '0.02em',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.65rem',
-                borderRadius: '8px',
+                borderRadius: '9999px',
                 opacity: hasOutOfStock ? 0.6 : 1,
                 cursor: hasOutOfStock ? 'not-allowed' : 'pointer',
               }}

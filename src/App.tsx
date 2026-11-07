@@ -431,7 +431,7 @@ const MainStore: React.FC = () => {
                 style={{
                   fontSize: '2.4rem',
                   fontWeight: 600,
-                  color: '#2C2224',
+                  color: '#1C1917',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                   marginBottom: '0.5rem',
@@ -463,7 +463,7 @@ const MainStore: React.FC = () => {
                     display: 'inline-flex',
                     background: '#FFFFFF',
                     padding: '4px',
-                    borderRadius: '8px',
+                    borderRadius: '9999px',
                     boxShadow: '0 2px 10px rgba(216, 74, 110, 0.06)',
                     border: '1px solid rgba(222, 83, 119, 0.18)',
                     maxWidth: '100%',
@@ -472,19 +472,19 @@ const MainStore: React.FC = () => {
                     scrollbarWidth: 'none',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
-                    gap: '2px',
+                    gap: '4px',
                   }}
                 >
                   <button
                     onClick={() => setShowcaseTab('all')}
                     className={`btn btn-sm ${showcaseTab === 'all' ? 'btn-primary' : 'btn-ghost'}`}
                     style={{
-                      borderRadius: '6px',
+                      borderRadius: '9999px',
                       fontSize: '0.82rem',
                       fontWeight: showcaseTab === 'all' ? 700 : 500,
                       flexShrink: 0,
                       letterSpacing: '0.02em',
-                      padding: '0.45rem 1rem',
+                      padding: '0.45rem 1.15rem',
                     }}
                   >
                     ทั้งหมด ({products.length})
@@ -493,7 +493,7 @@ const MainStore: React.FC = () => {
                     onClick={() => setShowcaseTab('best_seller')}
                     className={`btn btn-sm ${showcaseTab === 'best_seller' ? 'btn-primary' : 'btn-ghost'}`}
                     style={{
-                      borderRadius: '6px',
+                      borderRadius: '9999px',
                       fontSize: '0.82rem',
                       fontWeight: showcaseTab === 'best_seller' ? 700 : 500,
                       flexShrink: 0,
@@ -501,16 +501,16 @@ const MainStore: React.FC = () => {
                       alignItems: 'center',
                       gap: '6px',
                       letterSpacing: '0.02em',
-                      padding: '0.45rem 1rem',
+                      padding: '0.45rem 1.15rem',
                     }}
                   >
-                    <Star size={13} fill={showcaseTab === 'best_seller' ? '#C5A880' : '#D97706'} color={showcaseTab === 'best_seller' ? '#C5A880' : '#D97706'} /> Best Sellers
+                    <Star size={13} fill={showcaseTab === 'best_seller' ? '#FFFFFF' : '#D97706'} color={showcaseTab === 'best_seller' ? '#FFFFFF' : '#D97706'} /> Best Sellers
                   </button>
                   <button
                     onClick={() => setShowcaseTab('new_arrival')}
                     className={`btn btn-sm ${showcaseTab === 'new_arrival' ? 'btn-primary' : 'btn-ghost'}`}
                     style={{
-                      borderRadius: '6px',
+                      borderRadius: '9999px',
                       fontSize: '0.82rem',
                       fontWeight: showcaseTab === 'new_arrival' ? 700 : 500,
                       flexShrink: 0,
@@ -518,17 +518,17 @@ const MainStore: React.FC = () => {
                       alignItems: 'center',
                       gap: '6px',
                       letterSpacing: '0.02em',
-                      padding: '0.45rem 1rem',
+                      padding: '0.45rem 1.15rem',
                     }}
                   >
-                    <Sparkles size={13} color={showcaseTab === 'new_arrival' ? '#C5A880' : 'var(--rose-damask, #8C2E41)'} /> New Arrivals
+                    <Sparkles size={13} color={showcaseTab === 'new_arrival' ? '#FFFFFF' : 'var(--rose-damask, #C73D62)'} /> New Arrivals
                   </button>
                   {isHalloweenMode && (
                     <button
                       onClick={() => setShowcaseTab('halloween')}
                       className={`btn btn-sm ${showcaseTab === 'halloween' ? 'btn-primary' : 'btn-ghost'}`}
                       style={{
-                        borderRadius: '20px',
+                        borderRadius: '9999px',
                         fontSize: '0.82rem',
                         fontWeight: showcaseTab === 'halloween' ? 700 : 500,
                         background: showcaseTab === 'halloween' ? 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)' : 'transparent',
@@ -537,7 +537,7 @@ const MainStore: React.FC = () => {
                         alignItems: 'center',
                         gap: '6px',
                         flexShrink: 0,
-                        padding: '0.45rem 1rem',
+                        padding: '0.45rem 1.15rem',
                       }}
                     >
                       <CutePumpkinIcon size={14} /> Festive Edition
@@ -663,11 +663,11 @@ const MainStore: React.FC = () => {
                         onClick={() => setVisibleCount(filteredProducts.length)}
                         className="btn btn-outline"
                         style={{
-                          borderRadius: '6px',
-                          padding: '0.65rem 1.25rem',
+                          borderRadius: '9999px',
+                          padding: '0.65rem 1.45rem',
                           fontWeight: 600,
                           fontSize: '0.85rem',
-                          letterSpacing: '0.04em',
+                          letterSpacing: '0.02em',
                         }}
                       >
                         แสดงทั้งหมด

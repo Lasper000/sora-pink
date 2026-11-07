@@ -381,7 +381,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '680px',
-          borderRadius: '24px',
+          borderRadius: '28px',
           background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF9FA 100%)',
           maxHeight: '90vh',
           display: 'flex',
@@ -459,8 +459,8 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
                   color: '#FFFFFF',
                   fontWeight: 800,
                   fontSize: '0.72rem',
-                  padding: '2px 8px',
-                  borderRadius: '6px',
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
                   letterSpacing: '0.04em',
                 }}
               >
@@ -488,7 +488,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
                 style={{
                   background: '#FFFFFF',
                   border: '1px solid #CBD5E1',
-                  borderRadius: '8px',
+                  borderRadius: '9999px',
                   padding: '3px 8px',
                   fontSize: '0.75rem',
                   display: 'inline-flex',

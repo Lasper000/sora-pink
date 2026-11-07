@@ -49,11 +49,11 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
       className="glass-card product-filter-card"
       style={{
         padding: '1.75rem',
-        borderRadius: '12px',
+        borderRadius: '24px',
         marginBottom: '2.5rem',
         background: '#FFFFFF',
         border: '1px solid rgba(222, 83, 119, 0.16)',
-        boxShadow: '0 4px 20px rgba(216, 74, 110, 0.04)',
+        boxShadow: '0 6px 24px rgba(216, 74, 110, 0.05)',
         width: '100%',
         boxSizing: 'border-box',
       }}
@@ -103,9 +103,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                   key={type}
                   onClick={() => toggleSkinType(type)}
                   style={{
-                    padding: '0.35rem 0.8rem',
-                    borderRadius: '6px',
-                    fontSize: '0.78rem',
+                    padding: '0.4rem 1rem',
+                    borderRadius: '9999px',
+                    fontSize: '0.8rem',
                     fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
                     border: active ? '1px solid #C73D62' : '1px solid #F0C4CF',
@@ -113,12 +113,12 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                     color: active ? '#FFFFFF' : '#706064',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '5px',
                     transition: 'all 0.2s ease',
                   }}
                 >
                   {type}
-                  {active && <Check size={11} />}
+                  {active && <Check size={12} />}
                 </button>
               );
             })}
@@ -138,9 +138,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                   key={concern}
                   onClick={() => toggleSkinConcern(concern)}
                   style={{
-                    padding: '0.35rem 0.8rem',
-                    borderRadius: '6px',
-                    fontSize: '0.78rem',
+                    padding: '0.4rem 1rem',
+                    borderRadius: '9999px',
+                    fontSize: '0.8rem',
                     fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
                     border: active ? '1px solid #C73D62' : '1px solid #F0C4CF',
@@ -148,7 +148,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                     color: active ? '#FFFFFF' : '#706064',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '4px',
+                    gap: '5px',
                     transition: 'all 0.2s ease',
                   }}
                 >

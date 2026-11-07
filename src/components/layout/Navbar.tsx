@@ -239,15 +239,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <div
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: '8px',
+                width: 40,
+                height: 40,
+                borderRadius: '14px',
                 background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(216, 74, 110, 0.25)',
+                boxShadow: '0 4px 14px rgba(216, 74, 110, 0.28)',
                 border: '1px solid #FAD1DC',
                 position: 'relative',
               }}
@@ -257,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <CutePumpkinIcon size={20} />
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, letterSpacing: '0.02em', color: '#FFFFFF' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.02em', color: '#FFFFFF' }}>
                   S
                 </span>
               )}
@@ -268,8 +268,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="brand-title font-serif"
                   style={{
                     fontSize: '1.5rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
+                    fontWeight: 800,
+                    letterSpacing: '0.06em',
                     whiteSpace: 'nowrap',
                     color: '#2C2224',
                   }}
@@ -281,12 +281,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="brand-spooky-badge"
                     style={{
                       fontSize: '0.65rem',
-                      background: '#FDF2F4',
-                      border: '1px solid rgba(140, 46, 65, 0.25)',
-                      color: '#8C2E41',
-                      padding: '1px 6px',
-                      borderRadius: '4px',
-                      fontWeight: 600,
+                      background: '#FFF0F4',
+                      border: '1px solid #FAD1DC',
+                      color: '#C73D62',
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      fontWeight: 700,
                       letterSpacing: '0.05em',
                       textTransform: 'uppercase',
                       display: 'inline-flex',
@@ -417,15 +417,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="desktop-search-input"
                 style={{
                   width: '100%',
-                  paddingLeft: '2.2rem',
-                  paddingRight: searchQuery ? '2rem' : '0.85rem',
-                  paddingTop: '0.45rem',
-                  paddingBottom: '0.45rem',
-                  borderRadius: '6px',
+                  paddingLeft: '2.4rem',
+                  paddingRight: searchQuery ? '2rem' : '1rem',
+                  paddingTop: '0.5rem',
+                  paddingBottom: '0.5rem',
+                  borderRadius: '9999px',
                   background: isDark ? 'rgba(30, 26, 28, 0.8)' : '#FFFFFF',
-                  border: isSearchFocused ? '1px solid var(--text-primary)' : '1px solid rgba(28, 25, 23, 0.12)',
-                  boxShadow: isSearchFocused ? '0 0 0 2px rgba(140, 46, 65, 0.12)' : 'none',
-                  fontSize: '0.82rem',
+                  border: isSearchFocused ? '1.5px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.22)',
+                  boxShadow: isSearchFocused ? '0 0 0 3px rgba(223, 94, 126, 0.16)' : 'none',
+                  fontSize: '0.84rem',
                   boxSizing: 'border-box',
                   outline: 'none',
                   transition: 'all 0.25s ease',
@@ -468,12 +468,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     right: 0,
                     width: '380px',
                     background: '#FFFFFF',
-                    borderRadius: '12px',
-                    boxShadow: '0 20px 45px rgba(28, 25, 23, 0.14)',
-                    border: '1px solid rgba(28, 25, 23, 0.1)',
+                    borderRadius: '20px',
+                    boxShadow: '0 20px 45px rgba(223, 94, 126, 0.16)',
+                    border: '1px solid rgba(222, 83, 119, 0.18)',
                     zIndex: 1200,
                     overflow: 'hidden',
-                    padding: '0.75rem',
+                    padding: '0.85rem',
                   }}
                 >
                   <div
@@ -559,9 +559,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                             width: '100%',
                             padding: '0.5rem',
                             marginTop: '0.3rem',
-                            border: '1px solid #FAD1DC',
-                            background: '#FFF5F8',
-                            color: '#C73D62',
+                            border: '1px solid rgba(28, 25, 23, 0.1)',
+                            background: '#FAF5F0',
+                            color: '#1C1917',
                             borderRadius: '6px',
                             fontSize: '0.76rem',
                             fontWeight: 600,
@@ -644,22 +644,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="btn btn-primary btn-sm cart-btn-main"
               style={{
                 position: 'relative',
-                padding: '0.45rem 0.95rem',
+                padding: '0.5rem 1.15rem',
                 gap: '0.45rem',
-                borderRadius: '6px',
-                letterSpacing: '0.04em',
+                borderRadius: '9999px',
+                letterSpacing: '0.02em',
               }}
             >
               <ShoppingBag size={16} />
-              <span className="cart-btn-text" style={{ fontSize: '0.82rem' }}>ตะกร้า</span>
+              <span className="cart-btn-text" style={{ fontSize: '0.84rem' }}>ตะกร้า</span>
               <span
                 key={`cart-${itemCount}`}
                 className="cart-badge-count animate-badge-pop"
                 style={{
                   background: '#FFFFFF',
                   color: '#C73D62',
-                  borderRadius: '4px',
-                  padding: '1px 5px',
+                  borderRadius: '9999px',
+                  padding: '1px 6px',
                   fontSize: '0.68rem',
                   fontWeight: 700,
                   marginLeft: '2px',

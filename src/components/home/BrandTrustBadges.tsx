@@ -47,21 +47,21 @@ export const BrandTrustBadges: React.FC = () => {
               style={{
                 background: '#FFFFFF',
                 border: '1px solid rgba(222, 83, 119, 0.14)',
-                borderRadius: '12px',
-                padding: '1.15rem 1.25rem',
+                borderRadius: '20px',
+                padding: '1.25rem 1.35rem',
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.9rem',
                 transition: 'all 0.25s ease',
-                boxShadow: '0 2px 10px rgba(216, 74, 110, 0.04)',
+                boxShadow: '0 4px 16px rgba(216, 74, 110, 0.05)',
               }}
             >
               <div
                 className="trust-badge-icon-box"
                 style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '8px',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '50%',
                   background: '#FFF0F4',
                   border: '1px solid #FAD1DC',
                   display: 'flex',

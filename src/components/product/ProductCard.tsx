@@ -46,17 +46,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
       onClick={onClick}
       className="glass-card product-card-container"
       style={{
-        borderRadius: '12px',
+        borderRadius: '22px',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         cursor: 'pointer',
         background: '#FFFFFF',
-        border: '1px solid rgba(28, 25, 23, 0.08)',
+        border: '1px solid rgba(222, 83, 119, 0.12)',
         position: 'relative',
         transition: 'all 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
-        boxShadow: '0 2px 10px -2px rgba(28, 25, 23, 0.04)',
+        boxShadow: '0 4px 16px -2px rgba(223, 94, 126, 0.08)',
       }}
     >
       <div>
@@ -108,19 +108,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
             >
               <span
                 style={{
-                  background: '#8C2E41',
-                  color: '#FAF8F5',
-                  padding: '4px 10px',
-                  borderRadius: '4px',
+                  background: '#C73D62',
+                  color: '#FFFFFF',
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
                   fontWeight: 600,
                   fontSize: '0.74rem',
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                 }}
               >
                 สินค้าหมดชั่วคราว
               </span>
-              <span style={{ fontSize: '0.62rem', color: '#FAF8F5', marginTop: '3px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.62rem', color: '#FAF8F5', marginTop: '3px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 OUT OF STOCK
               </span>
             </div>
@@ -130,24 +130,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           <div
             style={{
               position: 'absolute',
-              top: '10px',
-              left: '10px',
+              top: '12px',
+              left: '12px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '4px',
+              gap: '6px',
               zIndex: 4,
             }}
           >
             {isOutOfStock && (
               <span
                 style={{
-                  background: '#8C2E41',
-                  color: '#FAF8F5',
-                  padding: '2px 7px',
-                  borderRadius: '4px',
-                  fontSize: '0.65rem',
+                  background: '#C73D62',
+                  color: '#FFFFFF',
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '0.68rem',
                   fontWeight: 600,
-                  letterSpacing: '0.06em',
+                  letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                 }}
               >
@@ -160,12 +160,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 style={{
                   background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                   color: '#FFFFFF',
-                  padding: '2px 7px',
-                  borderRadius: '4px',
-                  fontSize: '0.68rem',
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '0.7rem',
                   fontWeight: 700,
                   letterSpacing: '0.04em',
-                  boxShadow: '0 2px 6px rgba(216, 74, 110, 0.25)',
+                  boxShadow: '0 2px 8px rgba(223, 94, 126, 0.3)',
                 }}
               >
                 -{discountPercent}%
@@ -175,12 +175,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
             {isLowStock && (
               <span
                 style={{
-                  background: '#FAF5F0',
-                  color: '#92540E',
-                  border: '1px solid rgba(197, 168, 128, 0.4)',
-                  padding: '2px 7px',
-                  borderRadius: '4px',
-                  fontSize: '0.65rem',
+                  background: '#FFF5F8',
+                  color: '#C73D62',
+                  border: '1px solid #FAD1DC',
+                  padding: '3px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '0.68rem',
                   fontWeight: 600,
                   letterSpacing: '0.04em',
                 }}
@@ -196,19 +196,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
             className="product-card-wishlist-btn"
             style={{
               position: 'absolute',
-              top: '10px',
-              right: '10px',
-              width: '32px',
-              height: '32px',
-              borderRadius: '6px',
-              background: 'rgba(255, 255, 255, 0.92)',
-              backdropFilter: 'blur(6px)',
-              border: '1px solid rgba(28, 25, 23, 0.08)',
+              top: '12px',
+              right: '12px',
+              width: '34px',
+              height: '34px',
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.94)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(222, 83, 119, 0.16)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+              boxShadow: '0 2px 10px rgba(223, 94, 126, 0.12)',
               transition: 'transform 0.2s ease, background 0.2s ease',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
@@ -233,44 +233,45 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
               className="product-card-quickview-btn"
               style={{
                 position: 'absolute',
-                bottom: '10px',
+                bottom: '12px',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 background: '#FFFFFF',
                 color: '#C73D62',
-                border: '1px solid rgba(222, 83, 119, 0.2)',
-                padding: '0.3rem 0.8rem',
-                borderRadius: '4px',
-                fontSize: '0.72rem',
+                border: '1px solid rgba(222, 83, 119, 0.25)',
+                padding: '0.35rem 1rem',
+                borderRadius: '9999px',
+                fontSize: '0.74rem',
                 fontWeight: 600,
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
-                boxShadow: '0 4px 12px rgba(216, 74, 110, 0.08)',
+                gap: '5px',
+                boxShadow: '0 4px 14px rgba(223, 94, 126, 0.15)',
                 cursor: 'pointer',
               }}
             >
-              <Eye size={12} /> ดูด่วน
+              <Eye size={13} /> ดูด่วน
             </button>
           )}
         </div>
 
         {/* Content Details */}
-        <div className="product-card-body" style={{ padding: '1rem 1.15rem' }}>
+        <div className="product-card-body" style={{ padding: '1.1rem 1.25rem' }}>
           {/* Skin Type tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '0.45rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '0.55rem' }}>
             {(product.skin_types || []).slice(0, 2).map((st) => (
               <span
                 key={st}
                 style={{
-                  background: '#FAF5F0',
-                  color: '#57534E',
-                  borderRadius: '4px',
-                  padding: '1px 6px',
+                  background: '#FFF5F8',
+                  color: '#C73D62',
+                  border: '1px solid #FAD1DC',
+                  borderRadius: '9999px',
+                  padding: '2px 8px',
                   fontSize: '0.68rem',
                   fontWeight: 500,
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.02em',
                 }}
               >
                 {st}
@@ -310,7 +311,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                     height: '11px',
                     borderRadius: '50%',
                     background: color,
-                    border: selectedShade === idx ? '2px solid #DF5E7E' : '1px solid #FFFFFF',
+                    border: selectedShade === idx ? '2px solid #1C1917' : '1px solid #FFFFFF',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
                     cursor: 'pointer',
                   }}
@@ -425,10 +426,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
           disabled={isOutOfStock}
           className="btn btn-primary btn-sm product-card-buy-btn"
           style={{
-            padding: '0.45rem 0.9rem',
-            borderRadius: '6px',
-            fontSize: '0.78rem',
-            letterSpacing: '0.04em',
+            padding: '0.5rem 1.15rem',
+            borderRadius: '9999px',
+            fontSize: '0.8rem',
+            letterSpacing: '0.02em',
             opacity: isOutOfStock ? 0.5 : 1,
             cursor: isOutOfStock ? 'not-allowed' : 'pointer',
             background: isOutOfStock ? '#E7E2DF' : undefined,

@@ -128,9 +128,9 @@ export const SkinQuizModal: React.FC<SkinQuizModalProps> = ({ isOpen, onClose, o
                   key={item.type}
                   onClick={() => setSelectedSkin(item.type)}
                   style={{
-                    padding: '0.75rem',
-                    borderRadius: '12px',
-                    border: active ? '2px solid #F43F5E' : '1px solid #E5E7EB',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '18px',
+                    border: active ? '2px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.18)',
                     background: active ? '#FFF5F8' : '#FFFFFF',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',

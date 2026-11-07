@@ -192,8 +192,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                       color: '#DC2626',
                       border: '1px solid #FCA5A5',
                       fontWeight: 700,
-                      padding: '2px 8px',
-                      borderRadius: '6px',
+                      padding: '3px 10px',
+                      borderRadius: '9999px',
                       fontSize: '0.75rem',
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -210,8 +210,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                       color: '#B45309',
                       border: '1px solid #FCD34D',
                       fontWeight: 700,
-                      padding: '2px 8px',
-                      borderRadius: '6px',
+                      padding: '3px 10px',
+                      borderRadius: '9999px',
                       fontSize: '0.75rem',
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -228,8 +228,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                       color: '#059669',
                       border: '1px solid #A7F3D0',
                       fontWeight: 600,
-                      padding: '2px 8px',
-                      borderRadius: '6px',
+                      padding: '3px 10px',
+                      borderRadius: '9999px',
                       fontSize: '0.75rem',
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -265,7 +265,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   <button
                     type="button"
                     onClick={handleShareLine}
-                    style={{ background: '#06C755', color: '#fff', border: 'none', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ background: '#06C755', color: '#fff', border: 'none', borderRadius: '9999px', padding: '2px 9px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
                     title="แชร์ลง LINE"
                   >
                     LINE
@@ -273,7 +273,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   <button
                     type="button"
                     onClick={handleShareFacebook}
-                    style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: '6px', padding: '2px 7px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ background: '#1877F2', color: '#fff', border: 'none', borderRadius: '9999px', padding: '2px 9px', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer' }}
                     title="แชร์ลง FB"
                   >
                     FB
@@ -285,8 +285,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                       background: isCopied ? '#ECFDF5' : '#F1F5F9',
                       color: isCopied ? '#059669' : '#475569',
                       border: isCopied ? '1px solid #10B981' : '1px solid #CBD5E1',
-                      borderRadius: '6px',
-                      padding: '2px 7px',
+                      borderRadius: '9999px',
+                      padding: '2px 9px',
                       fontSize: '0.7rem',
                       fontWeight: 600,
                       cursor: 'pointer',
@@ -348,7 +348,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     border: '1px solid #E2E8F0',
-                    borderRadius: '12px',
+                    borderRadius: '9999px',
                     overflow: 'hidden',
                     background: isOutOfStock ? '#E2E8F0' : '#FFFFFF',
                     opacity: isOutOfStock ? 0.6 : 1,
@@ -380,8 +380,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   className="btn btn-primary"
                   style={{
                     flex: 1,
-                    borderRadius: '12px',
-                    padding: '0.55rem 1rem',
+                    borderRadius: '9999px',
+                    padding: '0.55rem 1.25rem',
                     fontSize: '0.88rem',
                     fontWeight: 700,
                     opacity: isOutOfStock ? 0.65 : 1,
@@ -399,7 +399,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                 <button
                   onClick={handleWishlist}
                   className="btn-icon btn-outline"
-                  style={{ width: '42px', height: '42px', borderRadius: '12px' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%' }}
                 >
                   <Heart size={18} fill={isFavorited ? '#E11D48' : 'transparent'} color={isFavorited ? '#E11D48' : '#64748B'} />
                 </button>

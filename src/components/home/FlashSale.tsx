@@ -44,7 +44,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
           className="glass-card flash-sale-main-card"
           style={{
             background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDFE 100%)',
-            borderRadius: '16px',
+            borderRadius: '26px',
             padding: '2.25rem 2rem',
             border: '1px solid rgba(222, 83, 119, 0.16)',
             boxShadow: '0 8px 30px rgba(216, 74, 110, 0.06)',
@@ -67,9 +67,9 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div
                 style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: '10px',
+                  width: 48,
+                  height: 48,
+                  borderRadius: '16px',
                   background: 'linear-gradient(135deg, #FFF0F4 0%, #FEE2E8 100%)',
                   border: '1px solid #FAD1DC',
                   display: 'flex',
@@ -98,7 +98,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   className="font-serif flash-sale-title"
                   style={{
                     fontSize: '1.65rem',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     color: '#2C2224',
                     letterSpacing: '-0.01em',
                     lineHeight: 1.2,
@@ -116,8 +116,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                 alignItems: 'center',
                 gap: '0.75rem',
                 background: '#FFF5F8',
-                padding: '0.5rem 0.95rem',
-                borderRadius: '8px',
+                padding: '0.5rem 1.15rem',
+                borderRadius: '9999px',
                 border: '1px solid #FAD1DC',
               }}
             >
@@ -138,7 +138,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                     color: '#FFFFFF',
-                    borderRadius: '6px',
+                    borderRadius: '10px',
                     padding: '3px 8px',
                     fontWeight: 700,
                     fontSize: '0.88rem',
@@ -155,7 +155,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                     color: '#FFFFFF',
-                    borderRadius: '6px',
+                    borderRadius: '10px',
                     padding: '3px 8px',
                     fontWeight: 700,
                     fontSize: '0.88rem',
@@ -172,7 +172,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                     color: '#FFFFFF',
-                    borderRadius: '6px',
+                    borderRadius: '10px',
                     padding: '3px 8px',
                     fontWeight: 700,
                     fontSize: '0.88rem',
@@ -203,12 +203,12 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     cursor: 'pointer',
                     background: '#FFFFFF',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(222, 83, 119, 0.14)',
+                    borderRadius: '22px',
+                    border: '1px solid rgba(222, 83, 119, 0.16)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    padding: '0.9rem',
+                    padding: '1.1rem',
                     transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
                   }}
                 >
@@ -219,7 +219,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       style={{
                         position: 'relative',
                         width: '100%',
-                        borderRadius: '8px',
+                        borderRadius: '16px',
                         overflow: 'hidden',
                         marginBottom: '0.85rem',
                         background: '#FFF5F8',
@@ -260,11 +260,11 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                             style={{
                               background: '#C73D62',
                               color: '#FFFFFF',
-                              padding: '5px 12px',
-                              borderRadius: '4px',
+                              padding: '5px 14px',
+                              borderRadius: '9999px',
                               fontSize: '0.7rem',
                               fontWeight: 700,
-                              letterSpacing: '0.08em',
+                              letterSpacing: '0.04em',
                               textTransform: 'uppercase',
                               border: '1px solid rgba(255, 255, 255, 0.2)',
                             }}
@@ -277,16 +277,16 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       <span
                         style={{
                           position: 'absolute',
-                          top: '8px',
-                          left: '8px',
+                          top: '10px',
+                          left: '10px',
                           background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                           color: '#FFFFFF',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
+                          padding: '3px 10px',
+                          borderRadius: '9999px',
                           fontSize: '0.7rem',
                           fontWeight: 700,
                           letterSpacing: '0.04em',
-                          boxShadow: '0 2px 6px rgba(216, 74, 110, 0.3)',
+                          boxShadow: '0 2px 8px rgba(216, 74, 110, 0.3)',
                           zIndex: 3,
                         }}
                       >
@@ -386,7 +386,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       disabled={product.stock_quantity <= 0}
                       className="btn btn-primary btn-sm flash-sale-add-btn"
                       style={{
-                        padding: '0.45rem 0.85rem',
+                        padding: '0.45rem 1.1rem',
+                        borderRadius: '9999px',
                         opacity: product.stock_quantity <= 0 ? 0.5 : 1,
                         cursor: product.stock_quantity <= 0 ? 'not-allowed' : 'pointer',
                         fontSize: '0.78rem',

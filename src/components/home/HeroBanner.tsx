@@ -280,11 +280,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         justifyContent: 'space-between',
                         gap: '0.75rem',
                         background: '#FFFFFF',
-                        padding: '0.35rem 0.5rem 0.35rem 0.85rem',
-                        borderRadius: '8px',
+                        padding: '0.4rem 0.6rem 0.4rem 1.1rem',
+                        borderRadius: '9999px',
                         border: '1px solid rgba(222, 83, 119, 0.2)',
                         marginBottom: '1.5rem',
-                        boxShadow: '0 2px 8px rgba(222, 83, 119, 0.08)',
+                        boxShadow: '0 2px 10px rgba(222, 83, 119, 0.08)',
                         maxWidth: '100%',
                       }}
                     >
@@ -299,11 +299,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         onClick={() => copyCode(slide.promoCode)}
                         className="hero-copy-btn"
                         style={{
-                          background: '#FAF5F0',
-                          color: '#8C2E41',
-                          border: '1px solid rgba(140, 46, 65, 0.25)',
-                          padding: '0.22rem 0.65rem',
-                          borderRadius: '4px',
+                          background: '#FFF5F8',
+                          color: '#C73D62',
+                          border: '1px solid #FAD1DC',
+                          padding: '0.25rem 0.85rem',
+                          borderRadius: '9999px',
                           fontSize: '0.72rem',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -451,9 +451,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 60,
-              width: '42px',
-              height: '42px',
-              borderRadius: '8px',
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
               background: '#FFFFFF',
               border: '1px solid rgba(222, 83, 119, 0.25)',
               color: '#C73D62',
@@ -466,7 +466,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
               e.currentTarget.style.background = '#FFF5F8';
               e.currentTarget.style.borderColor = '#DF5E7E';
             }}
@@ -491,9 +491,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 60,
-              width: '42px',
-              height: '42px',
-              borderRadius: '8px',
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
               background: '#FFFFFF',
               border: '1px solid rgba(222, 83, 119, 0.25)',
               color: '#C73D62',
@@ -506,7 +506,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.08)';
               e.currentTarget.style.background = '#FFF5F8';
               e.currentTarget.style.borderColor = '#DF5E7E';
             }}
@@ -532,9 +532,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               gap: '0.5rem',
               zIndex: 50,
               background: '#FFFFFF',
-              padding: '5px 14px',
-              borderRadius: '20px',
-              boxShadow: '0 4px 12px rgba(223, 94, 126, 0.12)',
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              boxShadow: '0 4px 14px rgba(223, 94, 126, 0.12)',
               border: '1px solid rgba(222, 83, 119, 0.2)',
             }}
           >

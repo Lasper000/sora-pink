@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check } from 'lucide-react';
+import { ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check, Sparkles } from 'lucide-react';
 import { showToast } from '../common/Toast';
 
 interface FooterProps {
@@ -44,9 +44,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: '8px',
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
                 background: '#FFF0F4',
                 border: '1px solid #FAD1DC',
                 display: 'flex',
@@ -66,9 +66,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: '8px',
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
                 background: '#FFF0F4',
                 border: '1px solid #FAD1DC',
                 display: 'flex',
@@ -88,9 +88,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: '8px',
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
                 background: '#FFF0F4',
                 border: '1px solid #FAD1DC',
                 display: 'flex',
@@ -110,9 +110,31 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: '8px',
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
+                background: '#FFF0F4',
+                border: '1px solid #FAD1DC',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#C73D62',
+              }}
+            >
+              <Sparkles size={20} />
+            </div>
+            <div>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#2C2224', letterSpacing: '0.02em' }}>Clean & Gentle Formula</h5>
+              <p style={{ fontSize: '0.78rem', color: '#706064' }}>ปราศจากพาราเบนและสารระคายเคือง</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: '50%',
                 background: '#FFF0F4',
                 border: '1px solid #FAD1DC',
                 display: 'flex',
@@ -283,8 +305,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 style={{
                   fontSize: '0.82rem',
-                  borderRadius: '6px',
-                  padding: '0.65rem 0.95rem',
+                  borderRadius: '9999px',
+                  padding: '0.65rem 1.15rem',
                   background: '#FFFFFF',
                   border: '1px solid rgba(222, 83, 119, 0.25)',
                   color: '#2C2224',
@@ -295,8 +317,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               <button
                 type="submit"
                 style={{
-                  padding: '0.65rem 1rem',
-                  borderRadius: '6px',
+                  padding: '0.65rem 1.25rem',
+                  borderRadius: '9999px',
                   background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                   color: '#FFFFFF',
                   border: 'none',
@@ -354,16 +376,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
           </div>
           <div className="footer-payment-methods" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
             <span style={{ letterSpacing: '0.04em', color: '#706064', fontWeight: 500 }}>SECURED CHECKOUT:</span>
-            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '4px 12px', borderRadius: '9999px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               PromptPay QR
             </span>
-            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '4px 12px', borderRadius: '9999px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               VISA
             </span>
-            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '4px 12px', borderRadius: '9999px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               Mastercard
             </span>
-            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '4px 12px', borderRadius: '9999px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               COD
             </span>
           </div>

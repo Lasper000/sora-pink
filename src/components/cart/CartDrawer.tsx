@@ -58,14 +58,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <ShoppingBag size={19} color="#C73D62" />
-            <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 600, color: '#2C2224', margin: 0 }}>
+            <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 700, color: '#2C2224', margin: 0 }}>
               Shopping Bag
             </h3>
             <span
               style={{
                 fontSize: '0.72rem',
-                padding: '2px 8px',
-                borderRadius: '4px',
+                padding: '2px 9px',
+                borderRadius: '9999px',
                 background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                 color: '#FFFFFF',
                 fontWeight: 600,
@@ -76,7 +76,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
               {itemCount}
             </span>
           </div>
-          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '6px' }}>
+          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '50%' }}>
             <X size={18} />
           </button>
         </div>
@@ -169,11 +169,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     style={{
                       display: 'flex',
                       gap: '0.85rem',
-                      padding: '0.75rem',
-                      borderRadius: '16px',
+                      padding: '0.85rem',
+                      borderRadius: '18px',
                       background: '#FFFFFF',
-                      border: '1px solid #F3F4F6',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                      border: '1px solid rgba(222, 83, 119, 0.14)',
+                      boxShadow: '0 2px 10px rgba(223, 94, 126, 0.05)',
                     }}
                   >
                     {/* Item Image */}
@@ -181,7 +181,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                       style={{
                         width: '74px',
                         height: '74px',
-                        borderRadius: '12px',
+                        borderRadius: '14px',
                         overflow: 'hidden',
                         background: '#FFF5F8',
                         flexShrink: 0,
@@ -203,7 +203,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               fontSize: '0.88rem',
                               fontWeight: 600,
-                              color: '#1F2937',
+                              color: '#2C2224',
                               lineHeight: 1.3,
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
@@ -219,7 +219,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               background: 'none',
                               border: 'none',
-                              color: '#9CA3AF',
+                              color: '#A09296',
                               cursor: 'pointer',
                               padding: '2px',
                             }}
@@ -233,15 +233,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             ฿{unitPrice.toLocaleString()}
                           </div>
                           {item.product.stock_quantity <= 0 ? (
-                            <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
                               สินค้าหมดสต็อก
                             </span>
                           ) : item.product.stock_quantity <= 5 ? (
-                            <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FFF0F4', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FFF0F4', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
                               เหลือ {item.product.stock_quantity} ชิ้น
                             </span>
                           ) : (
-                            <span style={{ fontSize: '0.68rem', color: '#706064', background: '#FFF0F4', padding: '2px 6px', borderRadius: '4px', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#706064', background: '#FFF0F4', padding: '2px 8px', borderRadius: '9999px', fontWeight: 500 }}>
                               คงเหลือ {item.product.stock_quantity}
                             </span>
                           )}
@@ -256,8 +256,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             alignItems: 'center',
                             background: '#FFF5F8',
                             border: '1px solid #FAD1DC',
-                            borderRadius: '6px',
-                            padding: '2px',
+                            borderRadius: '9999px',
+                            padding: '2px 4px',
                           }}
                         >
                           <button
@@ -265,14 +265,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               width: '24px',
                               height: '24px',
-                              borderRadius: '4px',
+                              borderRadius: '50%',
                               border: 'none',
                               background: '#FFFFFF',
                               cursor: 'pointer',
                               fontSize: '0.85rem',
                               fontWeight: 700,
                               color: '#C73D62',
-                              boxShadow: '0 1px 2px rgba(216,74,110,0.1)',
+                              boxShadow: '0 1px 3px rgba(216,74,110,0.15)',
                             }}
                           >
                             -
@@ -289,14 +289,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               width: '24px',
                               height: '24px',
-                              borderRadius: '4px',
+                              borderRadius: '50%',
                               border: 'none',
                               background: '#FFFFFF',
                               cursor: 'pointer',
                               fontSize: '0.85rem',
                               fontWeight: 700,
                               color: '#C73D62',
-                              boxShadow: '0 1px 2px rgba(216,74,110,0.1)',
+                              boxShadow: '0 1px 3px rgba(216,74,110,0.15)',
                             }}
                           >
                             +
@@ -333,21 +333,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    background: '#FFF5F8',
-                    border: '1px solid #FAD1DC',
+                    background: '#FAF8F5',
+                    border: '1px solid rgba(197, 168, 128, 0.4)',
                     padding: '0.5rem 0.85rem',
-                    borderRadius: '8px',
+                    borderRadius: '6px',
                     fontSize: '0.8rem',
-                    color: '#2C2224',
+                    color: '#1C1917',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Tag size={13} color="#DF5E7E" />
-                    <span>โค้ด: <strong style={{ color: '#C73D62' }}>{appliedPromo.code}</strong> (-฿{discountAmount})</span>
+                    <Tag size={13} color="#8C2E41" />
+                    <span>โค้ด: <strong>{appliedPromo.code}</strong> (-฿{discountAmount})</span>
                   </div>
                   <button
                     onClick={removePromoCode}
-                    style={{ background: 'none', border: 'none', color: '#DF5E7E', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                    style={{ background: 'none', border: 'none', color: '#8C2E41', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
                   >
                     ยกเลิก
                   </button>
@@ -360,9 +360,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '0.82rem', padding: '0.5rem 0.85rem', borderRadius: '8px', textTransform: 'uppercase' }}
+                    style={{ fontSize: '0.82rem', padding: '0.5rem 0.85rem', borderRadius: '6px', textTransform: 'uppercase' }}
                   />
-                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '8px', fontSize: '0.8rem' }}>
+                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '6px', fontSize: '0.8rem' }}>
                     ใช้โค้ด
                   </button>
                 </form>
@@ -375,7 +375,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: 'var(--rose-damask, #C73D62)',
+                    color: 'var(--rose-damask, #8C2E41)',
                     fontSize: '0.76rem',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -393,19 +393,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
 
             {/* Price Breakdown */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#706064' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#78716C' }}>
                 <span>ยอดรวมสินค้า</span>
-                <span style={{ color: '#2C2224', fontWeight: 600 }}>฿{subtotal.toLocaleString()}</span>
+                <span style={{ color: '#1C1917', fontWeight: 500 }}>฿{subtotal.toLocaleString()}</span>
               </div>
               {discountAmount > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#C73D62', fontWeight: 600 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8C2E41', fontWeight: 600 }}>
                   <span>ส่วนลดพิเศษ</span>
                   <span>-฿{discountAmount.toLocaleString()}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#706064' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#78716C' }}>
                 <span>บริการจัดส่งด่วน</span>
-                <span>{shippingFee === 0 ? <strong style={{ color: '#C73D62' }}>ฟรี (Complimentary)</strong> : `฿${shippingFee}`}</span>
+                <span>{shippingFee === 0 ? <strong style={{ color: '#1C1917' }}>ฟรี (Complimentary)</strong> : `฿${shippingFee}`}</span>
               </div>
               <div
                 style={{
@@ -414,8 +414,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                   alignItems: 'baseline',
                   fontSize: '1.15rem',
                   fontWeight: 700,
-                  color: '#2C2224',
-                  borderTop: '1px solid rgba(222, 83, 119, 0.15)',
+                  color: '#1C1917',
+                  borderTop: '1px solid rgba(28, 25, 23, 0.08)',
                   paddingTop: '0.65rem',
                   marginTop: '0.35rem',
                 }}
@@ -440,9 +440,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
               style={{
                 width: '100%',
                 padding: '0.85rem',
-                fontSize: '0.92rem',
-                borderRadius: '8px',
-                letterSpacing: '0.04em',
+                fontSize: '0.95rem',
+                borderRadius: '9999px',
+                letterSpacing: '0.02em',
                 opacity: hasOutOfStockItem ? 0.6 : 1,
                 cursor: hasOutOfStockItem ? 'not-allowed' : 'pointer',
                 background: hasOutOfStockItem ? '#E7E5E4' : undefined,

@@ -53,7 +53,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   position: 'relative',
                   overflow: 'hidden',
                   cursor: 'pointer',
-                  borderRadius: '12px',
+                  borderRadius: '24px',
                   border: isSelected ? '2px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.15)',
                   boxShadow: isSelected
                     ? '0 10px 24px rgba(223, 94, 126, 0.25)'
@@ -107,11 +107,11 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                       background: isSelected ? 'linear-gradient(135deg, #DF5E7E, #C73D62)' : 'rgba(255, 255, 255, 0.28)',
                       color: '#FFFFFF',
                       backdropFilter: 'blur(4px)',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontSize: '0.66rem',
+                      padding: '3px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '0.68rem',
                       fontWeight: 600,
-                      letterSpacing: '0.06em',
+                      letterSpacing: '0.04em',
                       textTransform: 'uppercase',
                       display: 'inline-block',
                       marginBottom: '0.4rem',
@@ -119,7 +119,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   >
                     {isSelected ? 'เลือกอยู่' : 'ดูสินค้า'}
                   </span>
-                  <h3 className="category-card-title font-serif" style={{ fontSize: '1.35rem', fontWeight: 600, color: '#FFFFFF', marginBottom: '0.2rem', letterSpacing: '0.01em' }}>
+                  <h3 className="category-card-title font-serif" style={{ fontSize: '1.35rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.2rem', letterSpacing: '-0.01em' }}>
                     {cat.name}
                   </h3>
                   <p

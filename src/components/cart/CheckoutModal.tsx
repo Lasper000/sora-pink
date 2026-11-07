@@ -176,27 +176,27 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       <div
         className="modal-content modal-content-lg"
         onClick={(e) => e.stopPropagation()}
-        style={{ padding: '2rem' }}
+        style={{ padding: '2rem', borderRadius: '28px' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', borderBottom: '1px solid rgba(222, 83, 119, 0.12)', paddingBottom: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
             <div
               style={{
-                width: 42,
-                height: 42,
-                borderRadius: '10px',
+                width: 44,
+                height: 44,
+                borderRadius: '14px',
                 background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#FFFFFF',
-                boxShadow: '0 4px 12px rgba(223, 94, 126, 0.25)',
+                boxShadow: '0 4px 14px rgba(223, 94, 126, 0.28)',
               }}
             >
               <Package size={20} />
             </div>
             <div>
-              <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 600, color: '#2C2224', margin: 0 }}>
+              <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 700, color: '#2C2224', margin: 0 }}>
                 {step === 'form' ? 'Checkout & Shipping' : 'คำสั่งซื้อสำเร็จ!'}
               </h3>
               <p style={{ fontSize: '0.78rem', color: '#706064', margin: '2px 0 0 0' }}>
@@ -204,7 +204,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '8px' }}>
+          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '50%' }}>
             <X size={18} />
           </button>
         </div>
@@ -214,10 +214,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             {!profile && (
               <div
                 style={{
-                  background: '#FAF8F5',
-                  border: '1px solid rgba(197, 168, 128, 0.4)',
-                  borderRadius: '8px',
-                  padding: '0.75rem 1rem',
+                  background: '#FFF5F8',
+                  border: '1px solid #FAD1DC',
+                  borderRadius: '16px',
+                  padding: '0.85rem 1.15rem',
                   marginBottom: '1.5rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -227,8 +227,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles size={15} color="#8C2E41" />
-                  <span style={{ fontSize: '0.82rem', color: '#57534E' }}>
+                  <Sparkles size={15} color="#DF5E7E" />
+                  <span style={{ fontSize: '0.82rem', color: '#706064' }}>
                     มีบัญชีอยู่แล้ว? <strong>เข้าสู่ระบบด้วย Google หรืออีเมล</strong> เพื่อดึงที่อยู่จัดส่งและสะสมคะแนน
                   </span>
                 </div>
@@ -239,7 +239,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     onOpenAuth?.();
                   }}
                   className="btn btn-sm btn-outline"
-                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.85rem', borderRadius: '6px' }}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 1rem', borderRadius: '9999px' }}
                 >
                   เข้าสู่ระบบ
                 </button>
@@ -339,8 +339,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.75rem',
-                      padding: '0.85rem',
-                      borderRadius: '10px',
+                      padding: '0.85rem 1.15rem',
+                      borderRadius: '18px',
                       border: paymentMethod === 'promptpay' ? '1.5px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.15)',
                       background: paymentMethod === 'promptpay' ? '#FFF5F8' : '#FFFFFF',
                       boxShadow: paymentMethod === 'promptpay' ? '0 2px 8px rgba(223, 94, 126, 0.12)' : 'none',
@@ -372,8 +372,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.75rem',
-                      padding: '0.85rem',
-                      borderRadius: '10px',
+                      padding: '0.85rem 1.15rem',
+                      borderRadius: '18px',
                       border: paymentMethod === 'credit_card' ? '1.5px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.15)',
                       background: paymentMethod === 'credit_card' ? '#FFF5F8' : '#FFFFFF',
                       boxShadow: paymentMethod === 'credit_card' ? '0 2px 8px rgba(223, 94, 126, 0.12)' : 'none',
@@ -405,8 +405,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.75rem',
-                      padding: '0.85rem',
-                      borderRadius: '10px',
+                      padding: '0.85rem 1.15rem',
+                      borderRadius: '18px',
                       border: paymentMethod === 'cod' ? '1.5px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.15)',
                       background: paymentMethod === 'cod' ? '#FFF5F8' : '#FFFFFF',
                       boxShadow: paymentMethod === 'cod' ? '0 2px 8px rgba(223, 94, 126, 0.12)' : 'none',
@@ -439,8 +439,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     style={{
                       background: '#FFF9FA',
                       border: '1px solid rgba(222, 83, 119, 0.2)',
-                      borderRadius: '12px',
-                      padding: '1.25rem',
+                      borderRadius: '22px',
+                      padding: '1.35rem',
                       marginBottom: '1.25rem',
                       boxShadow: '0 4px 16px rgba(223, 94, 126, 0.05)',
                     }}
@@ -453,7 +453,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                             background: '#003D79',
                             color: '#FFFFFF',
                             padding: '3px 8px',
-                            borderRadius: '4px',
+                            borderRadius: '9999px',
                             fontWeight: 700,
                             fontSize: '0.75rem',
                             letterSpacing: '0.5px',
@@ -465,7 +465,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                           สแกนจ่ายผ่าน QR Code
                         </span>
                       </div>
-                      <span style={{ fontSize: '0.7rem', color: '#C73D62', background: '#FFF0F4', border: '1px solid #FAD1DC', padding: '2px 7px', borderRadius: '4px', fontWeight: 600 }}>
+                      <span style={{ fontSize: '0.7rem', color: '#C73D62', background: '#FFF0F4', border: '1px solid #FAD1DC', padding: '2px 9px', borderRadius: '9999px', fontWeight: 600 }}>
                         ฟรีค่าธรรมเนียม
                       </span>
                     </div>
@@ -478,7 +478,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                           height: '180px',
                           background: '#FFFFFF',
                           border: '1px solid rgba(222, 83, 119, 0.2)',
-                          borderRadius: '12px',
+                          borderRadius: '18px',
                           margin: '0 auto',
                           display: 'flex',
                           alignItems: 'center',
@@ -514,9 +514,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                             onClick={handleCopyPhone}
                             className="btn btn-outline btn-sm"
                             style={{
-                              padding: '2px 8px',
+                              padding: '2px 10px',
                               fontSize: '0.72rem',
-                              borderRadius: '4px',
+                              borderRadius: '9999px',
                               borderColor: 'rgba(222, 83, 119, 0.25)',
                               color: '#C73D62',
                               display: 'inline-flex',
@@ -542,8 +542,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       style={{
                         background: '#FFFFFF',
                         border: slipImage ? '1.5px solid #DF5E7E' : '1px dashed rgba(222, 83, 119, 0.35)',
-                        borderRadius: '10px',
-                        padding: '1rem',
+                        borderRadius: '18px',
+                        padding: '1.15rem',
                         textAlign: 'center',
                       }}
                     >
@@ -552,11 +552,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                           <Upload size={14} color="#DF5E7E" /> แนบสลิปหลักฐานการโอนเงิน *
                         </label>
                         {slipImage ? (
-                          <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '4px', background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)', color: '#FFFFFF', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <span style={{ fontSize: '0.7rem', padding: '3px 10px', borderRadius: '9999px', background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)', color: '#FFFFFF', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                             <Check size={11} /> แนบสลิปแล้ว
                           </span>
                         ) : (
-                          <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '4px', background: '#FFF0F4', color: '#C73D62', fontWeight: 600, border: '1px solid #FAD1DC' }}>
+                          <span style={{ fontSize: '0.7rem', padding: '3px 10px', borderRadius: '9999px', background: '#FFF0F4', color: '#C73D62', fontWeight: 600, border: '1px solid #FAD1DC' }}>
                             จำเป็นต้องแนบสลิป
                           </span>
                         )}
@@ -571,9 +571,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                               flexDirection: 'column',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              padding: '1rem',
+                              padding: '1.15rem',
                               background: '#FFF5F8',
-                              borderRadius: '8px',
+                              borderRadius: '14px',
                               border: '1px dashed rgba(222, 83, 119, 0.3)',
                               cursor: 'pointer',
                               transition: 'all 0.2s',
@@ -604,14 +604,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                               gap: '0.75rem',
                               padding: '0.65rem',
                               background: '#FFF5F8',
-                              borderRadius: '8px',
+                              borderRadius: '14px',
                               border: '1px solid rgba(222, 83, 119, 0.2)',
                             }}
                           >
                             <img
                               src={slipImage}
                               alt="สลิปที่แนบ"
-                              style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px', border: '1px solid rgba(222, 83, 119, 0.2)' }}
+                              style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '10px', border: '1px solid rgba(222, 83, 119, 0.2)' }}
                             />
                             <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
                               <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#2C2224', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -647,8 +647,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 <div
                   style={{
                     background: '#FFF5F8',
-                    padding: '1.15rem',
-                    borderRadius: '12px',
+                    padding: '1.25rem',
+                    borderRadius: '22px',
                     border: '1px solid rgba(222, 83, 119, 0.18)',
                     marginBottom: '1.25rem',
                   }}
@@ -688,7 +688,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   type="submit"
                   disabled={isSubmitting}
                   className="btn btn-primary"
-                  style={{ width: '100%', padding: '0.85rem', fontSize: '0.92rem', borderRadius: '8px', letterSpacing: '0.04em' }}
+                  style={{ width: '100%', padding: '0.85rem', fontSize: '0.95rem', borderRadius: '9999px', letterSpacing: '0.02em' }}
                 >
                   {isSubmitting ? 'กำลังบันทึกคำสั่งซื้อ...' : `ยืนยันการสั่งซื้อ (฿${grandTotal.toLocaleString()})`}
                 </button>
