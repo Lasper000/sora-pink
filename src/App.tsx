@@ -11,7 +11,6 @@ import { BrandTrustBadges } from './components/home/BrandTrustBadges';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { FlashSale } from './components/home/FlashSale';
 import { ShopByRoutine } from './components/home/ShopByRoutine';
-import { ClinicalResultsSlider } from './components/home/ClinicalResultsSlider';
 import { CustomerReviewsWall } from './components/home/CustomerReviewsWall';
 import { InstagramCommunityWall } from './components/home/InstagramCommunityWall';
 import { FAQSection } from './components/home/FAQSection';
@@ -680,9 +679,6 @@ const MainStore: React.FC = () => {
             )}
           </div>
         </section>
-
-        {/* 3. Clinical Proven Results Interactive Slider */}
-        <ClinicalResultsSlider />
 
         {/* 4. Real Customer Reviews & Social Proof Wall */}
         <CustomerReviewsWall />
