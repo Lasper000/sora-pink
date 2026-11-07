@@ -188,7 +188,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
               value={filters.minRating}
               onChange={(e) => onFilterChange({ minRating: Number(e.target.value) })}
               className="form-select"
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', width: 'auto', borderRadius: '6px', border: '1px solid #F0C4CF' }}
+              style={{ padding: '0.35rem 1rem', fontSize: '0.8rem', width: 'auto', borderRadius: '9999px', border: '1px solid #F0C4CF' }}
             >
               <option value="0">ทั้งหมด</option>
               <option value="4.5">4.5 ดาวขึ้นไป</option>
@@ -207,7 +207,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
             value={filters.sortBy}
             onChange={(e) => onFilterChange({ sortBy: e.target.value as FilterState['sortBy'] })}
             className="form-select"
-            style={{ padding: '0.35rem 0.85rem', fontSize: '0.82rem', width: 'auto', borderRadius: '6px', border: '1px solid #F0C4CF' }}
+            style={{ padding: '0.35rem 1rem', fontSize: '0.82rem', width: 'auto', borderRadius: '9999px', border: '1px solid #F0C4CF' }}
           >
             <option value="featured">คัดสรรยอดนิยม (Featured)</option>
             <option value="price_asc">ราคา: ต่ำ &rarr; สูง</option>

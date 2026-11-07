@@ -224,7 +224,7 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
                   <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>คลิกเพื่อก็อปปี้โค้ดนำไปใช้</div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#E11D48', background: '#FFE4E8', padding: '2px 6px', borderRadius: '6px' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#E11D48', background: '#FFE4E8', padding: '2px 8px', borderRadius: '9999px' }}>
                 คัดลอก
               </span>
             </button>

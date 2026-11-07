@@ -360,9 +360,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '0.82rem', padding: '0.5rem 0.85rem', borderRadius: '6px', textTransform: 'uppercase' }}
+                    style={{ fontSize: '0.82rem', padding: '0.5rem 1rem', borderRadius: '9999px', textTransform: 'uppercase' }}
                   />
-                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '6px', fontSize: '0.8rem' }}>
+                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '9999px', padding: '0.5rem 1.15rem', fontSize: '0.8rem' }}>
                     ใช้โค้ด
                   </button>
                 </form>

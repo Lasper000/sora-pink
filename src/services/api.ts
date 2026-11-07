@@ -286,6 +286,15 @@ export const placeNewOrder = async (
   paymentMethod: Order['payment_method'],
   slipUrl?: string | null
 ): Promise<Order> => {
+  // Pre-validate stock availability in local store
+  const currentProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+  for (const item of items) {
+    const liveProd = currentProducts.find((p) => p.id === item.product_id);
+    if (liveProd && liveProd.stock_quantity < item.quantity) {
+      throw new Error(`ขออภัยค่ะ สินค้า "${item.product.name}" มีจำนวนคงเหลือไม่เพียงพอ (เหลือ ${liveProd.stock_quantity} ชิ้น)`);
+    }
+  }
+
   const orderId = 'SP-' + Date.now().toString().slice(-8);
 
   const orderItems: OrderItem[] = items.map((item) => ({
@@ -371,8 +380,8 @@ export const placeNewOrder = async (
   }
 
   // Stock deduction in Mock / Local Storage
-  const currentProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
-  const updatedProducts = currentProducts.map((p) => {
+  const liveProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+  const updatedProducts = liveProducts.map((p) => {
     const purchased = items.find((i) => i.product_id === p.id);
     if (purchased) {
       return {
@@ -510,6 +519,24 @@ export const adminUpdateOrderStatus = async (
   }
 
   const orders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  const targetOrder = orders.find((o) => o.id === orderId);
+
+  // If status transitions to cancelled, restore stock for items back into store inventory
+  if (status === 'cancelled' && targetOrder && targetOrder.order_status !== 'cancelled' && targetOrder.items) {
+    const currentProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    const restoredProducts = currentProducts.map((p) => {
+      const returnedItem = targetOrder.items?.find((i) => i.product_id === p.id);
+      if (returnedItem) {
+        return {
+          ...p,
+          stock_quantity: p.stock_quantity + returnedItem.quantity,
+        };
+      }
+      return p;
+    });
+    setStoredData(STORAGE_KEYS.PRODUCTS, restoredProducts);
+  }
+
   const updatedOrders = orders.map((o) => {
     if (o.id === orderId) {
       return {

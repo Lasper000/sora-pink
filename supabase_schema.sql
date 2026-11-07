@@ -50,10 +50,16 @@ CREATE TABLE IF NOT EXISTS public.products (
     discount_price DECIMAL(10, 2) CHECK (discount_price IS NULL OR (discount_price >= 0 AND discount_price < price)),
     stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
     images TEXT[] DEFAULT '{}',
+    rating DECIMAL(2, 1) DEFAULT 5.0,
+    review_count INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Migration safety for existing products table
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS rating DECIMAL(2, 1) DEFAULT 5.0;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 0;
 
 -- ----------------------------------------------------------------------------
 -- 4. ตาราง cart_items (ตะกร้าสินค้าของผู้ใช้)
@@ -184,7 +190,33 @@ CREATE TRIGGER trigger_deduct_stock
     AFTER INSERT ON public.order_items
     FOR EACH ROW EXECUTE FUNCTION public.deduct_product_stock_on_order();
 
--- 3. อัปเดต updated_at อัตโนมัติ
+-- 3. ฟังก์ชันคืนสต็อกสินค้าอัตโนมัติเมื่อคำสั่งซื้อถูกยกเลิก (Restore Stock on Order Cancellation)
+CREATE OR REPLACE FUNCTION public.restore_product_stock_on_order_cancel()
+RETURNS TRIGGER AS $$
+DECLARE
+    item RECORD;
+BEGIN
+    -- ทำงานเมื่อคำสั่งซื้อเปลี่ยนสถานะเป็น 'cancelled' จากสถานะเดิมที่ไม่ใช่ 'cancelled'
+    IF NEW.order_status = 'cancelled' AND (OLD.order_status IS NULL OR OLD.order_status != 'cancelled') THEN
+        FOR item IN SELECT product_id, quantity FROM public.order_items WHERE order_id = NEW.id LOOP
+            IF item.product_id IS NOT NULL THEN
+                UPDATE public.products
+                SET stock_quantity = stock_quantity + item.quantity,
+                    updated_at = NOW()
+                WHERE id = item.product_id;
+            END IF;
+        END LOOP;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trigger_restore_stock_on_cancel ON public.orders;
+CREATE TRIGGER trigger_restore_stock_on_cancel
+    AFTER UPDATE OF order_status ON public.orders
+    FOR EACH ROW EXECUTE FUNCTION public.restore_product_stock_on_order_cancel();
+
+-- 4. อัปเดต updated_at อัตโนมัติ
 CREATE OR REPLACE FUNCTION public.update_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -243,16 +275,16 @@ CREATE POLICY "Users can update own cart items" ON public.cart_items FOR UPDATE 
 CREATE POLICY "Users can delete own cart items" ON public.cart_items FOR DELETE USING (auth.uid() = user_id);
 
 -- --- Orders RLS ---
-CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
-CREATE POLICY "Users can create own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL OR public.is_admin());
+CREATE POLICY "Users can create own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.uid() IS NULL OR user_id IS NULL);
 CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE USING (public.is_admin());
 
 -- --- Order Items RLS ---
 CREATE POLICY "Users can view own order items" ON public.order_items FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR public.is_admin()))
+    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR orders.user_id IS NULL OR public.is_admin()))
 );
 CREATE POLICY "Users can insert own order items" ON public.order_items FOR INSERT WITH CHECK (
-    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR auth.uid() IS NULL OR orders.user_id IS NULL))
 );
 
 -- --- Reviews RLS ---
@@ -266,14 +298,25 @@ CREATE POLICY "Users can view own wishlists" ON public.wishlists FOR SELECT USIN
 CREATE POLICY "Users can insert into own wishlist" ON public.wishlists FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can remove from own wishlist" ON public.wishlists FOR DELETE USING (auth.uid() = user_id);
 
+-- ----------------------------------------------------------------------------
+-- PERFORMANCE INDEXES
+-- ----------------------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category_id);
+CREATE INDEX IF NOT EXISTS idx_products_active ON public.products(is_active);
+CREATE INDEX IF NOT EXISTS idx_orders_user ON public.orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(order_status);
+CREATE INDEX IF NOT EXISTS idx_order_items_order ON public.order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_product ON public.order_items(product_id);
+
 -- ============================================================================
 -- SUPABASE STORAGE CONFIGURATION
 -- ============================================================================
--- หมายเหตุ: สร้างบัคเก็ต 'product-images' และ 'avatars' ในหน้า Supabase Storage
+-- สร้างบัคเก็ต 'product-images', 'avatars' และ 'order-slips' ในหน้า Supabase Storage
 INSERT INTO storage.buckets (id, name, public)
 VALUES 
     ('product-images', 'product-images', true),
-    ('avatars', 'avatars', true)
+    ('avatars', 'avatars', true),
+    ('order-slips', 'order-slips', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Policies สำหรับ Storage
@@ -282,6 +325,13 @@ CREATE POLICY "Admins Upload for product-images" ON storage.objects FOR INSERT W
 
 CREATE POLICY "Public Read for avatars" ON storage.objects FOR SELECT USING (bucket_id = 'avatars');
 CREATE POLICY "Users Upload own avatar" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.uid() IS NOT NULL);
+
+CREATE POLICY "Public Read for order-slips" ON storage.objects FOR SELECT USING (bucket_id = 'order-slips');
+CREATE POLICY "Anyone can upload order-slips" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'order-slips');
+
+-- หมายเหตุสำหรับเจ้าของร้านค้า:
+-- หากต้องการตั้งค่า User ตัวเองให้เป็น Admin ให้รันคำสั่งด้านล่าง (ใส่ Email หรือ User ID ของคุณ):
+-- UPDATE public.profiles SET role = 'admin' WHERE id = 'YOUR_USER_UUID';
 
 -- ============================================================================
 -- SEED DATA (ข้อมูลเริ่มต้นสำหรับทดสอบ)

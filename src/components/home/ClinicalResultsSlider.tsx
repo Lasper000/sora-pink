@@ -325,8 +325,8 @@ export const ClinicalResultsSlider: React.FC = () => {
                 style={{
                   background: sliderPosition >= 90 ? '#E2E8F0' : '#FFFFFF',
                   border: '1px solid #CBD5E1',
-                  borderRadius: '8px',
-                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  padding: '4px 12px',
                   fontSize: '0.78rem',
                   color: '#334155',
                   cursor: 'pointer',
@@ -341,8 +341,8 @@ export const ClinicalResultsSlider: React.FC = () => {
                 style={{
                   background: sliderPosition >= 45 && sliderPosition <= 55 ? '#FFE4E6' : '#FFFFFF',
                   border: '1px solid #FECDD3',
-                  borderRadius: '8px',
-                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  padding: '4px 12px',
                   fontSize: '0.78rem',
                   color: '#BE123C',
                   cursor: 'pointer',
@@ -360,8 +360,8 @@ export const ClinicalResultsSlider: React.FC = () => {
                 style={{
                   background: sliderPosition <= 10 ? '#E0F2FE' : '#FFFFFF',
                   border: '1px solid #BAE6FD',
-                  borderRadius: '8px',
-                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  padding: '4px 12px',
                   fontSize: '0.78rem',
                   color: '#0369A1',
                   cursor: 'pointer',

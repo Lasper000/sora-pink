@@ -506,8 +506,8 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
                     fontSize: '0.72rem',
                     color: '#0284C7',
                     background: '#E0F2FE',
-                    padding: '2px 6px',
-                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
                     fontWeight: 600,
                   }}
                 >

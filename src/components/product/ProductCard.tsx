@@ -283,8 +283,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 style={{
                   background: '#FDF2F4',
                   color: '#8C2E41',
-                  borderRadius: '4px',
-                  padding: '1px 6px',
+                  borderRadius: '9999px',
+                  padding: '1px 8px',
                   fontSize: '0.68rem',
                   fontWeight: 500,
                   letterSpacing: '0.04em',

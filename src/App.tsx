@@ -11,6 +11,7 @@ import { BrandTrustBadges } from './components/home/BrandTrustBadges';
 import { CategoryGrid } from './components/home/CategoryGrid';
 import { FlashSale } from './components/home/FlashSale';
 import { ShopByRoutine } from './components/home/ShopByRoutine';
+import { ClinicalResultsSlider } from './components/home/ClinicalResultsSlider';
 import { CustomerReviewsWall } from './components/home/CustomerReviewsWall';
 import { InstagramCommunityWall } from './components/home/InstagramCommunityWall';
 import { FAQSection } from './components/home/FAQSection';
@@ -431,7 +432,7 @@ const MainStore: React.FC = () => {
                 style={{
                   fontSize: '2.4rem',
                   fontWeight: 600,
-                  color: '#1C1917',
+                  color: '#2C2224',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                   marginBottom: '0.5rem',
@@ -439,7 +440,7 @@ const MainStore: React.FC = () => {
               >
                 The Beauty Collection
               </h2>
-              <p style={{ color: '#78716C', fontSize: '0.95rem', maxWidth: '520px', margin: '0 auto' }}>
+              <p style={{ color: '#706064', fontSize: '0.95rem', maxWidth: '520px', margin: '0 auto' }}>
                 พิถีพิถันในการคัดสรรส่วนผสมระดับเวชสำอาง บริสุทธิ์และอ่อนโยนต่อทุกสภาพผิว
               </p>
 
@@ -608,7 +609,7 @@ const MainStore: React.FC = () => {
                       marginTop: '3.5rem',
                       padding: '2rem 1.5rem',
                       background: '#FFFFFF',
-                      borderRadius: '12px',
+                      borderRadius: '24px',
                       border: '1px solid rgba(222, 83, 119, 0.16)',
                       boxShadow: '0 4px 20px rgba(216, 74, 110, 0.05)',
                       maxWidth: '520px',
@@ -650,11 +651,11 @@ const MainStore: React.FC = () => {
                         onClick={() => setVisibleCount((prev) => prev + 24)}
                         className="btn btn-primary"
                         style={{
-                          borderRadius: '6px',
-                          padding: '0.65rem 1.5rem',
+                          borderRadius: '9999px',
+                          padding: '0.65rem 1.65rem',
                           fontWeight: 600,
                           fontSize: '0.85rem',
-                          letterSpacing: '0.04em',
+                          letterSpacing: '0.02em',
                         }}
                       >
                         โหลดสินค้าเพิ่มเติม (+24 ชิ้น)
@@ -680,16 +681,19 @@ const MainStore: React.FC = () => {
           </div>
         </section>
 
-        {/* 3. Real Customer Reviews & Social Proof Wall */}
+        {/* 3. Clinical Proven Results Interactive Slider */}
+        <ClinicalResultsSlider />
+
+        {/* 4. Real Customer Reviews & Social Proof Wall */}
         <CustomerReviewsWall />
 
-        {/* 4. Instagram / Community Aesthetics Wall */}
+        {/* 5. Instagram / Community Aesthetics Wall */}
         <InstagramCommunityWall
           products={products}
           onSelectProduct={(p) => handleSelectProduct(p)}
         />
 
-        {/* 5. Interactive FAQ Accordion */}
+        {/* 6. Interactive FAQ Accordion */}
         <FAQSection onOpenSkinQuiz={() => setIsSkinQuizOpen(true)} />
       </main>
 

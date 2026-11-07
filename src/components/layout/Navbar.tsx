@@ -181,8 +181,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               background: '#C73D62',
               color: '#FFFFFF',
               border: 'none',
-              borderRadius: '4px',
-              padding: '2px 8px',
+              borderRadius: '9999px',
+              padding: '2px 10px',
               fontSize: '0.7rem',
               fontWeight: 600,
               letterSpacing: '0.04em',
@@ -205,8 +205,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               background: '#FFFFFF',
               color: '#C73D62',
               border: '1px solid rgba(222, 83, 119, 0.25)',
-              borderRadius: '4px',
-              padding: '1px 8px',
+              borderRadius: '9999px',
+              padding: '2px 10px',
               fontSize: '0.7rem',
               fontWeight: 600,
               letterSpacing: '0.04em',
@@ -363,11 +363,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onOpenSkinQuiz}
               className="btn btn-outline btn-sm nav-quiz-btn"
               style={{
-                borderRadius: '6px',
+                borderRadius: '9999px',
                 borderColor: 'rgba(28, 25, 23, 0.15)',
                 background: 'transparent',
                 color: 'var(--text-primary)',
-                padding: '0.35rem 0.85rem',
+                padding: '0.4rem 1rem',
                 fontSize: '0.78rem',
                 fontWeight: 600,
                 letterSpacing: '0.04em',
@@ -1038,15 +1038,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                             ฿{(prod.discount_price || prod.price).toLocaleString()}
                           </span>
                           {prod.stock_quantity <= 0 ? (
-                            <span style={{ fontSize: '0.66rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 5px', borderRadius: '4px', fontWeight: 700, marginLeft: 'auto' }}>
+                            <span style={{ fontSize: '0.66rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 7px', borderRadius: '9999px', fontWeight: 700, marginLeft: 'auto' }}>
                               สินค้าหมด
                             </span>
                           ) : prod.stock_quantity <= 5 ? (
-                            <span style={{ fontSize: '0.66rem', color: '#B45309', background: '#FEF3C7', padding: '1px 5px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                            <span style={{ fontSize: '0.66rem', color: '#B45309', background: '#FEF3C7', padding: '1px 7px', borderRadius: '9999px', fontWeight: 600, marginLeft: 'auto' }}>
                               เหลือ {prod.stock_quantity} ชิ้น
                             </span>
                           ) : (
-                            <span style={{ fontSize: '0.66rem', color: '#059669', background: '#ECFDF5', padding: '1px 5px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
+                            <span style={{ fontSize: '0.66rem', color: '#059669', background: '#ECFDF5', padding: '1px 7px', borderRadius: '9999px', fontWeight: 600, marginLeft: 'auto' }}>
                               คงเหลือ {prod.stock_quantity}
                             </span>
                           )}
@@ -1061,12 +1061,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={scrollToProducts}
                     style={{
                       width: '100%',
-                      padding: '0.5rem',
+                      padding: '0.55rem',
                       marginTop: '0.25rem',
                       border: 'none',
                       background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
                       color: '#BE123C',
-                      borderRadius: '10px',
+                      borderRadius: '9999px',
                       fontSize: '0.78rem',
                       fontWeight: 700,
                       cursor: 'pointer',
