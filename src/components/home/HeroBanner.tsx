@@ -19,57 +19,57 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
 
   const allSlides = [
     {
-      badge: 'HALLOWEEN LIMITED EDITION',
-      title: 'SPOOKY PINK GLOW NIGHT',
-      subtitle: 'อัปเลเวลผิวฉ่ำโกลว์ สวยสะกดรับค่ำคืนฮาโลวีน',
-      desc: 'คอลเลกชันลิมิเต็ดสุดคิ้วท์! ลิปทินท์สีเชอร์รี่ฉ่ำวาว กับมาสก์ฟักทองกู้ผิวหมองคล้ำ ให้ผิวดูสุขภาพดี พิเศษเฉพาะช่วงนี้ ลดสูงสุดถึง 31% ช้อปเลยก่อนหมดน้า',
+      badge: 'HALLOWEEN ATELIER',
+      title: 'Spooky Velvet Glow',
+      subtitle: 'มนต์เสน่ห์ผิวฉ่ำโกลว์ สะกดทุกสายตาในยามค่ำคืน',
+      desc: 'คอลเลกชันลิมิเต็ดเอดิชั่น ลิปทินท์สีเชอร์รี่ฉ่ำวาว กับมาสก์ฟักทองกู้ผิวหมองคล้ำ ให้ผิวดูสุขภาพดีอย่างเป็นธรรมชาติ ลดสูงสุดถึง 31% ตลอดเทศกาล',
       promoCode: 'SPOOKY31',
       promoText: 'ลด 31% เมื่อช้อปครบ ฿600',
-      gradient: 'linear-gradient(135deg, #FFE4E6 0%, #FAF5FF 45%, #E0F2FE 100%)',
+      gradient: 'linear-gradient(135deg, #F9EFF1 0%, #F5EAEF 45%, #EBE7EF 100%)',
       heroImage: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
-      accentColor: '#9333EA',
+      accentColor: '#8C2E41',
       productName: 'Spooky Dew Tint #BloodCherry',
       productPrice: '฿338',
       originalPrice: '฿490',
     },
     {
       badge: 'NEW COLLECTION 2026',
-      title: 'SORA PINK SPRING GLOW',
-      subtitle: 'ผิวโกลว์ใส สุขภาพดี ในสไตล์พาสเทลมินิมอล',
-      desc: 'รวมสกินแคร์และเมคอัพโทนหวานละมุน ฟื้นบำรุงผิวอย่างอ่อนโยนด้วยเซราไมด์เข้มข้นและไฮยา 8 มิติ ให้ผิวดูอิ่มน้ำ สดใสตลอดทั้งวัน',
+      title: 'The Spring Radiance',
+      subtitle: 'นิยามใหม่แห่งผิวฉ่ำโกลว์ สะท้อนความเปล่งประกายแบบธรรมชาติ',
+      desc: 'ผสานคุณค่าจากเซราไมด์บริสุทธิ์และไฮยาลูรอน 8 มิติ ฟื้นบำรุงเกราะปกป้องผิวให้แข็งแรง เนียนนุ่ม อิ่มน้ำ เผยผิวเปล่งปลั่งดุจกลีบดอกไม้แรกแย้ม',
       promoCode: 'SORA50',
       promoText: 'ลดทันที ฿50 เมื่อช้อปครบ ฿500',
-      gradient: 'linear-gradient(135deg, #FFE8EF 0%, #FFF5F8 45%, #E0F4FF 100%)',
+      gradient: 'linear-gradient(135deg, #FAF7F4 0%, #F5EFEB 45%, #EBE5E1 100%)',
       heroImage: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
-      accentColor: '#F43F5E',
+      accentColor: '#8C2E41',
       productName: 'Cloud Hydrating Barrier Serum',
       productPrice: '฿690',
       originalPrice: '฿890',
     },
     {
-      badge: 'BEST SELLER DEAL',
-      title: 'VELVET DEW JELLY TINT',
-      subtitle: 'ปากอวบอิ่ม ฉ่ำวาว สี Sakura Pink ละมุนใจ',
-      desc: 'ลิปทินท์เนื้อเจลลี่สูตรบำรุงล้ำลึก สบายปาก ไม่เหนียวเหนอะหนะ สีสวยชัดติดทนทั้งวัน ให้ลุคปากฉ่ำสุขภาพดีแบบสาวเกาหลี',
+      badge: 'HAUTE BESTSELLER',
+      title: 'Velvet Dew Jelly Tint',
+      subtitle: 'ริมฝีปากอวบอิ่ม ฉ่ำวาว ละมุนละไมในเฉด Sakura Pink',
+      desc: 'ลิปทินท์เนื้อเจลลี่สูตรบำรุงล้ำลึก สบายปาก ไม่เหนียวเหนอะหนะ สีสวยชัดติดทนทั้งวัน มอบฟินิชปากฉ่ำสุขภาพดีดุจสาวเกาหลี',
       promoCode: 'GLOW20',
       promoText: 'รับส่วนลด 20% ทันที',
-      gradient: 'linear-gradient(135deg, #FFF0F3 0%, #FFE6EC 50%, #E6F8FF 100%)',
+      gradient: 'linear-gradient(135deg, #FBF4F6 0%, #F7EAEF 50%, #EFE3E8 100%)',
       heroImage: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=800&q=80',
-      accentColor: '#FB7185',
+      accentColor: '#8C2E41',
       productName: 'Dew Jelly Lip Tint #Sakura',
       productPrice: '฿320',
       originalPrice: '฿450',
     },
     {
-      badge: 'SENSITIVE SKIN SPECIAL',
-      title: 'BLUE CALMING CICA GEL',
-      subtitle: 'ปลอบประโลมผิวแพ้ง่าย คืนความสดชื่นสบายผิว',
-      desc: 'เจลบำรุงเนื้อเย็นสีฟ้าละมุน ผสานสารสกัด Cica เข้มข้น 70% ช่วยลดรอยแดง ปลอบประโลมผิวจากการระคายเคือง เติมความชุ่มชื้นทันทีที่ทา',
+      badge: 'SENSITIVE SKIN BOTANICAL',
+      title: 'Blue Calming Cica Gel',
+      subtitle: 'ปลอบประโลมผิวบอบบางแพ้ง่าย คืนความสดชื่นสู่ผิว',
+      desc: 'เจลบำรุงเนื้อสัมผัสบางเบา ผสานสารสกัด Cica เข้มข้น 70% ปลอบประโลมผิวจากความร้อนและมลภาวะ ลดรอยแดง เติมเต็มความชุ่มชื้นทันทีที่สัมผัส',
       promoCode: 'FREESHIP',
       promoText: 'ส่งฟรีทุกออเดอร์ ไม่มีขั้นต่ำ',
-      gradient: 'linear-gradient(135deg, #E0F4FF 0%, #F0F9FF 50%, #FFE8EF 100%)',
+      gradient: 'linear-gradient(135deg, #F4F8FA 0%, #EBF4F6 50%, #E2EFF2 100%)',
       heroImage: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
-      accentColor: '#0284C7',
+      accentColor: '#166074',
       productName: 'Blue Calming Cica Gel',
       productPrice: '฿420',
       originalPrice: '฿580',
@@ -209,48 +209,50 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '0.4rem',
-                        background: 'rgba(255, 255, 255, 0.88)',
+                        gap: '0.45rem',
+                        background: 'rgba(255, 255, 255, 0.95)',
                         backdropFilter: 'blur(8px)',
-                        padding: '0.35rem 0.95rem',
-                        borderRadius: '9999px',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '4px',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
                         color: slide.accentColor,
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
                         marginBottom: '1rem',
-                        border: '1px solid rgba(255, 255, 255, 0.8)',
+                        border: '1px solid rgba(28, 25, 23, 0.1)',
                       }}
                     >
                       {slide.badge.includes('HALLOWEEN') ? (
-                        <CutePumpkinIcon size={15} />
+                        <CutePumpkinIcon size={14} />
                       ) : (
-                        <Sparkles size={14} className="animate-spin-slow" />
+                        <Sparkles size={12} color="#C5A880" />
                       )}
-                      {slide.badge}
+                      <span>{slide.badge}</span>
                     </div>
 
                     <h1
-                      className="hero-slide-title"
+                      className="hero-slide-title font-serif"
                       style={{
-                        fontSize: 'clamp(2rem, 3.8vw, 3rem)',
-                        fontWeight: 800,
-                        lineHeight: 1.15,
-                        letterSpacing: '-0.5px',
+                        fontSize: 'clamp(2.4rem, 4.4vw, 3.8rem)',
+                        fontWeight: 600,
+                        lineHeight: 1.1,
+                        letterSpacing: '0.01em',
                         marginBottom: '0.6rem',
-                        color: '#1F2937',
+                        color: '#1C1917',
                       }}
                     >
                       {slide.title}
                     </h1>
 
                     <h2
-                      className="hero-slide-subtitle"
+                      className="hero-slide-subtitle font-italic-serif"
                       style={{
-                        fontSize: '1.25rem',
-                        fontWeight: 600,
-                        color: '#4B5563',
-                        marginBottom: '1rem',
+                        fontSize: '1.35rem',
+                        fontWeight: 500,
+                        color: '#8C2E41',
+                        marginBottom: '1.1rem',
+                        letterSpacing: '0.02em',
                       }}
                     >
                       {slide.subtitle}
@@ -259,9 +261,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                     <p
                       className="hero-slide-desc"
                       style={{
-                        fontSize: '0.95rem',
-                        color: '#6B7280',
-                        lineHeight: 1.7,
+                        fontSize: '0.92rem',
+                        color: '#57534E',
+                        lineHeight: 1.75,
                         marginBottom: '1.75rem',
                         maxWidth: '520px',
                       }}
@@ -276,38 +278,37 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        gap: '0.65rem',
-                        background: 'rgba(255, 255, 255, 0.95)',
+                        gap: '0.75rem',
+                        background: '#FFFFFF',
                         padding: '0.35rem 0.5rem 0.35rem 0.85rem',
-                        borderRadius: '9999px',
-                        border: '1.5px solid rgba(255, 141, 168, 0.45)',
-                        marginBottom: '1.25rem',
-                        boxShadow: '0 4px 14px rgba(255, 141, 168, 0.16)',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(28, 25, 23, 0.12)',
+                        marginBottom: '1.5rem',
+                        boxShadow: '0 2px 8px rgba(28, 25, 23, 0.04)',
                         maxWidth: '100%',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, overflow: 'hidden' }}>
-                        <Tag size={15} color="#F43F5E" className="animate-breathe" style={{ flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.82rem', color: '#4B5563', whiteSpace: 'nowrap' }}>
-                          โค้ด: <strong style={{ color: '#E11D48', fontWeight: 800 }}>{slide.promoCode}</strong>
-                          <span className="hero-promo-text-extra" style={{ color: '#6B7280', fontSize: '0.78rem' }}> ({slide.promoText})</span>
+                        <Tag size={14} color="#8C2E41" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.8rem', color: '#57534E', whiteSpace: 'nowrap' }}>
+                          รหัสสิทธิพิเศษ: <strong style={{ color: '#1C1917', fontWeight: 700 }}>{slide.promoCode}</strong>
+                          <span className="hero-promo-text-extra" style={{ color: '#8F8881', fontSize: '0.75rem' }}> ({slide.promoText})</span>
                         </span>
                       </div>
                       <button
                         onClick={() => copyCode(slide.promoCode)}
                         className="hero-copy-btn"
                         style={{
-                          background: 'linear-gradient(135deg, #FFE4E8 0%, #FFD1DC 100%)',
-                          color: '#E11D48',
-                          border: 'none',
-                          padding: '0.25rem 0.65rem',
-                          borderRadius: '9999px',
+                          background: '#FAF5F0',
+                          color: '#8C2E41',
+                          border: '1px solid rgba(140, 46, 65, 0.25)',
+                          padding: '0.22rem 0.65rem',
+                          borderRadius: '4px',
                           fontSize: '0.72rem',
-                          fontWeight: 700,
+                          fontWeight: 600,
                           cursor: 'pointer',
                           whiteSpace: 'nowrap',
                           flexShrink: 0,
-                          boxShadow: '0 2px 6px rgba(225, 29, 72, 0.15)',
                           transition: 'all 0.2s ease',
                         }}
                       >
@@ -318,10 +319,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                     {/* Action Buttons */}
                     <div className="hero-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem' }}>
                       <button onClick={onShopNow} className="btn btn-primary btn-lg hero-btn-shop">
-                        ช้อปเลยตอนนี้ <ArrowRight size={18} />
+                        ค้นพบคอลเลกชัน <ArrowRight size={16} />
                       </button>
                       <button onClick={onOpenSkinQuiz} className="btn btn-outline btn-lg hero-btn-quiz">
-                        <Sparkles size={18} /> ทำแบบประเมินผิว
+                        <Sparkles size={16} color="#C5A880" /> วิเคราะห์ผิวเฉพาะคุณ
                       </button>
                     </div>
                   </div>
@@ -438,7 +439,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
             ))}
           </div>
 
-          {/* Left Arrow Button (Pastel Rose Glassmorphism with Smooth Hover) */}
+          {/* Left Arrow Button (Tailored Minimalist) */}
           <button
             type="button"
             onClick={handlePrev}
@@ -450,38 +451,35 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 60,
-              width: '48px',
-              height: '48px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.92)',
-              backdropFilter: 'blur(12px)',
-              border: '2px solid rgba(255, 209, 220, 0.95)',
-              color: '#E11D48',
+              width: '42px',
+              height: '42px',
+              borderRadius: '6px',
+              background: '#FFFFFF',
+              border: '1px solid rgba(28, 25, 23, 0.12)',
+              color: '#1C1917',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(255, 141, 168, 0.35)',
-              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              boxShadow: '0 4px 12px rgba(28, 25, 23, 0.08)',
+              transition: 'all 0.2s ease',
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.15)';
-              e.currentTarget.style.borderColor = '#F43F5E';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(244, 63, 94, 0.45)';
-              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+              e.currentTarget.style.background = '#FAF5F0';
+              e.currentTarget.style.borderColor = '#1C1917';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(255, 209, 220, 0.95)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 141, 168, 0.35)';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.92)';
+              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.borderColor = 'rgba(28, 25, 23, 0.12)';
             }}
           >
-            <ChevronLeft size={24} strokeWidth={2.75} />
+            <ChevronLeft size={20} strokeWidth={2} />
           </button>
 
-          {/* Right Arrow Button (Pastel Rose Glassmorphism with Smooth Hover) */}
+          {/* Right Arrow Button (Tailored Minimalist) */}
           <button
             type="button"
             onClick={handleNext}
@@ -493,38 +491,35 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 60,
-              width: '48px',
-              height: '48px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.92)',
-              backdropFilter: 'blur(12px)',
-              border: '2px solid rgba(255, 209, 220, 0.95)',
-              color: '#E11D48',
+              width: '42px',
+              height: '42px',
+              borderRadius: '6px',
+              background: '#FFFFFF',
+              border: '1px solid rgba(28, 25, 23, 0.12)',
+              color: '#1C1917',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(255, 141, 168, 0.35)',
-              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              boxShadow: '0 4px 12px rgba(28, 25, 23, 0.08)',
+              transition: 'all 0.2s ease',
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.15)';
-              e.currentTarget.style.borderColor = '#F43F5E';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(244, 63, 94, 0.45)';
-              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+              e.currentTarget.style.background = '#FAF5F0';
+              e.currentTarget.style.borderColor = '#1C1917';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-              e.currentTarget.style.borderColor = 'rgba(255, 209, 220, 0.95)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(255, 141, 168, 0.35)';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.92)';
+              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.borderColor = 'rgba(28, 25, 23, 0.12)';
             }}
           >
-            <ChevronRight size={24} strokeWidth={2.75} />
+            <ChevronRight size={20} strokeWidth={2} />
           </button>
 
-          {/* Dots Indicator with Floating Glass Pill */}
+          {/* Dots Indicator with Minimalist Lookbook Counter */}
           <div
             className="hero-dots-container"
             style={{
@@ -534,14 +529,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem',
+              gap: '0.5rem',
               zIndex: 50,
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(8px)',
-              padding: '4px 10px',
-              borderRadius: '9999px',
-              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.9)',
+              background: '#FFFFFF',
+              padding: '4px 12px',
+              borderRadius: '6px',
+              boxShadow: '0 2px 8px rgba(28, 25, 23, 0.06)',
+              border: '1px solid rgba(28, 25, 23, 0.1)',
             }}
           >
             {/* Mobile mini prev button */}
@@ -555,13 +549,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                 border: 'none',
                 padding: '0 4px',
                 cursor: 'pointer',
-                color: '#E11D48',
+                color: '#1C1917',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
               aria-label="Previous slide"
             >
-              <ChevronLeft size={16} strokeWidth={2.75} />
+              <ChevronLeft size={16} strokeWidth={2} />
             </button>
 
             {slides.map((_, idx) => (
@@ -574,13 +568,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                 }}
                 aria-label={`Go to slide ${idx + 1}`}
                 style={{
-                  width: currentSlide === idx ? '28px' : '8px',
-                  height: '8px',
-                  borderRadius: '9999px',
+                  width: currentSlide === idx ? '24px' : '6px',
+                  height: '6px',
+                  borderRadius: '3px',
                   border: 'none',
-                  background: currentSlide === idx ? 'linear-gradient(90deg, #FF6B8B 0%, #F43F5E 100%)' : 'rgba(0, 0, 0, 0.16)',
+                  background: currentSlide === idx ? '#1C1917' : 'rgba(28, 25, 23, 0.2)',
                   cursor: 'pointer',
-                  transition: 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'all 0.3s ease',
                   padding: 0,
                 }}
               />

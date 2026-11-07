@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check } from 'lucide-react';
+import { ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check } from 'lucide-react';
 import { showToast } from '../common/Toast';
 
 interface FooterProps {
@@ -21,102 +21,111 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   return (
     <footer
       style={{
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF5F8 50%, #F0F9FF 100%)',
-        borderTop: '1px solid rgba(255, 209, 220, 0.4)',
-        marginTop: '5rem',
-        paddingTop: '3.5rem',
-        paddingBottom: '2rem',
+        background: '#161413',
+        color: '#FAF8F5',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        marginTop: '6rem',
+        paddingTop: '4.5rem',
+        paddingBottom: '2.5rem',
       }}
     >
       <div className="container">
-        {/* Trust Badges Bar */}
+        {/* Editorial Guarantees Ribbon */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1.5rem',
-            paddingBottom: '3rem',
-            borderBottom: '1px solid rgba(255, 209, 220, 0.5)',
-            marginBottom: '3rem',
+            gap: '2rem',
+            paddingBottom: '3.5rem',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            marginBottom: '3.5rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
-                background: '#FFE8EF',
+                width: 42,
+                height: 42,
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#C5A880',
               }}
             >
-              <ShieldCheck size={24} color="#F43F5E" />
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.95rem' }}>ของแท้ 100% ทุกชิ้น</h5>
-              <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>รับตรงจากแบรนด์ชั้นนำ</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>100% Guaranteed Authentic</h5>
+              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>คัดสรรจากห้องแล็บและแบรนด์ชั้นนำ</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
-                background: '#E0F4FF',
+                width: 42,
+                height: 42,
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#C5A880',
               }}
             >
-              <HeartHandshake size={24} color="#0284C7" />
+              <HeartHandshake size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.95rem' }}>ผ่านการทดสอบโดยแพทย์ผิวหนัง</h5>
-              <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>อ่อนโยน ปลอดภัย ไม่ระคายเคือง</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Dermatologist Tested</h5>
+              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>ปลอดภัยสำหรับผิวบอบบางแพ้ง่าย</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
-                background: '#FFE8EF',
+                width: 42,
+                height: 42,
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#C5A880',
               }}
             >
-              <Truck size={24} color="#F43F5E" />
+              <Truck size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.95rem' }}>จัดส่งด่วนทั่วประเทศ</h5>
-              <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>ฟรีค่าส่งเมื่อช้อปครบ ฿500</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Complimentary Delivery</h5>
+              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>จัดส่งด่วนพิเศษฟรีเมื่อช้อปครบ ฿500</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 48,
-                height: 48,
-                borderRadius: '50%',
-                background: '#E0F4FF',
+                width: 42,
+                height: 42,
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#C5A880',
               }}
             >
-              <RotateCcw size={24} color="#0284C7" />
+              <RotateCcw size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.95rem' }}>การันตีความพึงพอใจ</h5>
-              <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>เปลี่ยนคืนสินค้าได้ใน 7 วัน</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Satisfaction Promise</h5>
+              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>การันตีเปลี่ยนสินค้าภายใน 7 วัน</p>
             </div>
           </div>
         </div>
@@ -125,95 +134,178 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '2.5rem',
-            marginBottom: '3rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '3rem',
+            marginBottom: '3.5rem',
           }}
         >
           {/* Brand Info */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+          <div style={{ gridColumn: 'span 1' }}>
+            <div style={{ marginBottom: '1.25rem' }}>
               <div
+                className="font-serif"
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #FFD1DC 0%, #BFEFFF 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Sparkles size={16} color="#F43F5E" />
-              </div>
-              <span
-                style={{
-                  fontSize: '1.25rem',
-                  fontWeight: 800,
-                  background: 'linear-gradient(135deg, #E11D48 0%, #0284C7 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  fontSize: '1.6rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  color: '#FAF8F5',
+                  textTransform: 'uppercase',
+                  lineHeight: 1,
+                  marginBottom: '0.4rem',
                 }}
               >
                 SORA PINK
-              </span>
+              </div>
+              <div
+                style={{
+                  fontSize: '0.65rem',
+                  letterSpacing: '0.22em',
+                  color: '#C5A880',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                }}
+              >
+                Atelier de Beauté • Seoul & Bangkok
+              </div>
             </div>
-            <p style={{ fontSize: '0.88rem', color: '#6B7280', lineHeight: 1.7, marginBottom: '1rem' }}>
-              ศูนย์รวมเครื่องสำอาง สกินแคร์ดูแลผิวหน้า และผลิตภัณฑ์ดูแลผิวกายแบบครบวงจร
-              คัดสรรสูตรอ่อนโยน ผสานความงามแบบ Modern Pastel Minimalist เพื่อผิวฉ่ำโกลว์อย่างเป็นธรรมชาติ
+            <p style={{ fontSize: '0.85rem', color: '#A8A29E', lineHeight: 1.8, marginBottom: '1.25rem' }}>
+              ห้องปฏิบัติการแห่งความงามที่หลอมรวมศิลปะชั้นสูงเข้ากับนวัตกรรมชีววิทยาผิวพรรณ รังสรรค์ผลิตภัณฑ์เพื่อผิวสว่างกระจ่างใสอย่างยั่งยืน
             </p>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <span className="badge badge-pink" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Sparkles size={11} color="#E11D48" /> Cruelty-Free (ไม่ทดลองในสัตว์)
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '3px 9px',
+                  borderRadius: '4px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: '#C5A880',
+                  fontSize: '0.68rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Cruelty-Free
               </span>
-              <span className="badge badge-blue" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <ShieldCheck size={11} color="#0284C7" /> Dermatologist Tested
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '3px 9px',
+                  borderRadius: '4px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: '#C5A880',
+                  fontSize: '0.68rem',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Clean Formulation
               </span>
             </div>
           </div>
 
           {/* Categories */}
           <div>
-            <h5 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '1rem' }}>หมวดหมู่สินค้า</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.88rem', color: '#6B7280' }}>
-              <li><a href="#categories" style={{ transition: 'color 0.2s' }}>เครื่องสำอาง (Cosmetics)</a></li>
-              <li><a href="#categories">ดูแลผิวหน้า (Facial Skincare)</a></li>
-              <li><a href="#categories">ดูแลผิวกาย (Body & Personal Care)</a></li>
-              <li><a href="#categories">ดูแลเส้นผม (Hair & Scalp Care)</a></li>
-              <li><a href="#flash-sale" style={{ color: '#E11D48', fontWeight: 600 }}>สินค้าลดราคาพิเศษ (Flash Sale)</a></li>
+            <h5
+              style={{
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#FAF8F5',
+                marginBottom: '1.25rem',
+              }}
+            >
+              Collections
+            </h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#A8A29E' }}>
+              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none', transition: 'color 0.2s' }}>เมคอัพและเครื่องสำอาง (Cosmetics)</a></li>
+              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>สกินแคร์ดูแลผิวหน้า (Facial Care)</a></li>
+              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>ผลิตภัณฑ์บำรุงผิวกาย (Body Curation)</a></li>
+              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>ทรีตเมนต์เส้นผม (Hair Rituals)</a></li>
+              <li><a href="#flash-sale" style={{ color: '#C5A880', textDecoration: 'none', fontWeight: 600 }}>ข้อเสนอพิเศษ (Private Offers)</a></li>
             </ul>
           </div>
 
           {/* Customer Care */}
           <div>
-            <h5 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '1rem' }}>บริการลูกค้า</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.88rem', color: '#6B7280' }}>
-              <li>ติดตามสถานะพัสดุ (Order Tracking)</li>
-              <li>นโยบายการจัดส่งและเปลี่ยนสินค้า</li>
-              <li>คู่มือการดูแลผิวตามสภาพผิว</li>
-              <li>ติดต่อฝ่ายบริการลูกค้า (09:00 - 20:00 น.)</li>
-              <li>คำถามที่พบบ่อย (FAQs)</li>
+            <h5
+              style={{
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#FAF8F5',
+                marginBottom: '1.25rem',
+              }}
+            >
+              Concierge Service
+            </h5>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#A8A29E' }}>
+              <li>ติดตามสถานะคำสั่งซื้อ (Order Tracking)</li>
+              <li>เงื่อนไขการจัดส่งและเปลี่ยนคืน</li>
+              <li>คำปรึกษาการเลือกสกินแคร์เฉพาะบุคคล</li>
+              <li>ฝ่ายบริการลูกค้า (09:00 - 20:00 น.)</li>
+              <li>คำถามที่พบบ่อย (Client Inquiries)</li>
             </ul>
           </div>
 
           {/* Newsletter Box */}
           <div>
-            <h5 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.5rem' }}>รับส่วนลดพิเศษ ฿100</h5>
-            <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1rem' }}>
-              สมัครรับจดหมายข่าวความงาม เทคนิคการแต่งหน้า และรับคูปองส่วนลดทันที
+            <h5
+              style={{
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#FAF8F5',
+                marginBottom: '0.5rem',
+              }}
+            >
+              The Atelier Gazette
+            </h5>
+            <p style={{ fontSize: '0.82rem', color: '#A8A29E', marginBottom: '1.15rem', lineHeight: 1.6 }}>
+              รับสิทธิพิเศษ ข่าวสารการเปิดตัวคอลเลกชันใหม่ และโค้ดส่วนลด ฿100 สำหรับคำสั่งซื้อแรก
             </p>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.4rem' }}>
               <input
                 type="email"
                 required
-                placeholder="กรอกอีเมลของคุณ..."
+                placeholder="อีเมลของคุณ..."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
-                style={{ fontSize: '0.88rem', borderRadius: '9999px', padding: '0.6rem 1rem' }}
+                style={{
+                  fontSize: '0.82rem',
+                  borderRadius: '6px',
+                  padding: '0.65rem 0.95rem',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#FAF8F5',
+                  outline: 'none',
+                  flex: 1,
+                }}
               />
-              <button type="submit" className="btn btn-primary btn-sm" style={{ padding: '0.6rem 1rem' }}>
-                {subscribed ? <Check size={16} /> : <Send size={16} />}
+              <button
+                type="submit"
+                style={{
+                  padding: '0.65rem 1rem',
+                  borderRadius: '6px',
+                  background: '#C5A880',
+                  color: '#161413',
+                  border: 'none',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {subscribed ? <Check size={16} /> : <Send size={15} />}
               </button>
             </form>
           </div>
@@ -222,53 +314,54 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         {/* Bottom copyright & payment methods */}
         <div
           style={{
-            borderTop: '1px solid rgba(255, 209, 220, 0.4)',
-            paddingTop: '1.5rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '1.75rem',
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '1rem',
-            fontSize: '0.82rem',
-            color: '#9CA3AF',
+            gap: '1.25rem',
+            fontSize: '0.78rem',
+            color: '#78716C',
           }}
         >
           <div>
-            © 2026 SORA PINK Co., Ltd. All rights reserved. ออกแบบและพัฒนาด้วยความใส่ใจเพื่อคุณ
+            © 2026 SORA PINK ATELIER. ALL RIGHTS RESERVED.
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#CBD5E1',
-                  fontSize: '0.78rem',
+                  color: '#57534E',
+                  fontSize: '0.75rem',
                   cursor: 'pointer',
-                  marginLeft: '8px',
+                  marginLeft: '10px',
                   padding: 0,
                   transition: 'color 0.2s',
+                  letterSpacing: '0.04em',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#F43F5E')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#CBD5E1')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#C5A880')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#57534E')}
                 title="เข้าสู่ระบบจัดการร้านค้าสำหรับเจ้าหน้าที่"
               >
-                • จัดการร้านค้า
+                • ร้านค้าและคลังสินค้า (Admin)
               </button>
             )}
           </div>
-          <div className="footer-payment-methods" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <span>ช่องทางชำระเงินที่รองรับ:</span>
-            <span style={{ background: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #E5E7EB', fontWeight: 600, color: '#003D79' }}>
+          <div className="footer-payment-methods" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <span style={{ letterSpacing: '0.04em' }}>SECURED CHECKOUT:</span>
+            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
               PromptPay QR
             </span>
-            <span style={{ background: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #E5E7EB', fontWeight: 600, color: '#1A1F71' }}>
+            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
               VISA
             </span>
-            <span style={{ background: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #E5E7EB', fontWeight: 600, color: '#EB001B' }}>
+            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
               Mastercard
             </span>
-            <span style={{ background: '#FFFFFF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #E5E7EB', fontWeight: 600, color: '#047857' }}>
-              เก็บเงินปลายทาง COD
+            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
+              COD
             </span>
           </div>
         </div>

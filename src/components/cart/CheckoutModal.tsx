@@ -178,32 +178,33 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
         onClick={(e) => e.stopPropagation()}
         style={{ padding: '2rem' }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', borderBottom: '1px solid rgba(28, 25, 23, 0.08)', paddingBottom: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
             <div
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #FFD1DC 0%, #BFEFFF 100%)',
+                width: 40,
+                height: 40,
+                borderRadius: '8px',
+                background: '#1C1917',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#C5A880',
               }}
             >
-              <Package size={20} color="#E11D48" />
+              <Package size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
-                {step === 'form' ? 'ชำระเงินและระบุที่อยู่จัดส่ง' : 'คำสั่งซื้อสำเร็จ!'}
+              <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 600, color: '#1C1917', margin: 0 }}>
+                {step === 'form' ? 'Checkout & Shipping' : 'คำสั่งซื้อสำเร็จ!'}
               </h3>
-              <p style={{ fontSize: '0.82rem', color: '#6B7280' }}>
-                {step === 'form' ? 'ขั้นตอนสุดท้ายเพื่อรับสกินแคร์ที่คุณชื่นชอบ' : 'จัดเตรียมและตัดสต็อกสินค้าเรียบร้อยแล้ว'}
+              <p style={{ fontSize: '0.78rem', color: '#78716C', margin: '2px 0 0 0' }}>
+                {step === 'form' ? 'ขั้นตอนสุดท้ายเพื่อยืนยันคำสั่งซื้อสกินแคร์ที่คุณชื่นชอบ' : 'จัดเตรียมและตัดสต็อกสินค้าเรียบร้อยแล้ว'}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="btn-icon btn-ghost">
-            <X size={20} />
+          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '6px' }}>
+            <X size={18} />
           </button>
         </div>
 
@@ -212,11 +213,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             {!profile && (
               <div
                 style={{
-                  background: 'linear-gradient(135deg, #FFF5F7 0%, #F0F9FF 100%)',
-                  border: '1px solid #FFD1DC',
-                  borderRadius: '12px',
+                  background: '#FAF8F5',
+                  border: '1px solid rgba(197, 168, 128, 0.4)',
+                  borderRadius: '8px',
                   padding: '0.75rem 1rem',
-                  marginBottom: '1.25rem',
+                  marginBottom: '1.5rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -225,8 +226,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles size={16} color="#E11D48" />
-                  <span style={{ fontSize: '0.84rem', color: '#374151' }}>
+                  <Sparkles size={15} color="#8C2E41" />
+                  <span style={{ fontSize: '0.82rem', color: '#57534E' }}>
                     มีบัญชีอยู่แล้ว? <strong>เข้าสู่ระบบด้วย Google หรืออีเมล</strong> เพื่อดึงที่อยู่จัดส่งและสะสมคะแนน
                   </span>
                 </div>
@@ -237,7 +238,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     onOpenAuth?.();
                   }}
                   className="btn btn-sm btn-outline"
-                  style={{ fontSize: '0.78rem', padding: '0.3rem 0.75rem' }}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.85rem', borderRadius: '6px' }}
                 >
                   เข้าสู่ระบบ
                 </button>
@@ -326,8 +327,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
               {/* Right Column: Payment Method & Review */}
               <div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: '#1F2937', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CreditCard size={18} color="#0284C7" /> เลือกช่องทางการชำระเงิน
+                <h4 style={{ fontSize: '0.92rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem', color: '#1C1917', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CreditCard size={16} color="#1C1917" /> เลือกช่องทางการชำระเงิน
                 </h4>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.5rem' }}>
@@ -338,10 +339,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       alignItems: 'center',
                       gap: '0.75rem',
                       padding: '0.85rem',
-                      borderRadius: '14px',
-                      border: paymentMethod === 'promptpay' ? '2px solid #0284C7' : '1px solid #E5E7EB',
-                      background: paymentMethod === 'promptpay' ? '#F0F9FF' : '#FFFFFF',
+                      borderRadius: '8px',
+                      border: paymentMethod === 'promptpay' ? '1.5px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.1)',
+                      background: paymentMethod === 'promptpay' ? '#FAF8F5' : '#FFFFFF',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     <input
@@ -350,13 +352,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       value="promptpay"
                       checked={paymentMethod === 'promptpay'}
                       onChange={() => setPaymentMethod('promptpay')}
-                      style={{ accentColor: '#0284C7' }}
+                      style={{ accentColor: '#1C1917' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: '#0369A1', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <QrCode size={18} /> พร้อมเพย์ (PromptPay QR) - แนะนำ
+                      <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1C1917', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <QrCode size={16} color="#8C2E41" /> พร้อมเพย์ (PromptPay QR) - แนะนำ
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>
+                      <div style={{ fontSize: '0.76rem', color: '#78716C' }}>
                         สแกน QR Code ผ่านแอปธนาคารได้ทุกธนาคาร ยอดเงินเข้าทันที
                       </div>
                     </div>
@@ -369,10 +371,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       alignItems: 'center',
                       gap: '0.75rem',
                       padding: '0.85rem',
-                      borderRadius: '14px',
-                      border: paymentMethod === 'credit_card' ? '2px solid #F43F5E' : '1px solid #E5E7EB',
-                      background: paymentMethod === 'credit_card' ? '#FFF5F8' : '#FFFFFF',
+                      borderRadius: '8px',
+                      border: paymentMethod === 'credit_card' ? '1.5px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.1)',
+                      background: paymentMethod === 'credit_card' ? '#FAF8F5' : '#FFFFFF',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     <input
@@ -381,13 +384,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       value="credit_card"
                       checked={paymentMethod === 'credit_card'}
                       onChange={() => setPaymentMethod('credit_card')}
-                      style={{ accentColor: '#F43F5E' }}
+                      style={{ accentColor: '#1C1917' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: '#BE123C', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <CreditCard size={18} /> บัตรเครดิต / เดบิต (VISA / Mastercard)
+                      <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1C1917', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <CreditCard size={16} /> บัตรเครดิต / เดบิต (VISA / Mastercard)
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>
+                      <div style={{ fontSize: '0.76rem', color: '#78716C' }}>
                         ปลอดภัยด้วยระบบ 3D Secure ป้องกันการโจรกรรมข้อมูล
                       </div>
                     </div>
@@ -400,10 +403,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       alignItems: 'center',
                       gap: '0.75rem',
                       padding: '0.85rem',
-                      borderRadius: '14px',
-                      border: paymentMethod === 'cod' ? '2px solid #10B981' : '1px solid #E5E7EB',
-                      background: paymentMethod === 'cod' ? '#ECFDF5' : '#FFFFFF',
+                      borderRadius: '8px',
+                      border: paymentMethod === 'cod' ? '1.5px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.1)',
+                      background: paymentMethod === 'cod' ? '#FAF8F5' : '#FFFFFF',
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     <input
@@ -412,13 +416,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       value="cod"
                       checked={paymentMethod === 'cod'}
                       onChange={() => setPaymentMethod('cod')}
-                      style={{ accentColor: '#10B981' }}
+                      style={{ accentColor: '#1C1917' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: '#065F46', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Truck size={18} /> ชำระเงินปลายทาง (COD)
+                      <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#1C1917', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Truck size={16} /> ชำระเงินปลายทาง (COD)
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>
+                      <div style={{ fontSize: '0.76rem', color: '#78716C' }}>
                         ชำระเงินสดกับเจ้าหน้าที่จัดส่งพัสดุเมื่อได้รับของ
                       </div>
                     </div>
@@ -429,12 +433,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 {paymentMethod === 'promptpay' && (
                   <div
                     style={{
-                      background: 'linear-gradient(180deg, #F0F9FF 0%, #FFFFFF 100%)',
-                      border: '2px solid #38BDF8',
-                      borderRadius: '16px',
+                      background: '#FAF8F5',
+                      border: '1px solid rgba(28, 25, 23, 0.12)',
+                      borderRadius: '10px',
                       padding: '1.25rem',
                       marginBottom: '1.25rem',
-                      boxShadow: '0 4px 16px rgba(2, 132, 199, 0.08)',
+                      boxShadow: '0 2px 10px rgba(28, 25, 23, 0.03)',
                     }}
                   >
                     {/* PromptPay Header */}
@@ -444,20 +448,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                           style={{
                             background: '#003D79',
                             color: '#FFFFFF',
-                            padding: '4px 10px',
-                            borderRadius: '6px',
-                            fontWeight: 800,
-                            fontSize: '0.78rem',
+                            padding: '3px 8px',
+                            borderRadius: '4px',
+                            fontWeight: 700,
+                            fontSize: '0.75rem',
                             letterSpacing: '0.5px',
                           }}
                         >
                           PROMPTPAY
                         </div>
-                        <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0369A1' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1C1917' }}>
                           สแกนจ่ายผ่าน QR Code
                         </span>
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#0284C7', background: '#E0F2FE', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                      <span style={{ fontSize: '0.7rem', color: '#57534E', background: 'rgba(28, 25, 23, 0.06)', padding: '2px 7px', borderRadius: '4px', fontWeight: 600 }}>
                         ฟรีค่าธรรมเนียม
                       </span>
                     </div>
@@ -469,18 +473,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                           width: '180px',
                           height: '180px',
                           background: '#FFFFFF',
-                          border: '3px solid #003D79',
-                          borderRadius: '16px',
+                          border: '1px solid rgba(28, 25, 23, 0.15)',
+                          borderRadius: '8px',
                           margin: '0 auto',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           padding: '10px',
-                          boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
+                          boxShadow: '0 4px 12px rgba(28, 25, 23, 0.06)',
                         }}
                       >
                         {isGeneratingQr ? (
-                          <div style={{ fontSize: '0.82rem', color: '#6B7280' }}>กำลังสร้าง QR Code...</div>
+                          <div style={{ fontSize: '0.82rem', color: '#78716C' }}>กำลังสร้าง QR Code...</div>
                         ) : qrDataUrl ? (
                           <img
                             src={qrDataUrl}
@@ -493,13 +497,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       </div>
 
                       {/* PromptPay Details */}
-                      <div style={{ marginTop: '0.75rem' }}>
-                        <div style={{ fontSize: '0.88rem', color: '#1F2937', fontWeight: 700 }}>
-                          ชื่อบัญชี: <span style={{ color: '#0369A1' }}>{PROMPTPAY_NAME}</span>
+                      <div style={{ marginTop: '0.85rem' }}>
+                        <div style={{ fontSize: '0.85rem', color: '#1C1917', fontWeight: 600 }}>
+                          ชื่อบัญชี: <span>{PROMPTPAY_NAME}</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
-                          <span style={{ fontSize: '0.9rem', color: '#4B5563' }}>
-                            เบอร์พร้อมเพย์: <strong style={{ color: '#0F172A', fontSize: '1rem' }}>{PROMPTPAY_PHONE_FORMATTED}</strong>
+                          <span style={{ fontSize: '0.88rem', color: '#57534E' }}>
+                            เบอร์พร้อมเพย์: <strong style={{ color: '#1C1917', fontSize: '0.98rem' }}>{PROMPTPAY_PHONE_FORMATTED}</strong>
                           </span>
                           <button
                             type="button"
@@ -508,20 +512,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                             style={{
                               padding: '2px 8px',
                               fontSize: '0.72rem',
-                              borderColor: '#38BDF8',
-                              color: '#0284C7',
+                              borderRadius: '4px',
+                              borderColor: 'rgba(28, 25, 23, 0.2)',
+                              color: '#1C1917',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
                             }}
                           >
-                            {copiedPhone ? <Check size={12} color="#059669" /> : <Copy size={12} />}
+                            {copiedPhone ? <Check size={12} color="#8C2E41" /> : <Copy size={12} />}
                             {copiedPhone ? 'คัดลอกแล้ว' : 'คัดลอกเบอร์'}
                           </button>
                         </div>
-                        <div style={{ fontSize: '0.95rem', color: '#1F2937', marginTop: '6px' }}>
+                        <div style={{ fontSize: '0.92rem', color: '#1C1917', marginTop: '6px' }}>
                           ยอดเงินที่ต้องโอน:{' '}
-                          <strong style={{ color: '#E11D48', fontSize: '1.25rem', fontWeight: 800 }}>
+                          <strong style={{ color: '#1C1917', fontSize: '1.25rem', fontWeight: 700 }}>
                             ฿{grandTotal.toLocaleString()}
                           </strong>
                         </div>
@@ -532,22 +537,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     <div
                       style={{
                         background: '#FFFFFF',
-                        border: slipImage ? '1.5px solid #10B981' : '1.5px dashed #0284C7',
-                        borderRadius: '12px',
-                        padding: '0.9rem',
+                        border: slipImage ? '1px solid #1C1917' : '1px dashed rgba(28, 25, 23, 0.25)',
+                        borderRadius: '8px',
+                        padding: '1rem',
                         textAlign: 'center',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                        <label style={{ fontSize: '0.84rem', fontWeight: 700, color: '#1F2937', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Upload size={15} color="#0284C7" /> แนบสลิปหลักฐานการโอนเงิน *
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                        <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1C1917', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Upload size={14} color="#8C2E41" /> แนบสลิปหลักฐานการโอนเงิน *
                         </label>
                         {slipImage ? (
-                          <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <span style={{ fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', background: '#1C1917', color: '#FAF8F5', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                             <Check size={11} /> แนบสลิปแล้ว
                           </span>
                         ) : (
-                          <span className="badge badge-warning" style={{ background: '#FEF3C7', color: '#B45309' }}>
+                          <span style={{ fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', background: 'rgba(140, 46, 65, 0.08)', color: '#8C2E41', fontWeight: 600 }}>
                             จำเป็นต้องแนบสลิป
                           </span>
                         )}
@@ -563,18 +568,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                               alignItems: 'center',
                               justifyContent: 'center',
                               padding: '1rem',
-                              background: '#F8FAFC',
-                              borderRadius: '10px',
-                              border: '1px dashed #CBD5E1',
+                              background: '#FAF8F5',
+                              borderRadius: '6px',
+                              border: '1px dashed rgba(28, 25, 23, 0.15)',
                               cursor: 'pointer',
                               transition: 'all 0.2s',
                             }}
                           >
-                            <ImageIcon size={28} color="#0284C7" style={{ marginBottom: '6px' }} />
-                            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0369A1' }}>
+                            <ImageIcon size={24} color="#78716C" style={{ marginBottom: '6px' }} />
+                            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1C1917' }}>
                               คลิกที่นี่เพื่ออัปโหลดรูปสลิป
                             </span>
-                            <span style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>
+                            <span style={{ fontSize: '0.72rem', color: '#A8A29E', marginTop: '2px' }}>
                               รองรับไฟล์รูปภาพ JPG, PNG, WEBP (ไม่เกิน 10MB)
                             </span>
                           </label>
@@ -594,21 +599,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                               alignItems: 'center',
                               gap: '0.75rem',
                               padding: '0.65rem',
-                              background: '#F0FDF4',
-                              borderRadius: '10px',
-                              border: '1px solid #BBF7D0',
+                              background: '#FAF8F5',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(28, 25, 23, 0.1)',
                             }}
                           >
                             <img
                               src={slipImage}
                               alt="สลิปที่แนบ"
-                              style={{ width: '55px', height: '55px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #86EFAC' }}
+                              style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px', border: '1px solid rgba(28, 25, 23, 0.1)' }}
                             />
                             <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
-                              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#166534', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#1C1917', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {slipFileName || 'slip-transfer.jpg'}
                               </div>
-                              <div style={{ fontSize: '0.74rem', color: '#15803D' }}>
+                              <div style={{ fontSize: '0.74rem', color: '#78716C' }}>
                                 พร้อมส่งให้แอดมินตรวจสอบยอดเงิน
                               </div>
                             </div>
@@ -619,15 +624,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                                 setSlipFileName('');
                               }}
                               className="btn btn-ghost btn-sm"
-                              style={{ color: '#EF4444', padding: '0.35rem 0.6rem', fontSize: '0.75rem' }}
+                              style={{ color: '#8C2E41', padding: '0.35rem 0.6rem', fontSize: '0.75rem' }}
                               title="ลบสลิปเพื่อเลือกใหม่"
                             >
-                              <Trash2 size={14} /> ลบ
+                              <Trash2 size={13} /> ลบ
                             </button>
                           </div>
                         </div>
                       )}
-                      <div style={{ fontSize: '0.72rem', color: '#6B7280', marginTop: '0.5rem', textAlign: 'left' }}>
+                      <div style={{ fontSize: '0.72rem', color: '#78716C', marginTop: '0.5rem', textAlign: 'left' }}>
                         * หลังจากส่งสลิปแล้ว แอดมินจะตรวจสอบยอดเงินและกดยืนยันออเดอร์ก่อนจัดส่งสินค้าค่ะ
                       </div>
                     </div>
@@ -637,40 +642,41 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 {/* Order Total Box */}
                 <div
                   style={{
-                    background: '#FFF5F8',
-                    padding: '1rem',
-                    borderRadius: '16px',
-                    border: '1px solid #FFE4E6',
+                    background: '#FAF8F5',
+                    padding: '1.15rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(28, 25, 23, 0.08)',
                     marginBottom: '1.25rem',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: '#4B5563', marginBottom: '0.3rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#78716C', marginBottom: '0.35rem' }}>
                     <span>ยอดรวมสินค้า ({cart.length} รายการ)</span>
-                    <span>฿{subtotal.toLocaleString()}</span>
+                    <span style={{ color: '#1C1917', fontWeight: 500 }}>฿{subtotal.toLocaleString()}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: '#E11D48', fontWeight: 600, marginBottom: '0.3rem' }}>
-                      <span>ส่วนลดโปรโมชั่น</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#8C2E41', fontWeight: 600, marginBottom: '0.35rem' }}>
+                      <span>ส่วนลดสิทธิพิเศษ</span>
                       <span>-฿{discountAmount.toLocaleString()}</span>
                     </div>
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', color: '#4B5563', marginBottom: '0.5rem' }}>
-                    <span>ค่าจัดส่ง</span>
-                    <span>{shippingFee === 0 ? <strong style={{ color: '#059669' }}>ฟรี</strong> : `฿${shippingFee}`}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#78716C', marginBottom: '0.5rem' }}>
+                    <span>ค่าบริการจัดส่ง</span>
+                    <span>{shippingFee === 0 ? <strong style={{ color: '#1C1917' }}>ฟรี (Complimentary)</strong> : `฿${shippingFee}`}</span>
                   </div>
                   <div
                     style={{
-                      borderTop: '1px solid #FED7AA',
-                      paddingTop: '0.5rem',
+                      borderTop: '1px solid rgba(28, 25, 23, 0.08)',
+                      paddingTop: '0.65rem',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      fontSize: '1.2rem',
-                      fontWeight: 800,
-                      color: '#1F2937',
+                      alignItems: 'baseline',
+                      fontSize: '1.1rem',
+                      fontWeight: 700,
+                      color: '#1C1917',
                     }}
                   >
                     <span>ยอดสุทธิ</span>
-                    <span style={{ color: '#E11D48' }}>฿{grandTotal.toLocaleString()}</span>
+                    <span style={{ color: '#1C1917', fontSize: '1.3rem' }}>฿{grandTotal.toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -678,7 +684,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   type="submit"
                   disabled={isSubmitting}
                   className="btn btn-primary"
-                  style={{ width: '100%', padding: '0.9rem', fontSize: '1rem' }}
+                  style={{ width: '100%', padding: '0.85rem', fontSize: '0.92rem', borderRadius: '8px', letterSpacing: '0.04em' }}
                 >
                   {isSubmitting ? 'กำลังบันทึกคำสั่งซื้อ...' : `ยืนยันการสั่งซื้อ (฿${grandTotal.toLocaleString()})`}
                 </button>

@@ -38,16 +38,16 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
   };
 
   return (
-    <section id="flash-sale" style={{ padding: '2rem 0' }}>
+    <section id="flash-sale" style={{ padding: '2.5rem 0' }}>
       <div className="container">
         <div
           className="glass-card flash-sale-main-card"
           style={{
-            background: 'linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 40%, #EBF8FF 100%)',
-            borderRadius: '24px',
-            padding: '2rem',
-            border: '1.5px solid rgba(255, 209, 220, 0.7)',
-            boxShadow: '0 10px 30px rgba(255, 175, 190, 0.2)',
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)',
+            borderRadius: '16px',
+            padding: '2.25rem 2rem',
+            border: '1px solid rgba(28, 25, 23, 0.08)',
+            boxShadow: '0 8px 30px rgba(28, 25, 23, 0.04)',
           }}
         >
           {/* Header with Countdown */}
@@ -58,85 +58,123 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
               flexWrap: 'wrap',
               justifyContent: 'space-between',
               alignItems: 'center',
-              gap: '1rem',
-              marginBottom: '1.75rem',
-              borderBottom: '1px solid rgba(255, 209, 220, 0.4)',
-              paddingBottom: '1.25rem',
+              gap: '1.25rem',
+              marginBottom: '2rem',
+              borderBottom: '1px solid rgba(28, 25, 23, 0.08)',
+              paddingBottom: '1.5rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div
                 style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '14px',
-                  background: 'linear-gradient(135deg, #FF6B8B 0%, #E11D48 100%)',
+                  width: 46,
+                  height: 46,
+                  borderRadius: '10px',
+                  background: '#1C1917',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#fff',
-                  boxShadow: '0 6px 16px rgba(225, 29, 72, 0.4)',
+                  color: '#C5A880',
+                  boxShadow: '0 4px 14px rgba(28, 25, 23, 0.15)',
                 }}
               >
-                <Flame size={26} className="animate-fire" />
+                <Flame size={22} />
               </div>
               <div>
-                <h3 className="flash-sale-title" style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1F2937' }}>
-                  FLASH SALE ดีลเด็ดจำกัดเวลา
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.16em',
+                    textTransform: 'uppercase',
+                    color: 'var(--rose-damask, #8C2E41)',
+                    marginBottom: '0.2rem',
+                  }}
+                >
+                  LIMITED CURATION • PRIVATE OFFER
+                </div>
+                <h3
+                  className="font-serif flash-sale-title"
+                  style={{
+                    fontSize: '1.65rem',
+                    fontWeight: 600,
+                    color: '#1C1917',
+                    letterSpacing: '-0.01em',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Exclusive Flash Drop
                 </h3>
-                <p style={{ fontSize: '0.85rem', color: '#6B7280' }}>
-                  ลดกระหน่ำสูงสุด 40% เฉพาะรอบวันนี้เท่านั้น!
-                </p>
               </div>
             </div>
 
-            {/* Live Timer Boxes */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Clock size={18} color="#E11D48" className="animate-breathe" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4B5563' }}>สิ้นสุดใน:</span>
-              <div style={{ display: 'flex', gap: '0.35rem' }}>
+            {/* Live Timer Boxes - Editorial Horology Style */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                background: '#FFFFFF',
+                padding: '0.5rem 0.85rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(28, 25, 23, 0.08)',
+              }}
+            >
+              <Clock size={16} color="#8C2E41" />
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: '#57534E',
+                }}
+              >
+                Time Remaining
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <span
                   style={{
-                    background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    padding: '4px 8px',
-                    fontWeight: 800,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 2px 8px rgba(225, 29, 72, 0.35)',
-                    minWidth: '32px',
+                    background: '#1C1917',
+                    color: '#FAF8F5',
+                    borderRadius: '4px',
+                    padding: '3px 7px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    fontFamily: 'monospace',
+                    minWidth: '28px',
                     textAlign: 'center',
                   }}
                 >
                   {String(timeLeft.hours).padStart(2, '0')}
                 </span>
-                <span style={{ fontWeight: 800, color: '#E11D48', animation: 'softBreathe 1s infinite' }}>:</span>
+                <span style={{ fontWeight: 700, color: '#C5A880' }}>:</span>
                 <span
                   style={{
-                    background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    padding: '4px 8px',
-                    fontWeight: 800,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 2px 8px rgba(225, 29, 72, 0.35)',
-                    minWidth: '32px',
+                    background: '#1C1917',
+                    color: '#FAF8F5',
+                    borderRadius: '4px',
+                    padding: '3px 7px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    fontFamily: 'monospace',
+                    minWidth: '28px',
                     textAlign: 'center',
                   }}
                 >
                   {String(timeLeft.minutes).padStart(2, '0')}
                 </span>
-                <span style={{ fontWeight: 800, color: '#E11D48', animation: 'softBreathe 1s infinite' }}>:</span>
+                <span style={{ fontWeight: 700, color: '#C5A880' }}>:</span>
                 <span
                   style={{
-                    background: 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    padding: '4px 8px',
-                    fontWeight: 800,
-                    fontSize: '0.92rem',
-                    boxShadow: '0 2px 8px rgba(225, 29, 72, 0.35)',
-                    minWidth: '32px',
+                    background: '#8C2E41',
+                    color: '#FFFFFF',
+                    borderRadius: '4px',
+                    padding: '3px 7px',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    fontFamily: 'monospace',
+                    minWidth: '28px',
                     textAlign: 'center',
                   }}
                 >
@@ -161,11 +199,13 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     cursor: 'pointer',
                     background: '#FFFFFF',
-                    borderRadius: '18px',
-                    border: '1px solid rgba(255, 209, 220, 0.5)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(28, 25, 23, 0.08)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    padding: '0.9rem',
+                    transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
                   }}
                 >
                   <div>
@@ -175,10 +215,10 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       style={{
                         position: 'relative',
                         width: '100%',
-                        borderRadius: '14px',
+                        borderRadius: '8px',
                         overflow: 'hidden',
-                        marginBottom: '0.75rem',
-                        background: '#FFF5F8',
+                        marginBottom: '0.85rem',
+                        background: '#FAF7F4',
                       }}
                     >
                       <img
@@ -190,6 +230,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           height: '100%',
                           objectFit: 'cover',
                           filter: product.stock_quantity <= 0 ? 'grayscale(70%) opacity(0.85)' : 'none',
+                          transition: 'transform 0.5s ease',
                         }}
                       />
 
@@ -202,8 +243,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'rgba(15, 23, 42, 0.42)',
-                            backdropFilter: 'blur(2px)',
+                            background: 'rgba(28, 25, 23, 0.6)',
+                            backdropFilter: 'blur(3px)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -213,15 +254,18 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                         >
                           <span
                             style={{
-                              background: '#DC2626',
-                              color: '#FFFFFF',
-                              padding: '4px 10px',
-                              borderRadius: '9999px',
-                              fontSize: '0.72rem',
-                              fontWeight: 800,
+                              background: '#1C1917',
+                              color: '#FAF8F5',
+                              padding: '5px 12px',
+                              borderRadius: '4px',
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              letterSpacing: '0.08em',
+                              textTransform: 'uppercase',
+                              border: '1px solid rgba(255, 255, 255, 0.2)',
                             }}
                           >
-                            สินค้าหมด
+                            สินค้าหมด (Sold Out)
                           </span>
                         </div>
                       )}
@@ -231,12 +275,13 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           position: 'absolute',
                           top: '8px',
                           left: '8px',
-                          background: '#E11D48',
-                          color: '#FFFFFF',
-                          padding: '2px 8px',
-                          borderRadius: '9999px',
-                          fontSize: '0.75rem',
+                          background: '#8C2E41',
+                          color: '#FAF8F5',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          fontSize: '0.7rem',
                           fontWeight: 700,
+                          letterSpacing: '0.04em',
                           zIndex: 3,
                         }}
                       >
@@ -248,7 +293,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       style={{
                         fontSize: '0.92rem',
                         fontWeight: 600,
-                        marginBottom: '0.4rem',
+                        color: '#1C1917',
+                        marginBottom: '0.45rem',
                         lineHeight: 1.4,
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -260,36 +306,35 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                     </h4>
 
                     {/* Stock meter */}
-                    <div style={{ marginBottom: '0.75rem' }}>
+                    <div style={{ marginBottom: '0.85rem' }}>
                       <div
                         style={{
                           display: 'flex',
                           justifyContent: 'space-between',
-                          fontSize: '0.75rem',
-                          color: '#6B7280',
-                          marginBottom: '3px',
+                          fontSize: '0.72rem',
+                          color: '#78716C',
+                          marginBottom: '4px',
                         }}
                       >
                         <span>สต็อกคงเหลือ</span>
-                        <span style={{ fontWeight: 600, color: '#E11D48' }}>
-                          {product.stock_quantity > 0 ? `${product.stock_quantity} ชิ้น` : 'สินค้าหมด'}
+                        <span style={{ fontWeight: 600, color: product.stock_quantity <= 3 ? '#8C2E41' : '#1C1917' }}>
+                          {product.stock_quantity > 0 ? `${product.stock_quantity} ชิ้น` : 'หมดแล้ว'}
                         </span>
                       </div>
                       <div
                         style={{
-                          height: '6px',
-                          borderRadius: '9999px',
-                          background: '#FEE2E2',
+                          height: '4px',
+                          borderRadius: '2px',
+                          background: 'rgba(28, 25, 23, 0.08)',
                           overflow: 'hidden',
                         }}
                       >
                         <div
-                          className="striped-bar"
                           style={{
                             height: '100%',
                             width: `${Math.min(100, Math.max(15, product.stock_quantity * 2))}%`,
-                            background: 'linear-gradient(90deg, #FF8DA8 0%, #E11D48 100%)',
-                            borderRadius: '9999px',
+                            background: product.stock_quantity <= 3 ? '#8C2E41' : '#1C1917',
+                            borderRadius: '2px',
                             transition: 'width 0.5s ease',
                           }}
                         />
@@ -304,18 +349,27 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      paddingTop: '0.5rem',
-                      borderTop: '1px solid #F3F4F6',
+                      paddingTop: '0.65rem',
+                      borderTop: '1px solid rgba(28, 25, 23, 0.06)',
                     }}
                   >
                     <div>
-                      <div className="flash-sale-price" style={{ fontSize: '1.15rem', fontWeight: 800, color: '#E11D48' }}>
+                      <div
+                        className="flash-sale-price"
+                        style={{
+                          fontSize: '1.18rem',
+                          fontWeight: 700,
+                          color: '#1C1917',
+                          fontFamily: 'var(--font-sans)',
+                          letterSpacing: '-0.02em',
+                        }}
+                      >
                         ฿{(product.discount_price || product.price).toLocaleString()}
                       </div>
                       <div
                         style={{
-                          fontSize: '0.78rem',
-                          color: '#9CA3AF',
+                          fontSize: '0.75rem',
+                          color: '#A8A29E',
                           textDecoration: 'line-through',
                         }}
                       >
@@ -327,15 +381,14 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       disabled={product.stock_quantity <= 0}
                       className="btn btn-primary btn-sm flash-sale-add-btn"
                       style={{
-                        padding: '0.45rem 0.75rem',
-                        opacity: product.stock_quantity <= 0 ? 0.6 : 1,
+                        padding: '0.45rem 0.85rem',
+                        opacity: product.stock_quantity <= 0 ? 0.5 : 1,
                         cursor: product.stock_quantity <= 0 ? 'not-allowed' : 'pointer',
-                        background: product.stock_quantity <= 0 ? '#E2E8F0' : undefined,
-                        color: product.stock_quantity <= 0 ? '#64748B' : undefined,
-                        borderColor: product.stock_quantity <= 0 ? '#CBD5E1' : undefined,
+                        fontSize: '0.78rem',
+                        letterSpacing: '0.04em',
                       }}
                     >
-                      <ShoppingBag size={14} /> {product.stock_quantity <= 0 ? 'หมด' : 'เพิ่ม'}
+                      <ShoppingBag size={13} /> {product.stock_quantity <= 0 ? 'หมด' : 'ใส่ตะกร้า'}
                     </button>
                   </div>
                 </div>

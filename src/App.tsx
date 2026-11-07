@@ -410,25 +410,37 @@ const MainStore: React.FC = () => {
         <section id="all-products" style={{ padding: '3rem 0 4rem 0' }}>
           <div className="container">
             {/* Section Header */}
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
               <div
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
-                  color: '#F43F5E',
-                  fontSize: '0.85rem',
+                  gap: '0.5rem',
+                  color: 'var(--rose-damask, #8C2E41)',
+                  fontSize: '0.72rem',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '0.4rem',
+                  letterSpacing: '0.16em',
+                  marginBottom: '0.5rem',
                 }}
               >
-                <Sparkles size={16} /> คอลเลกชันความงามพรีเมียม
+                <Sparkles size={14} /> ATELIER CURATION • CLEAN FORMULAS
               </div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>เลือกสรรสินค้าเพื่อคุณ</h2>
-              <p style={{ color: '#6B7280', fontSize: '0.95rem' }}>
-                ปลอดภัยสำหรับผิวบอบบางแพ้ง่าย พร้อมส่วนผสมคุณภาพสูงที่ผ่านการรับรอง
+              <h2
+                className="font-serif"
+                style={{
+                  fontSize: '2.4rem',
+                  fontWeight: 600,
+                  color: '#1C1917',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.2,
+                  marginBottom: '0.5rem',
+                }}
+              >
+                The Beauty Collection
+              </h2>
+              <p style={{ color: '#78716C', fontSize: '0.95rem', maxWidth: '520px', margin: '0 auto' }}>
+                พิถีพิถันในการคัดสรรส่วนผสมระดับเวชสำอาง บริสุทธิ์และอ่อนโยนต่อทุกสภาพผิว
               </p>
 
               {/* Showcase Sub-tabs: ทั้งหมด, สินค้าขายดี, สินค้ามาใหม่ */}
@@ -438,7 +450,7 @@ const MainStore: React.FC = () => {
                   display: 'flex',
                   justifyContent: 'center',
                   maxWidth: '100%',
-                  marginTop: '1.25rem',
+                  marginTop: '1.75rem',
                   overflowX: 'auto',
                   WebkitOverflowScrolling: 'touch',
                   scrollbarWidth: 'none',
@@ -449,23 +461,31 @@ const MainStore: React.FC = () => {
                   className="showcase-tabs-pill"
                   style={{
                     display: 'inline-flex',
-                    background: 'rgba(255, 255, 255, 0.85)',
+                    background: '#FFFFFF',
                     padding: '4px',
-                    borderRadius: '9999px',
-                    boxShadow: '0 2px 10px rgba(255, 175, 190, 0.2)',
-                    border: '1px solid rgba(255, 209, 220, 0.6)',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 10px rgba(28, 25, 23, 0.04)',
+                    border: '1px solid rgba(28, 25, 23, 0.08)',
                     maxWidth: '100%',
                     overflowX: 'auto',
                     WebkitOverflowScrolling: 'touch',
                     scrollbarWidth: 'none',
                     whiteSpace: 'nowrap',
                     flexShrink: 0,
+                    gap: '2px',
                   }}
                 >
                   <button
                     onClick={() => setShowcaseTab('all')}
                     className={`btn btn-sm ${showcaseTab === 'all' ? 'btn-primary' : 'btn-ghost'}`}
-                    style={{ borderRadius: '9999px', fontSize: '0.85rem', flexShrink: 0 }}
+                    style={{
+                      borderRadius: '6px',
+                      fontSize: '0.82rem',
+                      fontWeight: showcaseTab === 'all' ? 700 : 500,
+                      flexShrink: 0,
+                      letterSpacing: '0.02em',
+                      padding: '0.45rem 1rem',
+                    }}
                   >
                     ทั้งหมด ({products.length})
                   </button>
@@ -473,47 +493,54 @@ const MainStore: React.FC = () => {
                     onClick={() => setShowcaseTab('best_seller')}
                     className={`btn btn-sm ${showcaseTab === 'best_seller' ? 'btn-primary' : 'btn-ghost'}`}
                     style={{
-                      borderRadius: '9999px',
-                      fontSize: '0.85rem',
+                      borderRadius: '6px',
+                      fontSize: '0.82rem',
+                      fontWeight: showcaseTab === 'best_seller' ? 700 : 500,
                       flexShrink: 0,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '5px',
+                      gap: '6px',
+                      letterSpacing: '0.02em',
+                      padding: '0.45rem 1rem',
                     }}
                   >
-                    <Star size={14} fill="#F59E0B" color="#F59E0B" /> สินค้าขายดี
+                    <Star size={13} fill={showcaseTab === 'best_seller' ? '#C5A880' : '#D97706'} color={showcaseTab === 'best_seller' ? '#C5A880' : '#D97706'} /> Best Sellers
                   </button>
                   <button
                     onClick={() => setShowcaseTab('new_arrival')}
                     className={`btn btn-sm ${showcaseTab === 'new_arrival' ? 'btn-primary' : 'btn-ghost'}`}
                     style={{
-                      borderRadius: '9999px',
-                      fontSize: '0.85rem',
+                      borderRadius: '6px',
+                      fontSize: '0.82rem',
+                      fontWeight: showcaseTab === 'new_arrival' ? 700 : 500,
                       flexShrink: 0,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '5px',
+                      gap: '6px',
+                      letterSpacing: '0.02em',
+                      padding: '0.45rem 1rem',
                     }}
                   >
-                    <Sparkles size={14} color="#F43F5E" /> สินค้ามาใหม่
+                    <Sparkles size={13} color={showcaseTab === 'new_arrival' ? '#C5A880' : 'var(--rose-damask, #8C2E41)'} /> New Arrivals
                   </button>
                   {isHalloweenMode && (
                     <button
                       onClick={() => setShowcaseTab('halloween')}
                       className={`btn btn-sm ${showcaseTab === 'halloween' ? 'btn-primary' : 'btn-ghost'}`}
                       style={{
-                        borderRadius: '9999px',
-                        fontSize: '0.85rem',
-                        background: showcaseTab === 'halloween' ? 'linear-gradient(135deg, #A855F7 0%, #EC4899 100%)' : 'transparent',
-                        color: showcaseTab === 'halloween' ? '#fff' : '#7E22CE',
-                        fontWeight: 600,
+                        borderRadius: '6px',
+                        fontSize: '0.82rem',
+                        fontWeight: showcaseTab === 'halloween' ? 700 : 500,
+                        background: showcaseTab === 'halloween' ? '#1C1917' : 'transparent',
+                        color: showcaseTab === 'halloween' ? '#FAF8F5' : '#78716C',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '5px',
+                        gap: '6px',
                         flexShrink: 0,
+                        padding: '0.45rem 1rem',
                       }}
                     >
-                      <CutePumpkinIcon size={15} /> ฮาโลวีน
+                      <CutePumpkinIcon size={14} /> Festive Edition
                     </button>
                   )}
                 </div>
@@ -578,29 +605,30 @@ const MainStore: React.FC = () => {
                   <div
                     style={{
                       textAlign: 'center',
-                      marginTop: '3rem',
+                      marginTop: '3.5rem',
                       padding: '2rem 1.5rem',
-                      background: 'rgba(255, 240, 243, 0.45)',
-                      borderRadius: '24px',
-                      border: '1px solid rgba(255, 209, 220, 0.6)',
-                      maxWidth: '560px',
+                      background: '#FFFFFF',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(28, 25, 23, 0.08)',
+                      boxShadow: '0 4px 20px rgba(28, 25, 23, 0.03)',
+                      maxWidth: '520px',
                       marginLeft: 'auto',
                       marginRight: 'auto',
                     }}
                   >
-                    <div style={{ marginBottom: '0.85rem' }}>
-                      <span style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                        กำลังแสดง <strong>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong>{filteredProducts.length}</strong> รายการ
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#78716C', letterSpacing: '0.04em' }}>
+                        กำลังแสดง <strong style={{ color: '#1C1917' }}>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong style={{ color: '#1C1917' }}>{filteredProducts.length}</strong> รายการ
                       </span>
-                      {/* Progress bar */}
+                      {/* Refined Hairline Progress bar */}
                       <div
                         style={{
-                          height: '6px',
-                          background: 'rgba(0, 0, 0, 0.08)',
-                          borderRadius: '9999px',
+                          height: '3px',
+                          background: 'rgba(28, 25, 23, 0.08)',
+                          borderRadius: '2px',
                           overflow: 'hidden',
-                          marginTop: '0.5rem',
-                          maxWidth: '280px',
+                          marginTop: '0.75rem',
+                          maxWidth: '240px',
                           marginLeft: 'auto',
                           marginRight: 'auto',
                         }}
@@ -609,8 +637,8 @@ const MainStore: React.FC = () => {
                           style={{
                             height: '100%',
                             width: `${(Math.min(visibleCount, filteredProducts.length) / filteredProducts.length) * 100}%`,
-                            background: 'linear-gradient(90deg, #F43F5E 0%, #EC4899 100%)',
-                            borderRadius: '9999px',
+                            background: '#1C1917',
+                            borderRadius: '2px',
                             transition: 'width 0.4s ease',
                           }}
                         />
@@ -622,11 +650,11 @@ const MainStore: React.FC = () => {
                         onClick={() => setVisibleCount((prev) => prev + 24)}
                         className="btn btn-primary"
                         style={{
-                          borderRadius: '9999px',
+                          borderRadius: '6px',
                           padding: '0.65rem 1.5rem',
-                          fontWeight: 700,
-                          fontSize: '0.9rem',
-                          boxShadow: '0 4px 14px rgba(244, 63, 94, 0.3)',
+                          fontWeight: 600,
+                          fontSize: '0.85rem',
+                          letterSpacing: '0.04em',
                         }}
                       >
                         โหลดสินค้าเพิ่มเติม (+24 ชิ้น)
@@ -635,13 +663,14 @@ const MainStore: React.FC = () => {
                         onClick={() => setVisibleCount(filteredProducts.length)}
                         className="btn btn-outline"
                         style={{
-                          borderRadius: '9999px',
+                          borderRadius: '6px',
                           padding: '0.65rem 1.25rem',
                           fontWeight: 600,
-                          fontSize: '0.88rem',
+                          fontSize: '0.85rem',
+                          letterSpacing: '0.04em',
                         }}
                       >
-                        แสดงทั้งหมด ({filteredProducts.length})
+                        แสดงทั้งหมด
                       </button>
                     </div>
                   </div>

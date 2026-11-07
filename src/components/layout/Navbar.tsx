@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectProduct,
 }) => {
   const { profile, role, logout } = useAuth();
-  const { itemCount, subtotal } = useCart();
+  const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { isDark, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -128,16 +128,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         className="top-announcement-bar"
         style={{
           background: isHalloweenMode
-            ? 'linear-gradient(90deg, #FCE7F3 0%, #EDE9FE 50%, #E0F2FE 100%)'
-            : 'linear-gradient(90deg, #FFD1DC 0%, #FFF0F3 50%, #BFEFFF 100%)',
-          padding: '0.35rem 1rem',
-          fontSize: '0.8rem',
+            ? 'linear-gradient(90deg, #2A171B 0%, #1F151C 50%, #151A22 100%)'
+            : isDark
+            ? '#191617'
+            : '#FAF5F0',
+          padding: '0.38rem 1rem',
+          fontSize: '0.74rem',
+          letterSpacing: '0.06em',
           textAlign: 'center',
-          color: '#4B5563',
+          color: isHalloweenMode ? '#F5D0D6' : isDark ? '#C8BFB8' : '#57534E',
+          borderBottom: '1px solid rgba(28, 25, 23, 0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '0.85rem',
+          gap: '1rem',
           flexWrap: 'wrap',
           transition: 'all 0.3s ease',
         }}
@@ -145,21 +149,25 @@ export const Navbar: React.FC<NavbarProps> = ({
         <span>
           {isHalloweenMode ? (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <CutePumpkinIcon size={18} />
+              <CutePumpkinIcon size={16} />
               <span className="announcement-text-desktop">
-                <strong>ต้อนรับฮาโลวีน!</strong> จิ้มกล่องสุ่มรับโค้ดลับ หรือกรอก <strong>SPOOKY31</strong> ลดทันที 31%
+                <strong>HALLOWEEN ATELIER:</strong> สุ่มรับโค้ดพิเศษ หรือกรอก <strong>SPOOKY31</strong> ลดทันที 31%
               </span>
               <span className="announcement-text-mobile" style={{ display: 'none' }}>
-                <strong>ฮาโลวีน!</strong> ลด 31% โค้ด <strong>SPOOKY31</strong>
+                ลด 31% โค้ด <strong>SPOOKY31</strong>
               </span>
             </span>
           ) : (
             <>
-              <span className="announcement-text-desktop" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <Sparkles size={13} color="#F43F5E" /> ต้อนรับฤดูกาลใหม่! ช้อปครบ ฿500 จัดส่งฟรี | กรอกโค้ด <strong>SORA50</strong> ลดทันที ฿50
+              <span className="announcement-text-desktop" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#8C2E41', fontWeight: 600 }}>COMPLIMENTARY SHIPPING</span>
+                <span>•</span>
+                <span>จัดส่งฟรีทุกออเดอร์เมื่อช้อปครบ ฿500</span>
+                <span>•</span>
+                <span>กรอกโค้ด <strong>SORA50</strong> ลดทันที ฿50</span>
               </span>
               <span className="announcement-text-mobile" style={{ display: 'none', alignItems: 'center', gap: '4px' }}>
-                <Sparkles size={12} color="#F43F5E" /> ส่งฟรี ฿500 | โค้ด <strong>SORA50</strong> ลด ฿50
+                ส่งฟรี ฿500+ | โค้ด <strong>SORA50</strong> ลด ฿50
               </span>
             </>
           )}
@@ -170,21 +178,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenTrickOrTreat}
             style={{
-              background: 'linear-gradient(135deg, #FF6B8B 0%, #A855F7 100%)',
-              color: '#FFFFFF',
+              background: '#8C2E41',
+              color: '#FAF8F5',
               border: 'none',
-              borderRadius: '9999px',
-              padding: '2px 10px',
-              fontSize: '0.72rem',
-              fontWeight: 700,
+              borderRadius: '4px',
+              padding: '2px 8px',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '4px',
-              boxShadow: '0 2px 6px rgba(168, 85, 247, 0.3)',
             }}
           >
-            <CutePumpkinIcon size={14} />
+            <CutePumpkinIcon size={13} />
             <span>สุ่มโค้ดลับ</span>
           </button>
         )}
@@ -194,36 +202,36 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onOpenCouponCenter}
             className="desktop-only"
             style={{
-              background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
-              color: '#BE123C',
-              border: '1px solid #FECDD3',
-              borderRadius: '9999px',
-              padding: '2px 9px',
-              fontSize: '0.72rem',
-              fontWeight: 700,
+              background: 'transparent',
+              color: '#8C2E41',
+              border: '1px solid rgba(140, 46, 65, 0.3)',
+              borderRadius: '4px',
+              padding: '1px 8px',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '4px',
-              marginLeft: '6px',
-              boxShadow: '0 2px 6px rgba(225, 29, 72, 0.12)',
+              marginLeft: '4px',
             }}
           >
-            <Ticket size={12} color="#E11D48" />
-            <span>เก็บคูปองส่วนลด</span>
+            <Ticket size={11} color="#8C2E41" />
+            <span>คูปองส่วนลด</span>
           </button>
         )}
       </div>
 
-      <div className="navbar-container" style={{ padding: '0.65rem 1.5rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.25rem', width: '100%' }}>
+      <div className="navbar-container" style={{ padding: '0.75rem 1.75rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', width: '100%' }}>
           {/* Brand Logo */}
           <a
             href="#"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.85rem',
               textDecoration: 'none',
               position: 'relative',
               flexShrink: 0,
@@ -233,39 +241,37 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 width: 38,
                 height: 38,
-                borderRadius: '12px',
-                background: isHalloweenMode
-                  ? 'linear-gradient(135deg, #FFB3C6 0%, #D8B4FE 50%, #BFEFFF 100%)'
-                  : 'linear-gradient(135deg, #FFD1DC 0%, #BFEFFF 100%)',
+                borderRadius: '8px',
+                background: '#1C1917',
+                color: '#FAF8F5',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(255, 175, 190, 0.4)',
+                boxShadow: '0 4px 12px rgba(28, 25, 23, 0.12)',
+                border: '1px solid rgba(197, 168, 128, 0.4)',
                 position: 'relative',
               }}
             >
               {isHalloweenMode ? (
                 <span style={{ display: 'inline-flex', animation: 'pumpkinWiggle 2s infinite ease-in-out' }}>
-                  <CutePumpkinIcon size={22} />
+                  <CutePumpkinIcon size={20} />
                 </span>
               ) : (
-                <Sparkles size={20} color="#F43F5E" />
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, letterSpacing: '0.02em', color: '#FAF8F5' }}>
+                  S
+                </span>
               )}
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span
-                  className="brand-title"
+                  className="brand-title font-serif"
                   style={{
-                    fontSize: '1.45rem',
-                    fontWeight: 800,
-                    letterSpacing: '-0.5px',
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
                     whiteSpace: 'nowrap',
-                    background: isHalloweenMode
-                      ? 'linear-gradient(135deg, #9333EA 0%, #BE123C 50%, #0284C7 100%)'
-                      : 'linear-gradient(135deg, #E11D48 0%, #BE123C 40%, #0284C7 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   SORA PINK
@@ -274,20 +280,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span
                     className="brand-spooky-badge"
                     style={{
-                      fontSize: '0.72rem',
-                      background: '#FDF4FF',
-                      border: '1px solid #E9D5FF',
-                      color: '#9333EA',
-                      padding: '1px 7px',
-                      borderRadius: '9999px',
-                      fontWeight: 700,
+                      fontSize: '0.65rem',
+                      background: '#FDF2F4',
+                      border: '1px solid rgba(140, 46, 65, 0.25)',
+                      color: '#8C2E41',
+                      padding: '1px 6px',
+                      borderRadius: '4px',
+                      fontWeight: 600,
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '3px',
                     }}
                   >
-                    <CuteGhostIcon size={13} />
-                    <span>Spooky</span>
+                    <CuteGhostIcon size={12} />
+                    <span>Édition</span>
                   </span>
                 )}
               </div>
@@ -295,14 +303,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="brand-subtitle"
                 style={{
                   display: 'block',
-                  fontSize: '0.62rem',
-                  letterSpacing: '1.2px',
+                  fontSize: '0.6rem',
+                  letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  color: '#9CA3AF',
+                  color: 'var(--text-muted)',
                   marginTop: '-3px',
+                  fontWeight: 500,
                 }}
               >
-                {isHalloweenMode ? 'Pastel Goth & Beauty Sanctuary' : 'Pastel Beauty Sanctuary'}
+                ATELIER DE BEAUTÉ • SEOUL & BANGKOK
               </span>
             </div>
           </a>
@@ -312,9 +321,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             style={{
               display: 'none',
               alignItems: 'center',
-              gap: '1.5rem',
-              fontSize: '0.92rem',
-              fontWeight: 600,
+              gap: '1.75rem',
+              fontSize: '0.86rem',
+              fontWeight: 500,
+              letterSpacing: '0.04em',
               whiteSpace: 'nowrap',
             }}
             className="desktop-nav"
@@ -322,7 +332,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#categories"
               style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', textDecoration: 'none', whiteSpace: 'nowrap' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#E11D48')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
             >
               หมวดหมู่สินค้า
@@ -330,43 +340,44 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#flash-sale"
               style={{
-                color: '#E11D48',
+                color: '#8C2E41',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '5px',
-                fontWeight: 700,
+                fontWeight: 600,
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
               }}
             >
-              <Flame size={15} color="#E11D48" /> <span>Flash Sale</span>
+              <Flame size={14} color="#8C2E41" /> <span>Flash Drop</span>
             </a>
             <a
               href="#all-products"
               style={{ color: 'var(--text-secondary)', transition: 'color 0.2s', textDecoration: 'none', whiteSpace: 'nowrap' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#E11D48')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
             >
-              สินค้าทั้งหมด
+              คอลเลกชันทั้งหมด
             </a>
             <button
               onClick={onOpenSkinQuiz}
               className="btn btn-outline btn-sm nav-quiz-btn"
               style={{
-                borderRadius: '9999px',
-                borderColor: '#BFEFFF',
-                background: 'rgba(224, 244, 255, 0.55)',
-                color: '#0284C7',
+                borderRadius: '6px',
+                borderColor: 'rgba(28, 25, 23, 0.15)',
+                background: 'transparent',
+                color: 'var(--text-primary)',
                 padding: '0.35rem 0.85rem',
-                fontSize: '0.82rem',
-                fontWeight: 700,
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
                 whiteSpace: 'nowrap',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
+                gap: '5px',
               }}
             >
-              <Sparkles size={14} /> วิเคราะห์สภาพผิว
+              <Sparkles size={13} color="#C5A880" /> วิเคราะห์สภาพผิว
             </button>
           </nav>
 
@@ -384,13 +395,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="desktop-search"
             >
               <Search
-                size={16}
-                color={isSearchFocused ? '#E11D48' : '#9CA3AF'}
+                size={15}
+                color={isSearchFocused ? '#8C2E41' : '#8F8881'}
                 style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', transition: 'color 0.2s' }}
               />
               <input
                 type="text"
-                placeholder="ค้นหาสินค้า, สกินแคร์..."
+                placeholder="ค้นหาสกินแคร์, เซรั่ม, ครีม..."
                 value={searchQuery}
                 onFocus={() => setIsSearchFocused(true)}
                 onChange={(e) => {
@@ -406,18 +417,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="desktop-search-input"
                 style={{
                   width: '100%',
-                  paddingLeft: '2.3rem',
+                  paddingLeft: '2.2rem',
                   paddingRight: searchQuery ? '2rem' : '0.85rem',
                   paddingTop: '0.45rem',
                   paddingBottom: '0.45rem',
-                  borderRadius: '9999px',
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: isSearchFocused ? '1.5px solid #F43F5E' : '1.5px solid rgba(255, 209, 220, 0.8)',
-                  boxShadow: isSearchFocused ? '0 0 0 3px rgba(244, 63, 94, 0.15)' : 'none',
-                  fontSize: '0.84rem',
+                  borderRadius: '6px',
+                  background: isDark ? 'rgba(30, 26, 28, 0.8)' : '#FFFFFF',
+                  border: isSearchFocused ? '1px solid var(--text-primary)' : '1px solid rgba(28, 25, 23, 0.12)',
+                  boxShadow: isSearchFocused ? '0 0 0 2px rgba(140, 46, 65, 0.12)' : 'none',
+                  fontSize: '0.82rem',
                   boxSizing: 'border-box',
                   outline: 'none',
                   transition: 'all 0.25s ease',
+                  color: 'var(--text-primary)',
                 }}
               />
               {searchQuery && (
@@ -454,36 +466,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                     position: 'absolute',
                     top: 'calc(100% + 8px)',
                     right: 0,
-                    width: '360px',
+                    width: '380px',
                     background: '#FFFFFF',
-                    borderRadius: '18px',
-                    boxShadow: '0 18px 45px rgba(0, 0, 0, 0.18), 0 0 20px rgba(255, 141, 168, 0.15)',
-                    border: '1.5px solid rgba(255, 209, 220, 0.85)',
+                    borderRadius: '12px',
+                    boxShadow: '0 20px 45px rgba(28, 25, 23, 0.14)',
+                    border: '1px solid rgba(28, 25, 23, 0.1)',
                     zIndex: 1200,
                     overflow: 'hidden',
-                    padding: '0.65rem',
+                    padding: '0.75rem',
                   }}
                 >
                   <div
                     style={{
                       padding: '0.35rem 0.5rem 0.5rem',
-                      fontSize: '0.76rem',
-                      color: '#6B7280',
+                      fontSize: '0.74rem',
+                      color: 'var(--text-muted)',
                       fontWeight: 600,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      borderBottom: '1px solid #F3F4F6',
+                      borderBottom: '1px solid rgba(28, 25, 23, 0.06)',
                       marginBottom: '0.4rem',
                     }}
                   >
-                    <span>ผลการค้นหา ({searchResults.length} ชิ้น)</span>
+                    <span>ผลการค้นหา ({searchResults.length})</span>
                     {searchResults.length > 0 && (
                       <span
                         onClick={scrollToProducts}
-                        style={{ color: '#E11D48', cursor: 'pointer', fontWeight: 700 }}
+                        style={{ color: '#8C2E41', cursor: 'pointer', fontWeight: 600 }}
                       >
-                        ดูผลลัพธ์ทั้งหมด
+                        ดูทั้งหมด
                       </span>
                     )}
                   </div>
@@ -502,51 +516,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                           style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.65rem',
-                            padding: '0.45rem 0.6rem',
-                            borderRadius: '12px',
+                            gap: '0.75rem',
+                            padding: '0.5rem 0.65rem',
+                            borderRadius: '8px',
                             cursor: 'pointer',
                             transition: 'background 0.15s ease',
                           }}
                           className="search-result-row"
-                          onMouseEnter={(e) => (e.currentTarget.style.background = '#FFF5F8')}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = '#FAF5F0')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                         >
                           <img
                             src={prod.images[0]}
                             alt={prod.name}
                             onError={handleImageError}
-                            style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }}
+                            style={{ width: '42px', height: '42px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0, border: '1px solid rgba(28, 25, 23, 0.08)' }}
                           />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {prod.name}
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#E11D48' }}>
+                              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#8C2E41' }}>
                                 ฿{(prod.discount_price || prod.price).toLocaleString()}
                               </span>
                               {prod.discount_price && (
-                                <span style={{ fontSize: '0.72rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                                <span style={{ fontSize: '0.72rem', color: '#8F8881', textDecoration: 'line-through' }}>
                                   ฿{prod.price.toLocaleString()}
-                                </span>
-                              )}
-                              {prod.stock_quantity <= 0 ? (
-                                <span style={{ fontSize: '0.68rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700, marginLeft: 'auto' }}>
-                                  สินค้าหมด
-                                </span>
-                              ) : prod.stock_quantity <= 5 ? (
-                                <span style={{ fontSize: '0.68rem', color: '#B45309', background: '#FEF3C7', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
-                                  เหลือ {prod.stock_quantity} ชิ้น
-                                </span>
-                              ) : (
-                                <span style={{ fontSize: '0.68rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, marginLeft: 'auto' }}>
-                                  คงเหลือ {prod.stock_quantity}
                                 </span>
                               )}
                             </div>
                           </div>
-                          <ArrowRight size={14} color="#9CA3AF" />
+                          <ArrowRight size={13} color="#8F8881" />
                         </div>
                       ))}
 
@@ -558,12 +559,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                             width: '100%',
                             padding: '0.5rem',
                             marginTop: '0.3rem',
-                            border: 'none',
-                            background: 'linear-gradient(135deg, #FFE4E6 0%, #FFD1DC 100%)',
-                            color: '#BE123C',
-                            borderRadius: '10px',
-                            fontSize: '0.78rem',
-                            fontWeight: 700,
+                            border: '1px solid rgba(28, 25, 23, 0.1)',
+                            background: '#FAF5F0',
+                            color: '#1C1917',
+                            borderRadius: '6px',
+                            fontSize: '0.76rem',
+                            fontWeight: 600,
+                            letterSpacing: '0.04em',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
@@ -571,7 +573,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             gap: '4px',
                           }}
                         >
-                          ดูผลลัพธ์ทั้งหมดในร้าน ({searchResults.length} ชิ้น) <ArrowRight size={13} />
+                          ดูผลลัพธ์ทั้งหมด ({searchResults.length} ชิ้น) <ArrowRight size={12} />
                         </button>
                       )}
                     </div>
@@ -580,7 +582,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <div style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                         ไม่พบสินค้าที่ตรงกับ "{searchQuery}"
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: '4px' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#8F8881', marginTop: '4px' }}>
                         ลองค้นหาด้วยคำอื่น เช่น เซรั่ม, ครีม, ลิป, Cica
                       </div>
                     </div>
@@ -597,9 +599,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
             >
               {isDark ? (
-                <Sun size={20} color="#FDE047" className="animate-spin-slow" />
+                <Sun size={18} color="#C5A880" className="animate-spin-slow" />
               ) : (
-                <Moon size={20} color="#6366F1" />
+                <Moon size={18} color="#57534E" />
               )}
             </button>
 
@@ -610,26 +612,25 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{ position: 'relative' }}
               title="รายการที่ถูกใจ"
             >
-              <Heart size={20} color="#E11D48" />
+              <Heart size={18} color="var(--text-primary)" />
               {wishlistCount > 0 && (
                 <span
                   key={`wishlist-${wishlistCount}`}
                   className="animate-badge-pop"
                   style={{
                     position: 'absolute',
-                    top: '4px',
-                    right: '4px',
-                    background: '#FF8DA8',
+                    top: '3px',
+                    right: '3px',
+                    background: '#8C2E41',
                     color: '#fff',
                     borderRadius: '50%',
-                    width: '18px',
-                    height: '18px',
-                    fontSize: '0.7rem',
+                    width: '16px',
+                    height: '16px',
+                    fontSize: '0.62rem',
                     fontWeight: 700,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 2px 6px rgba(255, 141, 168, 0.4)',
                   }}
                 >
                   {wishlistCount}
@@ -643,34 +644,29 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="btn btn-primary btn-sm cart-btn-main"
               style={{
                 position: 'relative',
-                padding: '0.5rem 0.85rem',
-                gap: '0.4rem',
+                padding: '0.45rem 0.95rem',
+                gap: '0.45rem',
+                borderRadius: '6px',
+                letterSpacing: '0.04em',
               }}
             >
-              <ShoppingBag size={18} />
-              <span style={{ display: 'none' }} className="cart-text">ตะกร้า</span>
-              {itemCount > 0 && (
-                <span
-                  key={`cart-${itemCount}`}
-                  className="animate-badge-pop"
-                  style={{
-                    background: '#FFFFFF',
-                    color: '#E11D48',
-                    borderRadius: '9999px',
-                    padding: '1px 7px',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.12)',
-                  }}
-                >
-                  {itemCount}
-                </span>
-              )}
-              {itemCount > 0 && (
-                <span style={{ fontSize: '0.8rem', opacity: 0.9, display: 'none' }} className="cart-total">
-                  ฿{subtotal.toLocaleString()}
-                </span>
-              )}
+              <ShoppingBag size={16} />
+              <span className="cart-btn-text" style={{ fontSize: '0.82rem' }}>ตะกร้า</span>
+              <span
+                key={`cart-${itemCount}`}
+                className="cart-badge-count animate-badge-pop"
+                style={{
+                  background: '#C5A880',
+                  color: '#1C1917',
+                  borderRadius: '4px',
+                  padding: '1px 5px',
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  marginLeft: '2px',
+                }}
+              >
+                {itemCount}
+              </span>
             </button>
 
             {/* User Account / Login Button */}

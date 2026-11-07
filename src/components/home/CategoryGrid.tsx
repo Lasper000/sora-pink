@@ -17,25 +17,27 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
   return (
     <section id="categories" style={{ padding: '2.5rem 0' }}>
       <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.25rem' }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.4rem',
-              color: '#F43F5E',
-              fontSize: '0.85rem',
-              fontWeight: 700,
+              color: '#8C2E41',
+              fontSize: '0.72rem',
+              fontWeight: 600,
               textTransform: 'uppercase',
-              letterSpacing: '1px',
+              letterSpacing: '0.14em',
               marginBottom: '0.4rem',
             }}
           >
-            <Sparkles size={16} /> หมวดหมู่ความงาม
+            <Sparkles size={13} color="#C5A880" /> คอลเลกชันตามหมวดหมู่
           </div>
-          <h2 style={{ fontSize: '1.85rem', fontWeight: 800 }}>เลือกช้อปตามหมวดหมู่</h2>
-          <p style={{ color: '#6B7280', fontSize: '0.95rem' }}>
-            ตอบโจทย์การดูแลตัวเองตั้งแต่ศีรษะจรดปลายเท้า ด้วยสูตรพรีเมียมอ่อนโยน
+          <h2 className="font-serif" style={{ fontSize: '2.2rem', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.01em' }}>
+            Curated Beauty Collections
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', maxWidth: '520px', margin: '0 auto' }}>
+            ตอบโจทย์การดูแลผิวพรรณตั้งแต่ศีรษะจรดปลายเท้า ด้วยสูตรพรีเมียมอ่อนโยนคัดสรรพิเศษ
           </p>
         </div>
 
@@ -46,16 +48,17 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
               <div
                 key={cat.id}
                 onClick={() => onSelectCategory(isSelected ? '' : cat.id)}
-                className="glass-card category-card-item"
+                className="category-card-item"
                 style={{
                   position: 'relative',
                   overflow: 'hidden',
                   cursor: 'pointer',
-                  borderRadius: '20px',
-                  border: isSelected ? '2px solid #F43F5E' : '1px solid rgba(255, 255, 255, 0.8)',
+                  borderRadius: '12px',
+                  border: isSelected ? '2px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.08)',
                   boxShadow: isSelected
-                    ? '0 12px 28px rgba(244, 63, 94, 0.25)'
-                    : '0 4px 16px rgba(0, 0, 0, 0.06)',
+                    ? '0 12px 28px rgba(28, 25, 23, 0.16)'
+                    : '0 2px 10px rgba(0, 0, 0, 0.04)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 {/* Background image */}
@@ -71,7 +74,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                     objectFit: 'cover',
                     transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.12)')}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 />
 
@@ -81,7 +84,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                     position: 'absolute',
                     inset: 0,
                     background:
-                      'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(20, 20, 30, 0.75) 100%)',
+                      'linear-gradient(180deg, rgba(28, 25, 23, 0.08) 0%, rgba(28, 25, 23, 0.8) 100%)',
                   }}
                 />
 
@@ -101,27 +104,30 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   <span
                     className="category-card-badge"
                     style={{
-                      background: isSelected ? '#F43F5E' : 'rgba(255, 255, 255, 0.25)',
+                      background: isSelected ? '#FAF8F5' : 'rgba(255, 255, 255, 0.2)',
+                      color: isSelected ? '#1C1917' : '#FAF8F5',
                       backdropFilter: 'blur(4px)',
                       padding: '2px 8px',
-                      borderRadius: '9999px',
-                      fontSize: '0.7rem',
+                      borderRadius: '4px',
+                      fontSize: '0.66rem',
                       fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
                       display: 'inline-block',
                       marginBottom: '0.4rem',
                     }}
                   >
-                    {isSelected ? 'กำลังเลือกอยู่' : 'คลิกเพื่อดูสินค้า'}
+                    {isSelected ? 'เลือกอยู่' : 'ดูสินค้า'}
                   </span>
-                  <h3 className="category-card-title" style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.2rem' }}>
+                  <h3 className="category-card-title font-serif" style={{ fontSize: '1.35rem', fontWeight: 600, color: '#FFFFFF', marginBottom: '0.2rem', letterSpacing: '0.01em' }}>
                     {cat.name}
                   </h3>
                   <p
                     className="category-card-desc"
                     style={{
                       fontSize: '0.78rem',
-                      color: 'rgba(255, 255, 255, 0.85)',
-                      lineHeight: 1.4,
+                      color: 'rgba(250, 248, 245, 0.85)',
+                      lineHeight: 1.45,
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',

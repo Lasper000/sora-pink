@@ -29,11 +29,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
   const routines: RoutineSet[] = [
     {
       id: 'morning-glow',
-      title: '☀️ Morning Dew Glow Routine',
-      tagline: '3 ขั้นตอนผิวฉ่ำวาวอิ่มน้ำ พร้อมออกแดดตลอดวัน',
-      badge: 'เซตขายดีอันดับ 1 🔥',
-      icon: <Sun size={20} color="#F59E0B" />,
-      themeColor: '#F59E0B',
+      title: 'Morning Dew Hydration Protocol',
+      tagline: '3 ขั้นตอนผิวฉ่ำวาวอิ่มน้ำ ล็อคความชุ่มชื้นตลอดวัน',
+      badge: 'SIGNATURE PROTOCOL 01',
+      icon: <Sun size={18} color="#C5A880" />,
+      themeColor: '#C5A880',
       discountPercent: 20,
       productIds: [
         'a1000000-0000-0000-0000-000000000001', // Barrier Serum
@@ -44,11 +44,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
     },
     {
       id: 'night-repair',
-      title: '🌙 Deep Night Recovery & Relax',
-      tagline: 'ซ่อมแซมและปลอบประโลมผิวอย่างล้ำลึกยามค่ำคืน',
-      badge: 'กู้ผิวฉ่ำฟูข้ามคืน 💤',
-      icon: <Moon size={20} color="#8B5CF6" />,
-      themeColor: '#8B5CF6',
+      title: 'Cellular Night Recovery Ritual',
+      tagline: 'ฟื้นบำรุงและปลอบประโลมผิวอย่างล้ำลึกยามค่ำคืน',
+      badge: 'OVERNIGHT RECOVERY',
+      icon: <Moon size={18} color="#8C2E41" />,
+      themeColor: '#8C2E41',
       discountPercent: 20,
       productIds: [
         'a1000000-0000-0000-0000-000000000004', // Sleeping Mask / Retinol
@@ -59,11 +59,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
     },
     {
       id: 'pastel-makeup',
-      title: '🌸 Sweet Pastel Daily Glam',
-      tagline: 'คอมโบเมคอัพโทนชมพู สวยละมุน สไตล์เกาหลี',
-      badge: 'ลุคพาสเทลน่ารัก 🍓',
-      icon: <Palette size={20} color="#EC4899" />,
-      themeColor: '#EC4899',
+      title: 'Luminous Velvet Everyday Edit',
+      tagline: 'คอมโบเมคอัพโทนธรรมชาติ สวยละมุน สไตล์คลีนบิวตี้',
+      badge: 'EVERYDAY EDIT',
+      icon: <Palette size={18} color="#1C1917" />,
+      themeColor: '#1C1917',
       discountPercent: 15,
       productIds: [
         'a1000000-0000-0000-0000-000000000008', // Marshmallow Blush
@@ -114,32 +114,42 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
     <section id="shop-by-routine" style={{ padding: '3.5rem 0', position: 'relative' }}>
       <div className="container">
         {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2.25rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.4rem',
-              color: '#F43F5E',
-              fontSize: '0.85rem',
+              color: 'var(--rose-damask, #8C2E41)',
+              fontSize: '0.72rem',
               fontWeight: 700,
               textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '0.35rem',
+              letterSpacing: '0.16em',
+              marginBottom: '0.4rem',
             }}
           >
-            <Sparkles size={16} /> BUNDLE & SAVE BIG
+            <Sparkles size={14} /> ATELIER REGIMENS • SYNERGISTIC CARE
           </div>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-            จับคู่เซตบิวตี้รูทีน <span style={{ color: '#E11D48' }}>คุ้มค่ากว่า</span>
+          <h2
+            className="font-serif"
+            style={{
+              fontSize: '2.3rem',
+              fontWeight: 600,
+              color: '#1C1917',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.2,
+              marginBottom: '0.5rem',
+            }}
+          >
+            Curated Beauty Rituals
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '580px', margin: '0 auto' }}>
-            ดูแลผิวอย่างตรงจุดด้วยสกินแคร์และเมคอัพที่คัดสรรมาให้ทำงานร่วมกันอย่างลงตัว พร้อมรับส่วนลดพิเศษเมื่อซื้อยกเซต
+          <p style={{ color: '#78716C', fontSize: '0.95rem', maxWidth: '560px', margin: '0 auto' }}>
+            ปรนนิบัติผิวแบบองค์รวม ผสานสกินแคร์และเมคอัพที่ทำงานเกื้อหนุนกัน พร้อมสิทธิพิเศษเมื่อเลือกซื้อยกเซต
           </p>
         </div>
 
         {/* Routine Switcher Tabs */}
-        <div className="routine-tabs-container" style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        <div className="routine-tabs-container" style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', marginBottom: '2.25rem', flexWrap: 'wrap' }}>
           {routines.map((routine) => {
             const isActive = routine.id === activeRoutineId;
             return (
@@ -150,29 +160,29 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.6rem',
+                  gap: '0.65rem',
                   padding: '0.65rem 1.25rem',
-                  borderRadius: '9999px',
-                  border: isActive ? `2px solid ${routine.themeColor}` : '1.5px solid var(--border-glass)',
-                  background: isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.65)',
-                  color: isActive ? routine.themeColor : 'var(--text-primary)',
-                  fontWeight: 700,
-                  fontSize: '0.92rem',
+                  borderRadius: '8px',
+                  border: isActive ? '1px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.08)',
+                  background: isActive ? '#1C1917' : '#FFFFFF',
+                  color: isActive ? '#FAF8F5' : '#57534E',
+                  fontWeight: isActive ? 600 : 500,
+                  fontSize: '0.85rem',
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
-                  boxShadow: isActive ? `0 6px 20px -2px rgba(244, 63, 94, 0.25)` : '0 2px 8px rgba(0,0,0,0.03)',
+                  boxShadow: isActive ? '0 4px 14px rgba(28, 25, 23, 0.12)' : 'none',
                 }}
               >
                 {routine.icon}
                 <span>{routine.title}</span>
                 <span
                   style={{
-                    fontSize: '0.72rem',
+                    fontSize: '0.7rem',
                     padding: '0.15rem 0.5rem',
-                    borderRadius: '9999px',
-                    background: isActive ? routine.themeColor : 'rgba(244, 63, 94, 0.12)',
-                    color: isActive ? '#FFFFFF' : '#E11D48',
-                    fontWeight: 800,
+                    borderRadius: '4px',
+                    background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'rgba(140, 46, 65, 0.08)',
+                    color: isActive ? '#FAF8F5' : '#8C2E41',
+                    fontWeight: 700,
                   }}
                 >
                   -{routine.discountPercent}%
@@ -186,36 +196,48 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
         <div
           className="routine-bundle-card glass-card"
           style={{
-            borderRadius: '24px',
-            padding: '2rem',
-            border: '1.5px solid rgba(255, 209, 220, 0.7)',
-            boxShadow: '0 16px 40px rgba(255, 141, 168, 0.12)',
+            borderRadius: '16px',
+            padding: '2.25rem',
+            background: '#FFFFFF',
+            border: '1px solid rgba(28, 25, 23, 0.08)',
+            boxShadow: '0 8px 30px rgba(28, 25, 23, 0.04)',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
           {/* Top Banner Tag */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <span
                 style={{
                   display: 'inline-block',
-                  background: 'linear-gradient(135deg, #FF6B8B 0%, #E11D48 100%)',
-                  color: '#FFFFFF',
-                  padding: '0.3rem 0.85rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  marginBottom: '0.5rem',
-                  boxShadow: '0 4px 12px rgba(225, 29, 72, 0.3)',
+                  background: 'rgba(140, 46, 65, 0.08)',
+                  color: '#8C2E41',
+                  border: '1px solid rgba(140, 46, 65, 0.2)',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '4px',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  marginBottom: '0.65rem',
                 }}
               >
                 {currentRoutine.badge}
               </span>
-              <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              <h3
+                className="font-serif"
+                style={{
+                  fontSize: '1.65rem',
+                  fontWeight: 600,
+                  color: '#1C1917',
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                }}
+              >
                 {currentRoutine.title}
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', margin: '0.25rem 0 0 0' }}>
+              <p style={{ color: '#78716C', fontSize: '0.9rem', margin: '0.35rem 0 0 0' }}>
                 {currentRoutine.tagline}
               </p>
             </div>
@@ -224,16 +246,16 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
             <div
               className="routine-savings-pill"
               style={{
-                background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
-                border: '1px solid #A7F3D0',
-                padding: '0.55rem 1rem',
-                borderRadius: '16px',
+                background: '#FAF8F5',
+                border: '1px solid rgba(197, 168, 128, 0.35)',
+                padding: '0.65rem 1.15rem',
+                borderRadius: '8px',
                 textAlign: 'right',
               }}
             >
-              <div style={{ fontSize: '0.75rem', color: '#047857', fontWeight: 600 }}>ประหยัดทันทีเมื่อซื้อเซตนี้</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#065F46' }}>
-                ลด ฿{savings.toLocaleString()} ({currentRoutine.discountPercent}%)
+              <div style={{ fontSize: '0.72rem', color: '#78716C', fontWeight: 600, letterSpacing: '0.04em' }}>PRIVILEGE SAVINGS</div>
+              <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#1C1917' }}>
+                ประหยัด ฿{savings.toLocaleString()} ({currentRoutine.discountPercent}%)
               </div>
             </div>
           </div>
@@ -246,14 +268,14 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 onClick={() => onSelectProduct(prod)}
                 className="bundle-item-box"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.8)',
-                  borderRadius: '18px',
+                  background: '#FAF8F5',
+                  borderRadius: '10px',
                   padding: '1rem',
-                  border: '1px solid rgba(255, 209, 220, 0.5)',
+                  border: '1px solid rgba(28, 25, 23, 0.06)',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
-                  gap: '0.85rem',
+                  gap: '0.9rem',
                   alignItems: 'center',
                   position: 'relative',
                 }}
@@ -263,17 +285,16 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                     position: 'absolute',
                     top: '8px',
                     left: '8px',
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: '#E11D48',
-                    color: '#FFFFFF',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '4px',
+                    background: '#1C1917',
+                    color: '#FAF8F5',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 2px 6px rgba(225, 29, 72, 0.4)',
                     zIndex: 2,
                   }}
                 >
@@ -284,10 +305,11 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   style={{
                     width: '74px',
                     height: '74px',
-                    borderRadius: '14px',
+                    borderRadius: '8px',
                     overflow: 'hidden',
-                    background: '#F9FAFB',
+                    background: '#FFFFFF',
                     flexShrink: 0,
+                    border: '1px solid rgba(28, 25, 23, 0.05)',
                   }}
                 >
                   <img
@@ -299,12 +321,14 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 </div>
 
                 <div style={{ overflow: 'hidden', flex: 1 }}>
-                  <div style={{ fontSize: '0.72rem', color: '#E11D48', fontWeight: 700 }}>ขั้นตอนที่ {idx + 1}</div>
+                  <div style={{ fontSize: '0.68rem', color: '#8C2E41', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                    STEP 0{idx + 1}
+                  </div>
                   <h5
                     style={{
                       fontSize: '0.88rem',
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      color: '#1C1917',
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
@@ -314,16 +338,16 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                     {prod.name}
                   </h5>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                      ราคาปกติ: <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
+                    <div style={{ fontSize: '0.78rem', color: '#78716C' }}>
+                      <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
                     </div>
                     {prod.stock_quantity <= 0 ? (
-                      <span style={{ fontSize: '0.68rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.68rem', color: '#8C2E41', background: 'rgba(140, 46, 65, 0.08)', padding: '1px 6px', borderRadius: '3px', fontWeight: 700 }}>
                         สินค้าหมด
                       </span>
                     ) : (
-                      <span style={{ fontSize: '0.68rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
-                        เหลือ {prod.stock_quantity} ชิ้น
+                      <span style={{ fontSize: '0.68rem', color: '#57534E', background: 'rgba(28, 25, 23, 0.05)', padding: '1px 6px', borderRadius: '3px', fontWeight: 500 }}>
+                        สต็อก {prod.stock_quantity}
                       </span>
                     )}
                   </div>
@@ -335,35 +359,36 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
           {/* Bottom Action Bar */}
           <div
             style={{
-              marginTop: '1.75rem',
+              marginTop: '2rem',
               paddingTop: '1.5rem',
-              borderTop: '1px solid rgba(255, 209, 220, 0.6)',
+              borderTop: '1px solid rgba(28, 25, 23, 0.08)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               flexWrap: 'wrap',
-              gap: '1rem',
+              gap: '1.25rem',
             }}
           >
             <div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                ราคารวมทั้งเซต 3 ชิ้น (จากปกติ ฿{originalTotalPrice.toLocaleString()})
+              <div style={{ fontSize: '0.78rem', color: '#78716C', letterSpacing: '0.02em' }}>
+                ราคารวมทั้งเซต 3 ชิ้น (จากราคาปกติ ฿{originalTotalPrice.toLocaleString()})
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', flexWrap: 'wrap' }}>
-                <span className="routine-bundle-price" style={{ fontSize: '2rem', fontWeight: 900, color: '#E11D48' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
+                <span className="routine-bundle-price" style={{ fontSize: '2rem', fontWeight: 700, color: '#1C1917', letterSpacing: '-0.02em' }}>
                   ฿{bundlePrice.toLocaleString()}
                 </span>
-                <span style={{ fontSize: '1rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                <span style={{ fontSize: '0.95rem', color: '#A8A29E', textDecoration: 'line-through' }}>
                   ฿{originalTotalPrice.toLocaleString()}
                 </span>
                 <span
                   style={{
-                    fontSize: '0.78rem',
+                    fontSize: '0.75rem',
                     fontWeight: 700,
-                    color: '#059669',
-                    background: '#ECFDF5',
-                    padding: '0.2rem 0.55rem',
-                    borderRadius: '6px',
+                    color: '#8C2E41',
+                    background: 'rgba(140, 46, 65, 0.08)',
+                    padding: '0.25rem 0.6rem',
+                    borderRadius: '4px',
+                    letterSpacing: '0.02em',
                   }}
                 >
                   ประหยัด ฿{savings.toLocaleString()}
@@ -377,22 +402,20 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
               className="btn btn-primary btn-lg bundle-cta-btn"
               style={{
                 padding: '0.85rem 1.85rem',
-                fontSize: '1rem',
-                fontWeight: 700,
+                fontSize: '0.92rem',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.6rem',
-                borderRadius: '16px',
+                gap: '0.65rem',
+                borderRadius: '8px',
                 opacity: hasOutOfStock ? 0.6 : 1,
                 cursor: hasOutOfStock ? 'not-allowed' : 'pointer',
-                background: hasOutOfStock ? '#E2E8F0' : undefined,
-                color: hasOutOfStock ? '#64748B' : undefined,
-                boxShadow: hasOutOfStock ? 'none' : '0 8px 24px rgba(225, 29, 72, 0.35)',
               }}
             >
-              <ShoppingBag size={20} />
-              <span>{hasOutOfStock ? 'มีสินค้าในเซตหมดชั่วคราว' : 'เพิ่มทั้งเซตลงตะกร้า (3 ชิ้น)'}</span>
-              <ArrowRight size={18} />
+              <ShoppingBag size={18} />
+              <span>{hasOutOfStock ? 'มีสินค้าในเซตหมดชั่วคราว' : 'สั่งซื้อทั้งเซต (3 ชิ้น)'}</span>
+              <ArrowRight size={16} />
             </button>
           </div>
         </div>

@@ -49,70 +49,83 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
           className="cart-drawer-header"
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #F3F4F6',
+            borderBottom: '1px solid rgba(28, 25, 23, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'linear-gradient(135deg, #FFF5F8 0%, #FFFFFF 100%)',
+            background: '#FAF8F5',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <ShoppingBag size={20} color="#E11D48" />
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>ตะกร้าสินค้าของคุณ</h3>
-            <span className="badge badge-pink">{itemCount} ชิ้น</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <ShoppingBag size={19} color="#1C1917" />
+            <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 600, color: '#1C1917', margin: 0 }}>
+              Shopping Bag
+            </h3>
+            <span
+              style={{
+                fontSize: '0.72rem',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                background: '#1C1917',
+                color: '#FAF8F5',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+              }}
+            >
+              {itemCount}
+            </span>
           </div>
-          <button onClick={onClose} className="btn-icon btn-ghost">
-            <X size={20} />
+          <button onClick={onClose} className="btn-icon btn-ghost" style={{ borderRadius: '6px' }}>
+            <X size={18} />
           </button>
         </div>
 
-        {/* Tiered Free Gifts Progress Bar */}
-        <div className="cart-drawer-milestones" style={{ padding: '0.85rem 1.5rem', background: '#FFF5F8', borderBottom: '1px solid #FFE4E8' }}>
+        {/* Tiered Free Gifts Progress Bar - Refined Atelier Style */}
+        <div className="cart-drawer-milestones" style={{ padding: '0.85rem 1.5rem', background: '#FFFFFF', borderBottom: '1px solid rgba(28, 25, 23, 0.06)' }}>
           {/* Status Message */}
-          <div style={{ fontSize: '0.82rem', marginBottom: '0.5rem', fontWeight: 600 }}>
+          <div style={{ fontSize: '0.8rem', marginBottom: '0.5rem', fontWeight: 500, color: '#57534E' }}>
             {subtotal < 500 ? (
-              <span style={{ color: '#4B5563' }}>
-                ช้อปเพิ่มอีก <strong style={{ color: '#E11D48' }}>฿{(500 - subtotal).toLocaleString()}</strong> เพื่อรับสิทธิ์ <strong>จัดส่งฟรี! 🚚</strong>
+              <span>
+                ช้อปเพิ่มอีก <strong style={{ color: '#1C1917' }}>฿{(500 - subtotal).toLocaleString()}</strong> เพื่อรับสิทธิ์ <strong>จัดส่งด่วนฟรี</strong>
               </span>
             ) : subtotal < 800 ? (
-              <span style={{ color: '#BE123C' }}>
-                ✨ ส่งฟรีแล้ว! ช้อปเพิ่มอีก <strong>฿{(800 - subtotal).toLocaleString()}</strong> รับฟรี <strong>ฟองน้ำแต่งหน้ามาร์ชแมลโลว์ 🎁</strong>
+              <span style={{ color: '#8C2E41' }}>
+                ✓ จัดส่งฟรีแล้ว • ช้อปเพิ่ม <strong>฿{(800 - subtotal).toLocaleString()}</strong> รับฟองน้ำมาร์ชแมลโลว์
               </span>
             ) : subtotal < 1200 ? (
-              <span style={{ color: '#9D174D' }}>
-                🎁 ได้ฟองน้ำแล้ว! ช้อปเพิ่มอีก <strong>฿{(1200 - subtotal).toLocaleString()}</strong> รับฟรี <strong>กระเป๋าพาสเทลลิมิเต็ด 🌸</strong>
+              <span style={{ color: '#8C2E41' }}>
+                ✓ รับของขวัญแล้ว • ช้อปเพิ่ม <strong>฿{(1200 - subtotal).toLocaleString()}</strong> รับกระเป๋า Atelier Curation
               </span>
             ) : (
-              <span className="animate-breathe" style={{ color: '#059669', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <Sparkles size={15} color="#059669" /> ยินดีด้วยค่ะ! คุณปลดล็อคของแถม VIP และส่งฟรีครบทุกสิทธิ์แล้ว 🎉
+              <span style={{ color: '#1C1917', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <Sparkles size={14} color="#C5A880" /> ยินดีด้วยค่ะ คุณได้รับสิทธิพิเศษและของขวัญครบทุกระดับแล้ว
               </span>
             )}
           </div>
 
-          {/* Progress Bar Container */}
-          <div style={{ position: 'relative', height: '8px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
+          {/* Hairline Progress Bar Container */}
+          <div style={{ position: 'relative', height: '4px', background: 'rgba(28, 25, 23, 0.08)', borderRadius: '2px', overflow: 'hidden' }}>
             <div
-              className="striped-bar"
               style={{
                 height: '100%',
                 width: `${Math.min(100, (subtotal / 1200) * 100)}%`,
-                background: 'linear-gradient(90deg, #FF9BB2 0%, #E11D48 50%, #A855F7 100%)',
-                borderRadius: '9999px',
+                background: '#1C1917',
+                borderRadius: '2px',
                 transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             />
           </div>
 
           {/* Milestones Labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', marginTop: '6px', color: '#64748B', flexWrap: 'wrap', gap: '4px' }}>
-            <span style={{ color: subtotal >= 500 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 500 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 500 ? '✓' : '○'} ส่งฟรี (฿500)
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', marginTop: '6px', color: '#78716C', flexWrap: 'wrap', gap: '4px' }}>
+            <span style={{ color: subtotal >= 500 ? '#1C1917' : '#A8A29E', fontWeight: subtotal >= 500 ? 700 : 500, whiteSpace: 'nowrap' }}>
+              {subtotal >= 500 ? '●' : '○'} ส่งฟรี (฿500)
             </span>
-            <span style={{ color: subtotal >= 800 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 800 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 800 ? '✓' : '○'} ฟองน้ำฟรี (฿800)
+            <span style={{ color: subtotal >= 800 ? '#1C1917' : '#A8A29E', fontWeight: subtotal >= 800 ? 700 : 500, whiteSpace: 'nowrap' }}>
+              {subtotal >= 800 ? '●' : '○'} ฟองน้ำแต่งหน้า (฿800)
             </span>
-            <span style={{ color: subtotal >= 1200 ? '#E11D48' : '#94A3B8', fontWeight: subtotal >= 1200 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 1200 ? '✓' : '○'} กระเป๋าฟรี (฿1,200)
+            <span style={{ color: subtotal >= 1200 ? '#1C1917' : '#A8A29E', fontWeight: subtotal >= 1200 ? 700 : 500, whiteSpace: 'nowrap' }}>
+              {subtotal >= 1200 ? '●' : '○'} กระเป๋า Atelier (฿1,200)
             </span>
           </div>
         </div>
@@ -215,19 +228,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                           </button>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E11D48' }}>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1C1917' }}>
                             ฿{unitPrice.toLocaleString()}
                           </div>
                           {item.product.stock_quantity <= 0 ? (
-                            <span style={{ fontSize: '0.7rem', color: '#DC2626', background: '#FEE2E2', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#8C2E41', background: 'rgba(140, 46, 65, 0.08)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
                               สินค้าหมดสต็อก
                             </span>
                           ) : item.product.stock_quantity <= 5 ? (
-                            <span style={{ fontSize: '0.7rem', color: '#B45309', background: '#FEF3C7', padding: '1px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#8C2E41', background: 'rgba(140, 46, 65, 0.06)', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
                               เหลือ {item.product.stock_quantity} ชิ้น
                             </span>
                           ) : (
-                            <span style={{ fontSize: '0.7rem', color: '#059669', background: '#ECFDF5', padding: '1px 6px', borderRadius: '4px', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.68rem', color: '#57534E', background: 'rgba(28, 25, 23, 0.05)', padding: '2px 6px', borderRadius: '4px', fontWeight: 500 }}>
                               คงเหลือ {item.product.stock_quantity}
                             </span>
                           )}
@@ -235,13 +248,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                       </div>
 
                       {/* Stepper */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.45rem' }}>
                         <div
                           style={{
                             display: 'flex',
                             alignItems: 'center',
-                            background: '#F3F4F6',
-                            borderRadius: '9999px',
+                            background: '#FAF8F5',
+                            border: '1px solid rgba(28, 25, 23, 0.1)',
+                            borderRadius: '6px',
                             padding: '2px',
                           }}
                         >
@@ -250,17 +264,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               width: '24px',
                               height: '24px',
-                              borderRadius: '50%',
+                              borderRadius: '4px',
                               border: 'none',
-                              background: '#fff',
+                              background: '#FFFFFF',
                               cursor: 'pointer',
                               fontSize: '0.85rem',
                               fontWeight: 700,
+                              color: '#1C1917',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                             }}
                           >
                             -
                           </button>
-                          <span style={{ width: '28px', textAlign: 'center', fontSize: '0.82rem', fontWeight: 600 }}>
+                          <span style={{ width: '28px', textAlign: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#1C1917' }}>
                             {item.quantity}
                           </span>
                           <button
@@ -272,18 +288,20 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             style={{
                               width: '24px',
                               height: '24px',
-                              borderRadius: '50%',
+                              borderRadius: '4px',
                               border: 'none',
-                              background: '#fff',
+                              background: '#FFFFFF',
                               cursor: 'pointer',
                               fontSize: '0.85rem',
                               fontWeight: 700,
+                              color: '#1C1917',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                             }}
                           >
                             +
                           </button>
                         </div>
-                        <span style={{ fontSize: '0.82rem', color: '#6B7280' }}>
+                        <span style={{ fontSize: '0.82rem', color: '#78716C', fontWeight: 500 }}>
                           รวม ฿{(unitPrice * item.quantity).toLocaleString()}
                         </span>
                       </div>
@@ -301,34 +319,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
             className="cart-drawer-footer"
             style={{
               padding: '1.25rem 1.5rem',
-              borderTop: '1px solid #E5E7EB',
+              borderTop: '1px solid rgba(28, 25, 23, 0.08)',
               background: '#FFFFFF',
-              boxShadow: '0 -4px 15px rgba(0, 0, 0, 0.04)',
+              boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.04)',
             }}
           >
             {/* Promo Code Input */}
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1.15rem' }}>
               {appliedPromo ? (
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    background: '#ECFDF5',
-                    border: '1px solid #A7F3D0',
-                    padding: '0.45rem 0.75rem',
-                    borderRadius: '10px',
-                    fontSize: '0.82rem',
-                    color: '#065F46',
+                    background: '#FAF8F5',
+                    border: '1px solid rgba(197, 168, 128, 0.4)',
+                    padding: '0.5rem 0.85rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    color: '#1C1917',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Tag size={14} color="#059669" />
-                    <span>ใช้โค้ด: <strong>{appliedPromo.code}</strong> (-฿{discountAmount})</span>
+                    <Tag size={13} color="#8C2E41" />
+                    <span>โค้ด: <strong>{appliedPromo.code}</strong> (-฿{discountAmount})</span>
                   </div>
                   <button
                     onClick={removePromoCode}
-                    style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
+                    style={{ background: 'none', border: 'none', color: '#8C2E41', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600 }}
                   >
                     ยกเลิก
                   </button>
@@ -337,13 +355,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                 <form onSubmit={handleApplyPromo} style={{ display: 'flex', gap: '0.5rem' }}>
                   <input
                     type="text"
-                    placeholder="โค้ดส่วนลด (เช่น SORA50, GLOW20)"
+                    placeholder="โค้ดส่วนลด (เช่น SORA50)"
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '0.85rem', padding: '0.5rem 0.75rem', textTransform: 'uppercase' }}
+                    style={{ fontSize: '0.82rem', padding: '0.5rem 0.85rem', borderRadius: '6px', textTransform: 'uppercase' }}
                   />
-                  <button type="submit" className="btn btn-outline btn-sm">
+                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '6px', fontSize: '0.8rem' }}>
                     ใช้โค้ด
                   </button>
                 </form>
@@ -356,52 +374,53 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#E11D48',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
+                    color: 'var(--rose-damask, #8C2E41)',
+                    fontSize: '0.76rem',
+                    fontWeight: 600,
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    marginTop: '6px',
+                    marginTop: '8px',
                     padding: 0,
                   }}
                 >
-                  <Ticket size={13} /> เลือกคูปองจากกระเป๋าของคุณ ({collectedVouchers.length} ใบ)
+                  <Ticket size={12} /> สิทธิพิเศษและคูปองของฉัน ({collectedVouchers.length} ใบ)
                 </button>
               )}
             </div>
 
             {/* Price Breakdown */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.88rem', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B7280' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#78716C' }}>
                 <span>ยอดรวมสินค้า</span>
-                <span>฿{subtotal.toLocaleString()}</span>
+                <span style={{ color: '#1C1917', fontWeight: 500 }}>฿{subtotal.toLocaleString()}</span>
               </div>
               {discountAmount > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#E11D48', fontWeight: 600 }}>
-                  <span>ส่วนลดคูปอง</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8C2E41', fontWeight: 600 }}>
+                  <span>ส่วนลดพิเศษ</span>
                   <span>-฿{discountAmount.toLocaleString()}</span>
                 </div>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B7280' }}>
-                <span>ค่าจัดส่งพัสดุ</span>
-                <span>{shippingFee === 0 ? <strong style={{ color: '#059669' }}>ฟรี</strong> : `฿${shippingFee}`}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#78716C' }}>
+                <span>บริการจัดส่งด่วน</span>
+                <span>{shippingFee === 0 ? <strong style={{ color: '#1C1917' }}>ฟรี (Complimentary)</strong> : `฿${shippingFee}`}</span>
               </div>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
+                  alignItems: 'baseline',
                   fontSize: '1.15rem',
-                  fontWeight: 800,
-                  color: '#1F2937',
-                  borderTop: '1px solid #F3F4F6',
-                  paddingTop: '0.5rem',
-                  marginTop: '0.25rem',
+                  fontWeight: 700,
+                  color: '#1C1917',
+                  borderTop: '1px solid rgba(28, 25, 23, 0.08)',
+                  paddingTop: '0.65rem',
+                  marginTop: '0.35rem',
                 }}
               >
                 <span>ยอดชำระสุทธิ</span>
-                <span style={{ color: '#E11D48' }}>฿{grandTotal.toLocaleString()}</span>
+                <span style={{ color: '#1C1917', fontSize: '1.35rem' }}>฿{grandTotal.toLocaleString()}</span>
               </div>
             </div>
 
@@ -420,18 +439,20 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
               style={{
                 width: '100%',
                 padding: '0.85rem',
-                fontSize: '0.95rem',
+                fontSize: '0.92rem',
+                borderRadius: '8px',
+                letterSpacing: '0.04em',
                 opacity: hasOutOfStockItem ? 0.6 : 1,
                 cursor: hasOutOfStockItem ? 'not-allowed' : 'pointer',
-                background: hasOutOfStockItem ? '#E2E8F0' : undefined,
-                color: hasOutOfStockItem ? '#64748B' : undefined,
+                background: hasOutOfStockItem ? '#E7E5E4' : undefined,
+                color: hasOutOfStockItem ? '#78716C' : undefined,
               }}
             >
               {hasOutOfStockItem ? (
                 'มีสินค้าหมดในตะกร้า (กรุณานำออกก่อนสั่งซื้อ)'
               ) : (
                 <>
-                  ดำเนินการสั่งซื้อ (Checkout) <ArrowRight size={18} />
+                  ดำเนินการสั่งซื้อ (Checkout) <ArrowRight size={16} />
                 </>
               )}
             </button>
