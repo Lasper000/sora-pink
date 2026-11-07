@@ -21,11 +21,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   return (
     <footer
       style={{
-        background: '#161413',
-        color: '#FAF8F5',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        marginTop: '6rem',
-        paddingTop: '4.5rem',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #FDF5F7 100%)',
+        color: '#2C2224',
+        borderTop: '1px solid rgba(222, 83, 119, 0.15)',
+        marginTop: '5rem',
+        paddingTop: '4rem',
         paddingBottom: '2.5rem',
       }}
     >
@@ -36,96 +36,96 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '2rem',
-            paddingBottom: '3.5rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingBottom: '3rem',
+            borderBottom: '1px solid rgba(222, 83, 119, 0.12)',
             marginBottom: '3.5rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: '#FFF0F4',
+                border: '1px solid #FAD1DC',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#C5A880',
+                color: '#C73D62',
               }}
             >
               <ShieldCheck size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>100% Guaranteed Authentic</h5>
-              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>คัดสรรจากห้องแล็บและแบรนด์ชั้นนำ</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#2C2224', letterSpacing: '0.02em' }}>100% Guaranteed Authentic</h5>
+              <p style={{ fontSize: '0.78rem', color: '#706064' }}>คัดสรรจากห้องแล็บและแบรนด์ชั้นนำ</p>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: '#FFF0F4',
+                border: '1px solid #FAD1DC',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#C5A880',
+                color: '#C73D62',
               }}
             >
               <HeartHandshake size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Dermatologist Tested</h5>
-              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>ปลอดภัยสำหรับผิวบอบบางแพ้ง่าย</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#2C2224', letterSpacing: '0.02em' }}>Dermatologist Tested</h5>
+              <p style={{ fontSize: '0.78rem', color: '#706064' }}>ปลอดภัยสำหรับผิวบอบบางแพ้ง่าย</p>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: '#FFF0F4',
+                border: '1px solid #FAD1DC',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#C5A880',
+                color: '#C73D62',
               }}
             >
               <Truck size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Complimentary Delivery</h5>
-              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>จัดส่งด่วนพิเศษฟรีเมื่อช้อปครบ ฿500</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#2C2224', letterSpacing: '0.02em' }}>Complimentary Delivery</h5>
+              <p style={{ fontSize: '0.78rem', color: '#706064' }}>จัดส่งด่วนพิเศษฟรีเมื่อช้อปครบ ฿500</p>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div
               style={{
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: '#FFF0F4',
+                border: '1px solid #FAD1DC',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#C5A880',
+                color: '#C73D62',
               }}
             >
               <RotateCcw size={20} />
             </div>
             <div>
-              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#FAF8F5', letterSpacing: '0.02em' }}>Satisfaction Promise</h5>
-              <p style={{ fontSize: '0.78rem', color: '#A8A29E' }}>การันตีเปลี่ยนสินค้าภายใน 7 วัน</p>
+              <h5 style={{ fontWeight: 600, fontSize: '0.92rem', color: '#2C2224', letterSpacing: '0.02em' }}>Satisfaction Promise</h5>
+              <p style={{ fontSize: '0.78rem', color: '#706064' }}>การันตีเปลี่ยนสินค้าภายใน 7 วัน</p>
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   fontSize: '1.6rem',
                   fontWeight: 600,
                   letterSpacing: '0.12em',
-                  color: '#FAF8F5',
+                  color: '#2C2224',
                   textTransform: 'uppercase',
                   lineHeight: 1,
                   marginBottom: '0.4rem',
@@ -158,17 +158,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               </div>
               <div
                 style={{
-                  fontSize: '0.65rem',
-                  letterSpacing: '0.22em',
-                  color: '#C5A880',
+                  fontSize: '0.68rem',
+                  letterSpacing: '0.2em',
+                  color: '#C73D62',
                   textTransform: 'uppercase',
-                  fontWeight: 600,
+                  fontWeight: 700,
                 }}
               >
                 Atelier de Beauté • Seoul & Bangkok
               </div>
             </div>
-            <p style={{ fontSize: '0.85rem', color: '#A8A29E', lineHeight: 1.8, marginBottom: '1.25rem' }}>
+            <p style={{ fontSize: '0.85rem', color: '#706064', lineHeight: 1.8, marginBottom: '1.25rem' }}>
               ห้องปฏิบัติการแห่งความงามที่หลอมรวมศิลปะชั้นสูงเข้ากับนวัตกรรมชีววิทยาผิวพรรณ รังสรรค์ผลิตภัณฑ์เพื่อผิวสว่างกระจ่างใสอย่างยั่งยืน
             </p>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -179,12 +179,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   gap: '4px',
                   padding: '3px 9px',
                   borderRadius: '4px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#C5A880',
+                  background: '#FFF0F4',
+                  border: '1px solid #FAD1DC',
+                  color: '#C73D62',
                   fontSize: '0.68rem',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
+                  fontWeight: 600,
                 }}
               >
                 Cruelty-Free
@@ -196,12 +197,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   gap: '4px',
                   padding: '3px 9px',
                   borderRadius: '4px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#C5A880',
+                  background: '#FFF0F4',
+                  border: '1px solid #FAD1DC',
+                  color: '#C73D62',
                   fontSize: '0.68rem',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
+                  fontWeight: 600,
                 }}
               >
                 Clean Formulation
@@ -217,18 +219,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 fontSize: '0.82rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color: '#FAF8F5',
+                color: '#2C2224',
                 marginBottom: '1.25rem',
               }}
             >
               Collections
             </h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#A8A29E' }}>
-              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none', transition: 'color 0.2s' }}>เมคอัพและเครื่องสำอาง (Cosmetics)</a></li>
-              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>สกินแคร์ดูแลผิวหน้า (Facial Care)</a></li>
-              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>ผลิตภัณฑ์บำรุงผิวกาย (Body Curation)</a></li>
-              <li><a href="#categories" style={{ color: '#A8A29E', textDecoration: 'none' }}>ทรีตเมนต์เส้นผม (Hair Rituals)</a></li>
-              <li><a href="#flash-sale" style={{ color: '#C5A880', textDecoration: 'none', fontWeight: 600 }}>ข้อเสนอพิเศษ (Private Offers)</a></li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#706064' }}>
+              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none', transition: 'color 0.2s' }}>เมคอัพและเครื่องสำอาง (Cosmetics)</a></li>
+              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>สกินแคร์ดูแลผิวหน้า (Facial Care)</a></li>
+              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>ผลิตภัณฑ์บำรุงผิวกาย (Body Curation)</a></li>
+              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>ทรีตเมนต์เส้นผม (Hair Rituals)</a></li>
+              <li><a href="#flash-sale" style={{ color: '#C73D62', textDecoration: 'none', fontWeight: 600 }}>ข้อเสนอพิเศษ (Private Offers)</a></li>
             </ul>
           </div>
 
@@ -240,13 +242,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 fontSize: '0.82rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color: '#FAF8F5',
+                color: '#2C2224',
                 marginBottom: '1.25rem',
               }}
             >
               Concierge Service
             </h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#A8A29E' }}>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#706064' }}>
               <li>ติดตามสถานะคำสั่งซื้อ (Order Tracking)</li>
               <li>เงื่อนไขการจัดส่งและเปลี่ยนคืน</li>
               <li>คำปรึกษาการเลือกสกินแคร์เฉพาะบุคคล</li>
@@ -263,13 +265,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 fontSize: '0.82rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color: '#FAF8F5',
+                color: '#2C2224',
                 marginBottom: '0.5rem',
               }}
             >
               The Atelier Gazette
             </h5>
-            <p style={{ fontSize: '0.82rem', color: '#A8A29E', marginBottom: '1.15rem', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.82rem', color: '#706064', marginBottom: '1.15rem', lineHeight: 1.6 }}>
               รับสิทธิพิเศษ ข่าวสารการเปิดตัวคอลเลกชันใหม่ และโค้ดส่วนลด ฿100 สำหรับคำสั่งซื้อแรก
             </p>
             <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.4rem' }}>
@@ -283,9 +285,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   fontSize: '0.82rem',
                   borderRadius: '6px',
                   padding: '0.65rem 0.95rem',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#FAF8F5',
+                  background: '#FFFFFF',
+                  border: '1px solid rgba(222, 83, 119, 0.25)',
+                  color: '#2C2224',
                   outline: 'none',
                   flex: 1,
                 }}
@@ -295,14 +297,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 style={{
                   padding: '0.65rem 1rem',
                   borderRadius: '6px',
-                  background: '#C5A880',
-                  color: '#161413',
+                  background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                  color: '#FFFFFF',
                   border: 'none',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(223, 94, 126, 0.25)',
                 }}
               >
                 {subscribed ? <Check size={16} /> : <Send size={15} />}
@@ -314,7 +317,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         {/* Bottom copyright & payment methods */}
         <div
           style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            borderTop: '1px solid rgba(222, 83, 119, 0.12)',
             paddingTop: '1.75rem',
             display: 'flex',
             flexWrap: 'wrap',
@@ -322,7 +325,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             alignItems: 'center',
             gap: '1.25rem',
             fontSize: '0.78rem',
-            color: '#78716C',
+            color: '#9E8D92',
           }}
         >
           <div>
@@ -333,7 +336,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#57534E',
+                  color: '#9E8D92',
                   fontSize: '0.75rem',
                   cursor: 'pointer',
                   marginLeft: '10px',
@@ -341,8 +344,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   transition: 'color 0.2s',
                   letterSpacing: '0.04em',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#C5A880')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#57534E')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#C73D62')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#9E8D92')}
                 title="เข้าสู่ระบบจัดการร้านค้าสำหรับเจ้าหน้าที่"
               >
                 • ร้านค้าและคลังสินค้า (Admin)
@@ -350,17 +353,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             )}
           </div>
           <div className="footer-payment-methods" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-            <span style={{ letterSpacing: '0.04em' }}>SECURED CHECKOUT:</span>
-            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
+            <span style={{ letterSpacing: '0.04em', color: '#706064', fontWeight: 500 }}>SECURED CHECKOUT:</span>
+            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               PromptPay QR
             </span>
-            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               VISA
             </span>
-            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               Mastercard
             </span>
-            <span style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', fontWeight: 600, color: '#FAF8F5', fontSize: '0.72rem' }}>
+            <span style={{ background: '#FFFFFF', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(222, 83, 119, 0.2)', fontWeight: 600, color: '#C73D62', fontSize: '0.72rem' }}>
               COD
             </span>
           </div>

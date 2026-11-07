@@ -5,34 +5,34 @@
    ========================================================================== */
 
 :root {
-  /* Editorial Luxury Color Palette */
-  --canvas: #FAF8F5;            /* Warm Silk / Ivory Porcelain Canvas */
-  --canvas-subtle: #F5EFEB;     /* Cashmere Stone / Warm Sand */
+  /* Luminous Glazed Porcelain & Petal Silk Palette */
+  --canvas: #FFFDFE;            /* Luminous Pearlescent Silk Canvas */
+  --canvas-subtle: #FDF5F7;     /* Soft Petal Milk */
   --canvas-card: #FFFFFF;       /* Crisp Pure White Surface */
   --surface: #FFFFFF;
-  --surface-glass: rgba(255, 255, 255, 0.92);
-  --surface-glass-card: rgba(255, 255, 255, 0.94);
+  --surface-glass: rgba(255, 255, 255, 0.94);
+  --surface-glass-card: rgba(255, 255, 255, 0.96);
 
-  /* Noir & Charcoal Typography (Deep Espresso, Never Harsh Flat Black) */
-  --text-primary: #1C1917;      /* Rich Deep Espresso Noir */
-  --text-secondary: #57534E;    /* Soft Muted Charcoal */
-  --text-muted: #8F8881;        /* Warm Stone Gray */
-  --text-light: #B8B0A8;
+  /* Soft Velvety Cocoa Typography (Gentle on the eyes, never harsh black) */
+  --text-primary: #2C2224;      /* Soft Deep Cocoa Rose */
+  --text-secondary: #706064;    /* Silky Warm Taupe */
+  --text-muted: #9E8D92;        /* Petal Dust Gray */
+  --text-light: #C4B5BA;
 
-  /* Curated Botanical & Rose Palette */
-  --rose-noir: #2E151B;         /* Deepest Wine/Velvet Noir */
-  --rose-damask: #8C2E41;       /* Haute Velvet Rose */
-  --rose-petal: #B96677;        /* Muted Petal Accent */
-  --rose-blush: #E5B4BE;        /* Soft Cashmere Rose */
-  --rose-mist: #F7EAEF;         /* Sheer Rose Tint */
-  --rose-50: #FFF5F7;
-  --rose-100: #FEE8EC;
+  /* Sophisticated French & Korean Beauty Rose */
+  --rose-primary: #DF5E7E;      /* Luminous Dewy Rose */
+  --rose-damask: #C73D62;       /* Velvety French Rose */
+  --rose-petal: #E47792;        /* Soft Petal Accent */
+  --rose-blush: #FCE8EE;        /* Cashmere Rose Blush */
+  --rose-mist: #FFF5F8;         /* Sheer Dewdrop Mist */
+  --rose-50: #FFF5F8;
+  --rose-100: #FEECEF;
 
   /* Clean Aqua & Calming Botanical */
-  --aqua-noir: #0F2D38;
-  --aqua-deep: #166074;
+  --aqua-noir: #123C47;
+  --aqua-deep: #1F738A;
   --aqua-soft: #85CADB;
-  --aqua-mist: #EFF8FA;
+  --aqua-mist: #F2FAFC;
   --blue-50: #F4FAFC;
   --blue-100: #E6F3F7;
   --blue-200: #CCE8F0;
@@ -40,36 +40,36 @@
   --blue-600: #125A6E;
 
   /* Warm Champagne & Fine Gold Foil */
-  --gold-accent: #C5A880;
-  --gold-champagne: #DFCEB8;
-  --gold-light: #F6F1EA;
+  --gold-accent: #D4A373;
+  --gold-champagne: #E8D3BD;
+  --gold-light: #FAF5EE;
 
   /* Backward Compatibility Variables */
-  --pink-50: #FFF5F7;
-  --pink-100: #FEE8EC;
-  --pink-200: #E5B4BE;
-  --pink-300: #D89AA7;
-  --pink-400: #B96677;
-  --pink-500: #8C2E41;
-  --pink-600: #6D1E30;
+  --pink-50: #FFF5F8;
+  --pink-100: #FEECEF;
+  --pink-200: #FAD1DC;
+  --pink-300: #F5B0C2;
+  --pink-400: #E47792;
+  --pink-500: #DF5E7E;
+  --pink-600: #C73D62;
 
-  --cream-50: #FAF8F5;
-  --cream-100: #F5EFEB;
-  --text-pink: #8C2E41;
-  --text-blue: #166074;
+  --cream-50: #FFFDFE;
+  --cream-100: #FDF5F7;
+  --text-pink: #C73D62;
+  --text-blue: #1F738A;
 
-  /* Architectural Hairline Borders */
-  --border-light: rgba(200, 185, 180, 0.45);
-  --border-hairline: rgba(28, 25, 23, 0.08);
-  --border-gold: rgba(197, 168, 128, 0.4);
-  --border-glass: rgba(255, 255, 255, 0.85);
+  /* Delicate Architectural Hairline Borders */
+  --border-light: rgba(232, 182, 195, 0.45);
+  --border-hairline: rgba(222, 83, 119, 0.12);
+  --border-gold: rgba(212, 163, 115, 0.35);
+  --border-glass: rgba(255, 255, 255, 0.9);
 
-  /* Natural Ambient Shadows (Subtle & Tactile, No Neon Glows) */
-  --shadow-sm: 0 2px 8px -2px rgba(28, 25, 23, 0.04), 0 1px 3px rgba(28, 25, 23, 0.03);
-  --shadow-md: 0 6px 20px -4px rgba(28, 25, 23, 0.06), 0 2px 8px -1px rgba(28, 25, 23, 0.03);
-  --shadow-lg: 0 16px 36px -8px rgba(28, 25, 23, 0.08), 0 4px 14px -2px rgba(28, 25, 23, 0.04);
-  --shadow-pink-glow: 0 4px 20px rgba(140, 46, 65, 0.15);
-  --shadow-blue-glow: 0 4px 20px rgba(22, 96, 116, 0.15);
+  /* Natural Dewy Ambient Shadows */
+  --shadow-sm: 0 2px 10px rgba(216, 74, 110, 0.04), 0 1px 3px rgba(44, 34, 36, 0.03);
+  --shadow-md: 0 8px 24px -4px rgba(216, 74, 110, 0.08), 0 2px 8px rgba(44, 34, 36, 0.03);
+  --shadow-lg: 0 16px 38px -6px rgba(216, 74, 110, 0.12), 0 4px 12px rgba(44, 34, 36, 0.04);
+  --shadow-pink-glow: 0 6px 24px rgba(223, 94, 126, 0.22);
+  --shadow-blue-glow: 0 6px 24px rgba(31, 115, 138, 0.18);
 
   /* Architectural Radii (Bespoke Luxury, Less Bubbly Cartoonish) */
   --radius-xs: 4px;
@@ -165,9 +165,9 @@ body {
   color: var(--text-primary);
   background-color: var(--canvas);
   background-image: 
-    radial-gradient(at 15% 15%, rgba(229, 180, 190, 0.12) 0px, transparent 60%),
-    radial-gradient(at 85% 10%, rgba(197, 168, 128, 0.10) 0px, transparent 55%),
-    radial-gradient(at 50% 85%, rgba(245, 239, 235, 0.6) 0px, transparent 60%);
+    radial-gradient(at 10% 12%, rgba(255, 222, 230, 0.45) 0px, transparent 55%),
+    radial-gradient(at 90% 8%, rgba(254, 244, 234, 0.45) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(255, 238, 243, 0.4) 0px, transparent 65%);
   background-attachment: fixed;
   min-height: 100vh;
   line-height: 1.65;
@@ -322,7 +322,7 @@ button, input, select, textarea {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #1C1917 0%, #8C2E41 65%, #C5A880 100%);
+  background: linear-gradient(135deg, #DF5E7E 0%, #C73D62 60%, #B02B4E 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -351,25 +351,25 @@ button, input, select, textarea {
   transform: scale(0.97);
 }
 
-/* Primary Button: Deep Espresso Noir with Refined Gold Shimmer */
+/* Primary Button: Luminous Velvet Petal Pink (Korean & French Haute Beauty) */
 .btn-primary {
-  background: #1C1917;
-  color: #FAF8F5;
-  border: 1px solid #1C1917;
-  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
+  background: linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%);
+  color: #FFFFFF;
+  border: 1px solid #C73D62;
+  box-shadow: 0 4px 14px rgba(223, 94, 126, 0.28);
 }
 
 .btn-primary:hover {
-  background: #8C2E41;
-  border-color: #8C2E41;
+  background: linear-gradient(135deg, #C73D62 0%, #B02B4E 100%);
+  border-color: #B02B4E;
   color: #FFFFFF;
-  box-shadow: 0 6px 20px rgba(140, 46, 65, 0.25);
+  box-shadow: 0 6px 20px rgba(199, 61, 98, 0.35);
   transform: translateY(-1.5px);
 }
 
 [data-theme="dark"] .btn-primary {
   background: #FAF8F5;
-  color: #1C1917;
+  color: #2C2224;
   border-color: #FAF8F5;
 }
 
@@ -379,17 +379,17 @@ button, input, select, textarea {
   border-color: #E58D9E;
 }
 
-/* Secondary Button: Warm Cashmere Sand */
+/* Secondary Button: Soft Silk Rose Milk */
 .btn-secondary {
-  background: #F5EFEB;
-  color: #1C1917;
-  border: 1px solid rgba(28, 25, 23, 0.08);
+  background: #FFF2F5;
+  color: #C73D62;
+  border: 1px solid #FAD1DC;
 }
 
 .btn-secondary:hover {
-  background: #EFE6E0;
-  color: #8C2E41;
-  border-color: rgba(140, 46, 65, 0.25);
+  background: #FFE8EE;
+  color: #B02B4E;
+  border-color: #F8B4C6;
   transform: translateY(-1.5px);
 }
 
@@ -404,17 +404,17 @@ button, input, select, textarea {
   color: #E58D9E;
 }
 
-/* Outline Button: Crisp Thin Hairline */
+/* Outline Button: Crisp Soft Petal Border */
 .btn-outline {
-  background: transparent;
-  border: 1px solid rgba(28, 25, 23, 0.22);
-  color: #1C1917;
+  background: #FFFFFF;
+  border: 1px solid #E8B6C3;
+  color: #C73D62;
 }
 
 .btn-outline:hover {
-  background: #1C1917;
-  color: #FAF8F5;
-  border-color: #1C1917;
+  background: #FFF2F5;
+  color: #B02B4E;
+  border-color: #DF5E7E;
   transform: translateY(-1.5px);
 }
 
@@ -425,7 +425,7 @@ button, input, select, textarea {
 
 [data-theme="dark"] .btn-outline:hover {
   background: #FAF8F5;
-  color: #1C1917;
+  color: #2C2224;
 }
 
 /* Ghost Button */
@@ -436,8 +436,8 @@ button, input, select, textarea {
 }
 
 .btn-ghost:hover {
-  background: rgba(28, 25, 23, 0.05);
-  color: var(--text-primary);
+  background: #FFF2F5;
+  color: #C73D62;
 }
 
 [data-theme="dark"] .btn-ghost:hover {
@@ -466,15 +466,16 @@ button, input, select, textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(28, 25, 23, 0.08);
+  border: 1px solid rgba(222, 83, 119, 0.16);
   background: #FFFFFF;
   color: var(--text-primary);
   transition: all var(--transition-fast);
 }
 
 .btn-icon:hover {
-  background: var(--canvas-subtle);
-  border-color: rgba(28, 25, 23, 0.16);
+  background: #FFF5F8;
+  border-color: #DF5E7E;
+  color: #C73D62;
   transform: translateY(-1px);
 }
 
@@ -493,9 +494,9 @@ button, input, select, textarea {
 }
 
 .badge-pink {
-  background: #FDF2F4;
-  color: #8C2E41;
-  border: 1px solid rgba(140, 46, 65, 0.2);
+  background: #FFF0F4;
+  color: #C73D62;
+  border: 1px solid rgba(223, 94, 126, 0.25);
 }
 
 .badge-blue {
@@ -529,7 +530,7 @@ button, input, select, textarea {
   font-size: 0.82rem;
   font-weight: 500;
   background: #FFFFFF;
-  border: 1px solid rgba(28, 25, 23, 0.1);
+  border: 1px solid rgba(222, 83, 119, 0.16);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -540,9 +541,9 @@ button, input, select, textarea {
 }
 
 .filter-pill:hover {
-  border-color: #1C1917;
-  color: #1C1917;
-  background: var(--canvas-subtle);
+  border-color: #DF5E7E;
+  color: #C73D62;
+  background: #FFF5F8;
   transform: translateY(-1px);
 }
 
@@ -551,17 +552,17 @@ button, input, select, textarea {
 }
 
 .filter-pill.active {
-  background: #1C1917;
-  border-color: #1C1917;
-  color: #FAF8F5;
+  background: linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%);
+  border-color: #C73D62;
+  color: #FFFFFF;
   font-weight: 600;
-  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
+  box-shadow: 0 4px 14px rgba(223, 94, 126, 0.25);
 }
 
 [data-theme="dark"] .filter-pill.active {
   background: #FAF8F5;
   border-color: #FAF8F5;
-  color: #1C1917;
+  color: #2C2224;
 }
 
 /* Haute Parfumerie Inputs and Forms */
@@ -569,7 +570,7 @@ button, input, select, textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(28, 25, 23, 0.15);
+  border: 1px solid rgba(222, 83, 119, 0.2);
   background: #FFFFFF;
   color: var(--text-primary);
   font-size: 0.92rem;
@@ -578,8 +579,8 @@ button, input, select, textarea {
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: #8C2E41;
-  box-shadow: 0 0 0 3px rgba(140, 46, 65, 0.12);
+  border-color: #DF5E7E;
+  box-shadow: 0 0 0 3px rgba(223, 94, 126, 0.16);
 }
 
 [data-theme="dark"] .form-input, [data-theme="dark"] .form-select, [data-theme="dark"] .form-textarea {

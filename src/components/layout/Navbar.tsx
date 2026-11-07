@@ -131,13 +131,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             ? 'linear-gradient(90deg, #2A171B 0%, #1F151C 50%, #151A22 100%)'
             : isDark
             ? '#191617'
-            : '#FAF5F0',
+            : '#FFF0F4',
           padding: '0.38rem 1rem',
           fontSize: '0.74rem',
           letterSpacing: '0.06em',
           textAlign: 'center',
-          color: isHalloweenMode ? '#F5D0D6' : isDark ? '#C8BFB8' : '#57534E',
-          borderBottom: '1px solid rgba(28, 25, 23, 0.06)',
+          color: isHalloweenMode ? '#F5D0D6' : isDark ? '#C8BFB8' : '#706064',
+          borderBottom: '1px solid rgba(222, 83, 119, 0.12)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -160,11 +160,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <>
               <span className="announcement-text-desktop" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: '#8C2E41', fontWeight: 600 }}>COMPLIMENTARY SHIPPING</span>
+                <span style={{ color: '#C73D62', fontWeight: 700 }}>COMPLIMENTARY SHIPPING</span>
                 <span>•</span>
                 <span>จัดส่งฟรีทุกออเดอร์เมื่อช้อปครบ ฿500</span>
                 <span>•</span>
-                <span>กรอกโค้ด <strong>SORA50</strong> ลดทันที ฿50</span>
+                <span>กรอกโค้ด <strong style={{ color: '#C73D62' }}>SORA50</strong> ลดทันที ฿50</span>
               </span>
               <span className="announcement-text-mobile" style={{ display: 'none', alignItems: 'center', gap: '4px' }}>
                 ส่งฟรี ฿500+ | โค้ด <strong>SORA50</strong> ลด ฿50
@@ -178,8 +178,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenTrickOrTreat}
             style={{
-              background: '#8C2E41',
-              color: '#FAF8F5',
+              background: '#C73D62',
+              color: '#FFFFFF',
               border: 'none',
               borderRadius: '4px',
               padding: '2px 8px',
@@ -202,9 +202,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onOpenCouponCenter}
             className="desktop-only"
             style={{
-              background: 'transparent',
-              color: '#8C2E41',
-              border: '1px solid rgba(140, 46, 65, 0.3)',
+              background: '#FFFFFF',
+              color: '#C73D62',
+              border: '1px solid rgba(222, 83, 119, 0.25)',
               borderRadius: '4px',
               padding: '1px 8px',
               fontSize: '0.7rem',
@@ -217,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               marginLeft: '4px',
             }}
           >
-            <Ticket size={11} color="#8C2E41" />
+            <Ticket size={11} color="#C73D62" />
             <span>คูปองส่วนลด</span>
           </button>
         )}
@@ -242,13 +242,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 width: 38,
                 height: 38,
                 borderRadius: '8px',
-                background: '#1C1917',
-                color: '#FAF8F5',
+                background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(28, 25, 23, 0.12)',
-                border: '1px solid rgba(197, 168, 128, 0.4)',
+                boxShadow: '0 4px 12px rgba(216, 74, 110, 0.25)',
+                border: '1px solid #FAD1DC',
                 position: 'relative',
               }}
             >
@@ -257,7 +257,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <CutePumpkinIcon size={20} />
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, letterSpacing: '0.02em', color: '#FAF8F5' }}>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, letterSpacing: '0.02em', color: '#FFFFFF' }}>
                   S
                 </span>
               )}
@@ -271,7 +271,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     fontWeight: 700,
                     letterSpacing: '0.12em',
                     whiteSpace: 'nowrap',
-                    color: 'var(--text-primary)',
+                    color: '#2C2224',
                   }}
                 >
                   SORA PINK
@@ -559,9 +559,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                             width: '100%',
                             padding: '0.5rem',
                             marginTop: '0.3rem',
-                            border: '1px solid rgba(28, 25, 23, 0.1)',
-                            background: '#FAF5F0',
-                            color: '#1C1917',
+                            border: '1px solid #FAD1DC',
+                            background: '#FFF5F8',
+                            color: '#C73D62',
                             borderRadius: '6px',
                             fontSize: '0.76rem',
                             fontWeight: 600,
@@ -656,8 +656,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 key={`cart-${itemCount}`}
                 className="cart-badge-count animate-badge-pop"
                 style={{
-                  background: '#C5A880',
-                  color: '#1C1917',
+                  background: '#FFFFFF',
+                  color: '#C73D62',
                   borderRadius: '4px',
                   padding: '1px 5px',
                   fontSize: '0.68rem',

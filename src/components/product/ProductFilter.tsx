@@ -52,8 +52,8 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
         borderRadius: '12px',
         marginBottom: '2.5rem',
         background: '#FFFFFF',
-        border: '1px solid rgba(28, 25, 23, 0.08)',
-        boxShadow: '0 4px 20px rgba(28, 25, 23, 0.03)',
+        border: '1px solid rgba(222, 83, 119, 0.16)',
+        boxShadow: '0 4px 20px rgba(216, 74, 110, 0.04)',
         width: '100%',
         boxSizing: 'border-box',
       }}
@@ -71,7 +71,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
             whiteSpace: 'nowrap',
           }}
         >
-          <Sparkles size={13} color={filters.categoryId === '' ? '#C5A880' : 'var(--rose-damask, #8C2E41)'} /> ทั้งหมด (All)
+          <Sparkles size={13} color={filters.categoryId === '' ? '#FFFFFF' : '#C73D62'} /> ทั้งหมด (All)
         </button>
         {categories.map((cat) => (
           <button
@@ -92,8 +92,8 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
       <div className="skin-filter-row">
         {/* Skin Types */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', fontWeight: 600, color: '#57534E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.65rem' }}>
-            <Droplet size={14} color="#8C2E41" /> เหมาะสำหรับสภาพผิว:
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', fontWeight: 600, color: '#706064', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.65rem' }}>
+            <Droplet size={14} color="#C73D62" /> เหมาะสำหรับสภาพผิว:
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
             {ALL_SKIN_TYPES.map((type) => {
@@ -108,9 +108,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                     fontSize: '0.78rem',
                     fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
-                    border: active ? '1px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.1)',
-                    background: active ? '#1C1917' : '#FAF8F5',
-                    color: active ? '#FAF8F5' : '#57534E',
+                    border: active ? '1px solid #C73D62' : '1px solid #F0C4CF',
+                    background: active ? 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)' : '#FFF8FA',
+                    color: active ? '#FFFFFF' : '#706064',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
@@ -127,8 +127,8 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
 
         {/* Skin Concerns */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', fontWeight: 600, color: '#57534E', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.65rem' }}>
-            <Sparkles size={14} color="#C5A880" /> ปัญหาผิวเป้าหมาย:
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', fontWeight: 600, color: '#706064', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.65rem' }}>
+            <Sparkles size={14} color="#C73D62" /> ปัญหาผิวเป้าหมาย:
           </label>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
             {ALL_SKIN_CONCERNS.map((concern) => {
@@ -143,9 +143,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
                     fontSize: '0.78rem',
                     fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
-                    border: active ? '1px solid var(--rose-damask, #8C2E41)' : '1px solid rgba(28, 25, 23, 0.1)',
-                    background: active ? 'var(--rose-damask, #8C2E41)' : '#FAF8F5',
-                    color: active ? '#FFFFFF' : '#57534E',
+                    border: active ? '1px solid #C73D62' : '1px solid #F0C4CF',
+                    background: active ? 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)' : '#FFF8FA',
+                    color: active ? '#FFFFFF' : '#706064',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
@@ -166,7 +166,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
           {/* Price Range Slider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '0.82rem' }}>
-            <span style={{ color: '#78716C', fontWeight: 500 }}>ช่วงราคา:</span>
+            <span style={{ color: '#706064', fontWeight: 500 }}>ช่วงราคา:</span>
             <input
               type="range"
               min="200"
@@ -174,21 +174,21 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
               step="50"
               value={filters.priceRange[1]}
               onChange={(e) => onFilterChange({ priceRange: [0, Number(e.target.value)] })}
-              style={{ accentColor: '#1C1917', width: '120px' }}
+              style={{ accentColor: '#DF5E7E', width: '120px' }}
             />
-            <span style={{ fontWeight: 600, color: '#1C1917' }}>
+            <span style={{ fontWeight: 600, color: '#C73D62' }}>
               สูงสุด ฿{filters.priceRange[1].toLocaleString()}
             </span>
           </div>
 
           {/* Rating filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem' }}>
-            <span style={{ color: '#78716C', fontWeight: 500 }}>คะแนน:</span>
+            <span style={{ color: '#706064', fontWeight: 500 }}>คะแนน:</span>
             <select
               value={filters.minRating}
               onChange={(e) => onFilterChange({ minRating: Number(e.target.value) })}
               className="form-select"
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', width: 'auto', borderRadius: '6px', border: '1px solid rgba(28, 25, 23, 0.12)' }}
+              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', width: 'auto', borderRadius: '6px', border: '1px solid #F0C4CF' }}
             >
               <option value="0">ทั้งหมด</option>
               <option value="4.5">4.5 ดาวขึ้นไป</option>
@@ -199,15 +199,15 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
 
         {/* Sort & Results Count */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.82rem', color: '#78716C' }}>
-            ค้นพบ <strong style={{ color: '#1C1917' }}>{totalResults}</strong> รายการ
+          <span style={{ fontSize: '0.82rem', color: '#706064' }}>
+            ค้นพบ <strong style={{ color: '#C73D62' }}>{totalResults}</strong> รายการ
           </span>
 
           <select
             value={filters.sortBy}
             onChange={(e) => onFilterChange({ sortBy: e.target.value as FilterState['sortBy'] })}
             className="form-select"
-            style={{ padding: '0.35rem 0.85rem', fontSize: '0.82rem', width: 'auto', borderRadius: '6px', border: '1px solid rgba(28, 25, 23, 0.12)' }}
+            style={{ padding: '0.35rem 0.85rem', fontSize: '0.82rem', width: 'auto', borderRadius: '6px', border: '1px solid #F0C4CF' }}
           >
             <option value="featured">คัดสรรยอดนิยม (Featured)</option>
             <option value="price_asc">ราคา: ต่ำ &rarr; สูง</option>
@@ -219,7 +219,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
             <button
               onClick={onResetFilters}
               className="btn btn-ghost btn-sm"
-              style={{ color: 'var(--rose-damask, #8C2E41)', gap: '4px', fontSize: '0.8rem', fontWeight: 600 }}
+              style={{ color: '#C73D62', gap: '4px', fontSize: '0.8rem', fontWeight: 600 }}
             >
               <RotateCcw size={12} /> รีเซ็ตตัวกรอง
             </button>

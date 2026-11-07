@@ -43,11 +43,11 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
         <div
           className="glass-card flash-sale-main-card"
           style={{
-            background: 'linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%)',
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDFE 100%)',
             borderRadius: '16px',
             padding: '2.25rem 2rem',
-            border: '1px solid rgba(28, 25, 23, 0.08)',
-            boxShadow: '0 8px 30px rgba(28, 25, 23, 0.04)',
+            border: '1px solid rgba(222, 83, 119, 0.16)',
+            boxShadow: '0 8px 30px rgba(216, 74, 110, 0.06)',
           }}
         >
           {/* Header with Countdown */}
@@ -60,7 +60,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
               alignItems: 'center',
               gap: '1.25rem',
               marginBottom: '2rem',
-              borderBottom: '1px solid rgba(28, 25, 23, 0.08)',
+              borderBottom: '1px solid rgba(222, 83, 119, 0.12)',
               paddingBottom: '1.5rem',
             }}
           >
@@ -70,12 +70,13 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   width: 46,
                   height: 46,
                   borderRadius: '10px',
-                  background: '#1C1917',
+                  background: 'linear-gradient(135deg, #FFF0F4 0%, #FEE2E8 100%)',
+                  border: '1px solid #FAD1DC',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#C5A880',
-                  boxShadow: '0 4px 14px rgba(28, 25, 23, 0.15)',
+                  color: '#C73D62',
+                  boxShadow: '0 4px 14px rgba(216, 74, 110, 0.12)',
                 }}
               >
                 <Flame size={22} />
@@ -87,7 +88,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                     fontWeight: 700,
                     letterSpacing: '0.16em',
                     textTransform: 'uppercase',
-                    color: 'var(--rose-damask, #8C2E41)',
+                    color: '#C73D62',
                     marginBottom: '0.2rem',
                   }}
                 >
@@ -98,7 +99,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     fontSize: '1.65rem',
                     fontWeight: 600,
-                    color: '#1C1917',
+                    color: '#2C2224',
                     letterSpacing: '-0.01em',
                     lineHeight: 1.2,
                   }}
@@ -108,26 +109,26 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
               </div>
             </div>
 
-            {/* Live Timer Boxes - Editorial Horology Style */}
+            {/* Live Timer Boxes - Luminous Rose Petal Style */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
-                background: '#FFFFFF',
-                padding: '0.5rem 0.85rem',
+                background: '#FFF5F8',
+                padding: '0.5rem 0.95rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(28, 25, 23, 0.08)',
+                border: '1px solid #FAD1DC',
               }}
             >
-              <Clock size={16} color="#8C2E41" />
+              <Clock size={16} color="#C73D62" />
               <span
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
-                  color: '#57534E',
+                  color: '#706064',
                 }}
               >
                 Time Remaining
@@ -135,47 +136,50 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <span
                   style={{
-                    background: '#1C1917',
-                    color: '#FAF8F5',
-                    borderRadius: '4px',
-                    padding: '3px 7px',
+                    background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                    color: '#FFFFFF',
+                    borderRadius: '6px',
+                    padding: '3px 8px',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.88rem',
                     fontFamily: 'monospace',
                     minWidth: '28px',
                     textAlign: 'center',
+                    boxShadow: '0 2px 6px rgba(216, 74, 110, 0.25)',
                   }}
                 >
                   {String(timeLeft.hours).padStart(2, '0')}
                 </span>
-                <span style={{ fontWeight: 700, color: '#C5A880' }}>:</span>
+                <span style={{ fontWeight: 700, color: '#C73D62' }}>:</span>
                 <span
                   style={{
-                    background: '#1C1917',
-                    color: '#FAF8F5',
-                    borderRadius: '4px',
-                    padding: '3px 7px',
+                    background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                    color: '#FFFFFF',
+                    borderRadius: '6px',
+                    padding: '3px 8px',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.88rem',
                     fontFamily: 'monospace',
                     minWidth: '28px',
                     textAlign: 'center',
+                    boxShadow: '0 2px 6px rgba(216, 74, 110, 0.25)',
                   }}
                 >
                   {String(timeLeft.minutes).padStart(2, '0')}
                 </span>
-                <span style={{ fontWeight: 700, color: '#C5A880' }}>:</span>
+                <span style={{ fontWeight: 700, color: '#C73D62' }}>:</span>
                 <span
                   style={{
-                    background: '#8C2E41',
+                    background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
                     color: '#FFFFFF',
-                    borderRadius: '4px',
-                    padding: '3px 7px',
+                    borderRadius: '6px',
+                    padding: '3px 8px',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.88rem',
                     fontFamily: 'monospace',
                     minWidth: '28px',
                     textAlign: 'center',
+                    boxShadow: '0 2px 6px rgba(216, 74, 110, 0.25)',
                   }}
                 >
                   {String(timeLeft.seconds).padStart(2, '0')}
@@ -200,7 +204,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                     cursor: 'pointer',
                     background: '#FFFFFF',
                     borderRadius: '12px',
-                    border: '1px solid rgba(28, 25, 23, 0.08)',
+                    border: '1px solid rgba(222, 83, 119, 0.14)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -218,7 +222,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                         borderRadius: '8px',
                         overflow: 'hidden',
                         marginBottom: '0.85rem',
-                        background: '#FAF7F4',
+                        background: '#FFF5F8',
                       }}
                     >
                       <img
@@ -243,7 +247,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'rgba(28, 25, 23, 0.6)',
+                            background: 'rgba(44, 34, 36, 0.55)',
                             backdropFilter: 'blur(3px)',
                             display: 'flex',
                             flexDirection: 'column',
@@ -254,8 +258,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                         >
                           <span
                             style={{
-                              background: '#1C1917',
-                              color: '#FAF8F5',
+                              background: '#C73D62',
+                              color: '#FFFFFF',
                               padding: '5px 12px',
                               borderRadius: '4px',
                               fontSize: '0.7rem',
@@ -265,7 +269,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                               border: '1px solid rgba(255, 255, 255, 0.2)',
                             }}
                           >
-                            สินค้าหมด (Sold Out)
+                            สินค้าหมด
                           </span>
                         </div>
                       )}
@@ -275,13 +279,14 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           position: 'absolute',
                           top: '8px',
                           left: '8px',
-                          background: '#8C2E41',
-                          color: '#FAF8F5',
+                          background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                          color: '#FFFFFF',
                           padding: '3px 8px',
                           borderRadius: '4px',
                           fontSize: '0.7rem',
                           fontWeight: 700,
                           letterSpacing: '0.04em',
+                          boxShadow: '0 2px 6px rgba(216, 74, 110, 0.3)',
                           zIndex: 3,
                         }}
                       >
@@ -293,7 +298,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       style={{
                         fontSize: '0.92rem',
                         fontWeight: 600,
-                        color: '#1C1917',
+                        color: '#2C2224',
                         marginBottom: '0.45rem',
                         lineHeight: 1.4,
                         display: '-webkit-box',
@@ -312,12 +317,12 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           display: 'flex',
                           justifyContent: 'space-between',
                           fontSize: '0.72rem',
-                          color: '#78716C',
+                          color: '#706064',
                           marginBottom: '4px',
                         }}
                       >
                         <span>สต็อกคงเหลือ</span>
-                        <span style={{ fontWeight: 600, color: product.stock_quantity <= 3 ? '#8C2E41' : '#1C1917' }}>
+                        <span style={{ fontWeight: 600, color: product.stock_quantity <= 3 ? '#C73D62' : '#2C2224' }}>
                           {product.stock_quantity > 0 ? `${product.stock_quantity} ชิ้น` : 'หมดแล้ว'}
                         </span>
                       </div>
@@ -325,7 +330,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                         style={{
                           height: '4px',
                           borderRadius: '2px',
-                          background: 'rgba(28, 25, 23, 0.08)',
+                          background: '#FEECEF',
                           overflow: 'hidden',
                         }}
                       >
@@ -333,7 +338,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                           style={{
                             height: '100%',
                             width: `${Math.min(100, Math.max(15, product.stock_quantity * 2))}%`,
-                            background: product.stock_quantity <= 3 ? '#8C2E41' : '#1C1917',
+                            background: product.stock_quantity <= 3 ? '#C73D62' : 'linear-gradient(90deg, #F48BA5 0%, #DF5E7E 100%)',
                             borderRadius: '2px',
                             transition: 'width 0.5s ease',
                           }}
@@ -350,16 +355,16 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       paddingTop: '0.65rem',
-                      borderTop: '1px solid rgba(28, 25, 23, 0.06)',
+                      borderTop: '1px solid rgba(222, 83, 119, 0.1)',
                     }}
                   >
                     <div>
                       <div
                         className="flash-sale-price"
                         style={{
-                          fontSize: '1.18rem',
+                          fontSize: '1.2rem',
                           fontWeight: 700,
-                          color: '#1C1917',
+                          color: '#C73D62',
                           fontFamily: 'var(--font-sans)',
                           letterSpacing: '-0.02em',
                         }}
@@ -369,7 +374,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       <div
                         style={{
                           fontSize: '0.75rem',
-                          color: '#A8A29E',
+                          color: '#A09296',
                           textDecoration: 'line-through',
                         }}
                       >

@@ -158,13 +158,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
             {discountPercent && !isOutOfStock && (
               <span
                 style={{
-                  background: '#1C1917',
-                  color: '#FAF8F5',
+                  background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                  color: '#FFFFFF',
                   padding: '2px 7px',
                   borderRadius: '4px',
                   fontSize: '0.68rem',
                   fontWeight: 700,
-                  letterSpacing: '0.06em',
+                  letterSpacing: '0.04em',
+                  boxShadow: '0 2px 6px rgba(216, 74, 110, 0.25)',
                 }}
               >
                 -{discountPercent}%
@@ -236,8 +237,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 left: '50%',
                 transform: 'translateX(-50%)',
                 background: '#FFFFFF',
-                color: '#1C1917',
-                border: '1px solid rgba(28, 25, 23, 0.12)',
+                color: '#C73D62',
+                border: '1px solid rgba(222, 83, 119, 0.2)',
                 padding: '0.3rem 0.8rem',
                 borderRadius: '4px',
                 fontSize: '0.72rem',
@@ -246,7 +247,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                boxShadow: '0 4px 12px rgba(28, 25, 23, 0.08)',
+                boxShadow: '0 4px 12px rgba(216, 74, 110, 0.08)',
                 cursor: 'pointer',
               }}
             >
@@ -309,7 +310,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
                     height: '11px',
                     borderRadius: '50%',
                     background: color,
-                    border: selectedShade === idx ? '2px solid #1C1917' : '1px solid #FFFFFF',
+                    border: selectedShade === idx ? '2px solid #DF5E7E' : '1px solid #FFFFFF',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
                     cursor: 'pointer',
                   }}
@@ -409,11 +410,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
         }}
       >
         <div>
-          <div className="product-card-price" style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+          <div className="product-card-price" style={{ fontWeight: 700, fontSize: '1.1rem', color: '#C73D62' }}>
             ฿{(product.discount_price || product.price).toLocaleString()}
           </div>
           {product.discount_price && (
-            <div style={{ fontSize: '0.76rem', color: '#8F8881', textDecoration: 'line-through' }}>
+            <div style={{ fontSize: '0.76rem', color: '#9E8D92', textDecoration: 'line-through' }}>
               ฿{product.price.toLocaleString()}
             </div>
           )}

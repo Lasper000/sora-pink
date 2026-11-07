@@ -54,10 +54,10 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   overflow: 'hidden',
                   cursor: 'pointer',
                   borderRadius: '12px',
-                  border: isSelected ? '2px solid #1C1917' : '1px solid rgba(28, 25, 23, 0.08)',
+                  border: isSelected ? '2px solid #DF5E7E' : '1px solid rgba(222, 83, 119, 0.15)',
                   boxShadow: isSelected
-                    ? '0 12px 28px rgba(28, 25, 23, 0.16)'
-                    : '0 2px 10px rgba(0, 0, 0, 0.04)',
+                    ? '0 10px 24px rgba(223, 94, 126, 0.25)'
+                    : '0 2px 10px rgba(222, 83, 119, 0.06)',
                   transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
@@ -84,7 +84,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                     position: 'absolute',
                     inset: 0,
                     background:
-                      'linear-gradient(180deg, rgba(28, 25, 23, 0.08) 0%, rgba(28, 25, 23, 0.8) 100%)',
+                      'linear-gradient(180deg, rgba(44, 34, 36, 0.04) 0%, rgba(44, 34, 36, 0.68) 100%)',
                   }}
                 />
 
@@ -104,8 +104,8 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                   <span
                     className="category-card-badge"
                     style={{
-                      background: isSelected ? '#FAF8F5' : 'rgba(255, 255, 255, 0.2)',
-                      color: isSelected ? '#1C1917' : '#FAF8F5',
+                      background: isSelected ? 'linear-gradient(135deg, #DF5E7E, #C73D62)' : 'rgba(255, 255, 255, 0.28)',
+                      color: '#FFFFFF',
                       backdropFilter: 'blur(4px)',
                       padding: '2px 8px',
                       borderRadius: '4px',

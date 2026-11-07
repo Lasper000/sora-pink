@@ -1054,8 +1054,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                 fontSize: '0.78rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#0F172A' }}>
-                <span style={{ color: '#E11D48', fontWeight: 800 }}>⚡ Fast Dispatch:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#2C2224' }}>
+                <span style={{ color: '#DF5E7E', fontWeight: 800 }}>⚡ Fast Dispatch:</span>
                 <span>สั่งซื้อภายใน 14:00 น. วันนี้ จัดส่งออกรอบบ่ายทันที ได้รับของใน 1-2 วันทำการ</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#64748B', flexWrap: 'wrap', gap: '4px' }}>

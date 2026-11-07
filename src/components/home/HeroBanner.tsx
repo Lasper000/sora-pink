@@ -239,7 +239,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         lineHeight: 1.1,
                         letterSpacing: '0.01em',
                         marginBottom: '0.6rem',
-                        color: '#1C1917',
+                        color: '#2C2224',
                       }}
                     >
                       {slide.title}
@@ -250,7 +250,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       style={{
                         fontSize: '1.35rem',
                         fontWeight: 500,
-                        color: '#8C2E41',
+                        color: '#C73D62',
                         marginBottom: '1.1rem',
                         letterSpacing: '0.02em',
                       }}
@@ -262,7 +262,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       className="hero-slide-desc"
                       style={{
                         fontSize: '0.92rem',
-                        color: '#57534E',
+                        color: '#706064',
                         lineHeight: 1.75,
                         marginBottom: '1.75rem',
                         maxWidth: '520px',
@@ -281,18 +281,18 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                         gap: '0.75rem',
                         background: '#FFFFFF',
                         padding: '0.35rem 0.5rem 0.35rem 0.85rem',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(28, 25, 23, 0.12)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(222, 83, 119, 0.2)',
                         marginBottom: '1.5rem',
-                        boxShadow: '0 2px 8px rgba(28, 25, 23, 0.04)',
+                        boxShadow: '0 2px 8px rgba(222, 83, 119, 0.08)',
                         maxWidth: '100%',
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, overflow: 'hidden' }}>
-                        <Tag size={14} color="#8C2E41" style={{ flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.8rem', color: '#57534E', whiteSpace: 'nowrap' }}>
-                          รหัสสิทธิพิเศษ: <strong style={{ color: '#1C1917', fontWeight: 700 }}>{slide.promoCode}</strong>
-                          <span className="hero-promo-text-extra" style={{ color: '#8F8881', fontSize: '0.75rem' }}> ({slide.promoText})</span>
+                        <Tag size={14} color="#DF5E7E" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.8rem', color: '#706064', whiteSpace: 'nowrap' }}>
+                          รหัสสิทธิพิเศษ: <strong style={{ color: '#C73D62', fontWeight: 700 }}>{slide.promoCode}</strong>
+                          <span className="hero-promo-text-extra" style={{ color: '#A89AA0', fontSize: '0.75rem' }}> ({slide.promoText})</span>
                         </span>
                       </div>
                       <button
@@ -453,27 +453,27 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               zIndex: 60,
               width: '42px',
               height: '42px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               background: '#FFFFFF',
-              border: '1px solid rgba(28, 25, 23, 0.12)',
-              color: '#1C1917',
+              border: '1px solid rgba(222, 83, 119, 0.25)',
+              color: '#C73D62',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(28, 25, 23, 0.08)',
+              boxShadow: '0 4px 14px rgba(223, 94, 126, 0.12)',
               transition: 'all 0.2s ease',
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
-              e.currentTarget.style.background = '#FAF5F0';
-              e.currentTarget.style.borderColor = '#1C1917';
+              e.currentTarget.style.background = '#FFF5F8';
+              e.currentTarget.style.borderColor = '#DF5E7E';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
               e.currentTarget.style.background = '#FFFFFF';
-              e.currentTarget.style.borderColor = 'rgba(28, 25, 23, 0.12)';
+              e.currentTarget.style.borderColor = 'rgba(222, 83, 119, 0.25)';
             }}
           >
             <ChevronLeft size={20} strokeWidth={2} />
@@ -493,27 +493,27 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               zIndex: 60,
               width: '42px',
               height: '42px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               background: '#FFFFFF',
-              border: '1px solid rgba(28, 25, 23, 0.12)',
-              color: '#1C1917',
+              border: '1px solid rgba(222, 83, 119, 0.25)',
+              color: '#C73D62',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(28, 25, 23, 0.08)',
+              boxShadow: '0 4px 14px rgba(223, 94, 126, 0.12)',
               transition: 'all 0.2s ease',
               pointerEvents: 'auto',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
-              e.currentTarget.style.background = '#FAF5F0';
-              e.currentTarget.style.borderColor = '#1C1917';
+              e.currentTarget.style.background = '#FFF5F8';
+              e.currentTarget.style.borderColor = '#DF5E7E';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
               e.currentTarget.style.background = '#FFFFFF';
-              e.currentTarget.style.borderColor = 'rgba(28, 25, 23, 0.12)';
+              e.currentTarget.style.borderColor = 'rgba(222, 83, 119, 0.25)';
             }}
           >
             <ChevronRight size={20} strokeWidth={2} />
@@ -532,10 +532,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
               gap: '0.5rem',
               zIndex: 50,
               background: '#FFFFFF',
-              padding: '4px 12px',
-              borderRadius: '6px',
-              boxShadow: '0 2px 8px rgba(28, 25, 23, 0.06)',
-              border: '1px solid rgba(28, 25, 23, 0.1)',
+              padding: '5px 14px',
+              borderRadius: '20px',
+              boxShadow: '0 4px 12px rgba(223, 94, 126, 0.12)',
+              border: '1px solid rgba(222, 83, 119, 0.2)',
             }}
           >
             {/* Mobile mini prev button */}
@@ -549,7 +549,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                 border: 'none',
                 padding: '0 4px',
                 cursor: 'pointer',
-                color: '#1C1917',
+                color: '#C73D62',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -572,7 +572,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                   height: '6px',
                   borderRadius: '3px',
                   border: 'none',
-                  background: currentSlide === idx ? '#1C1917' : 'rgba(28, 25, 23, 0.2)',
+                  background: currentSlide === idx ? 'linear-gradient(135deg, #DF5E7E, #C73D62)' : 'rgba(222, 83, 119, 0.25)',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   padding: 0,
@@ -591,13 +591,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                 border: 'none',
                 padding: '0 4px',
                 cursor: 'pointer',
-                color: '#E11D48',
+                color: '#C73D62',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
               aria-label="Next slide"
             >
-              <ChevronRight size={16} strokeWidth={2.75} />
+              <ChevronRight size={16} strokeWidth={2} />
             </button>
           </div>
         </div>

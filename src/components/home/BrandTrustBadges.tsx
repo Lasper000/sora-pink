@@ -11,25 +11,25 @@ interface TrustBadgeItem {
 export const BrandTrustBadges: React.FC = () => {
   const badges: TrustBadgeItem[] = [
     {
-      icon: <Sparkles size={20} color="#8C2E41" />,
+      icon: <Sparkles size={18} color="#C73D62" />,
       tag: 'CLEAN FORMULA',
       title: 'สูตรอ่อนโยน Clean & Gentle',
       subtitle: 'ปราศจากแอลกอฮอล์ พาราเบน และสารอันตราย 0%',
     },
     {
-      icon: <Heart size={20} color="#8C2E41" />,
+      icon: <Heart size={18} color="#C73D62" />,
       tag: 'ETHICAL BEAUTY',
       title: 'Cruelty-Free & Vegan',
       subtitle: 'ไม่ทดลองกับสัตว์ สารสกัดจากธรรมชาติและออร์แกนิก',
     },
     {
-      icon: <ShieldCheck size={20} color="#8C2E41" />,
+      icon: <ShieldCheck size={18} color="#C73D62" />,
       tag: 'DERMA TESTED',
       title: 'Dermatologist Verified',
       subtitle: 'ผ่านการทดสอบโดยแพทย์ผิวหนัง สำหรับผิวแพ้ง่าย',
     },
     {
-      icon: <Truck size={20} color="#8C2E41" />,
+      icon: <Truck size={18} color="#C73D62" />,
       tag: 'COMPLIMENTARY',
       title: 'จัดส่งด่วนฟรี ฿500+',
       subtitle: 'แพ็กเกจจิ้งพรีเมียม จัดส่งไว 1-2 วัน พร้อมรับประกัน',
@@ -46,14 +46,14 @@ export const BrandTrustBadges: React.FC = () => {
               className="trust-badge-card"
               style={{
                 background: '#FFFFFF',
-                border: '1px solid rgba(28, 25, 23, 0.08)',
+                border: '1px solid rgba(222, 83, 119, 0.14)',
                 borderRadius: '12px',
                 padding: '1.15rem 1.25rem',
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.9rem',
                 transition: 'all 0.25s ease',
-                boxShadow: '0 2px 8px -2px rgba(28, 25, 23, 0.04)',
+                boxShadow: '0 2px 10px rgba(216, 74, 110, 0.04)',
               }}
             >
               <div
@@ -62,8 +62,8 @@ export const BrandTrustBadges: React.FC = () => {
                   width: '40px',
                   height: '40px',
                   borderRadius: '8px',
-                  background: '#FAF5F0',
-                  border: '1px solid rgba(197, 168, 128, 0.3)',
+                  background: '#FFF0F4',
+                  border: '1px solid #FAD1DC',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -81,7 +81,7 @@ export const BrandTrustBadges: React.FC = () => {
                       fontWeight: 700,
                       letterSpacing: '0.12em',
                       textTransform: 'uppercase',
-                      color: '#8C2E41',
+                      color: '#C73D62',
                     }}
                   >
                     {item.tag}

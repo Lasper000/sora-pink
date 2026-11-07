@@ -431,7 +431,7 @@ const MainStore: React.FC = () => {
                 style={{
                   fontSize: '2.4rem',
                   fontWeight: 600,
-                  color: '#1C1917',
+                  color: '#2C2224',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                   marginBottom: '0.5rem',
@@ -464,8 +464,8 @@ const MainStore: React.FC = () => {
                     background: '#FFFFFF',
                     padding: '4px',
                     borderRadius: '8px',
-                    boxShadow: '0 2px 10px rgba(28, 25, 23, 0.04)',
-                    border: '1px solid rgba(28, 25, 23, 0.08)',
+                    boxShadow: '0 2px 10px rgba(216, 74, 110, 0.06)',
+                    border: '1px solid rgba(222, 83, 119, 0.18)',
                     maxWidth: '100%',
                     overflowX: 'auto',
                     WebkitOverflowScrolling: 'touch',
@@ -528,11 +528,11 @@ const MainStore: React.FC = () => {
                       onClick={() => setShowcaseTab('halloween')}
                       className={`btn btn-sm ${showcaseTab === 'halloween' ? 'btn-primary' : 'btn-ghost'}`}
                       style={{
-                        borderRadius: '6px',
+                        borderRadius: '20px',
                         fontSize: '0.82rem',
                         fontWeight: showcaseTab === 'halloween' ? 700 : 500,
-                        background: showcaseTab === 'halloween' ? '#1C1917' : 'transparent',
-                        color: showcaseTab === 'halloween' ? '#FAF8F5' : '#78716C',
+                        background: showcaseTab === 'halloween' ? 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)' : 'transparent',
+                        color: showcaseTab === 'halloween' ? '#FFFFFF' : '#706064',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
@@ -609,22 +609,22 @@ const MainStore: React.FC = () => {
                       padding: '2rem 1.5rem',
                       background: '#FFFFFF',
                       borderRadius: '12px',
-                      border: '1px solid rgba(28, 25, 23, 0.08)',
-                      boxShadow: '0 4px 20px rgba(28, 25, 23, 0.03)',
+                      border: '1px solid rgba(222, 83, 119, 0.16)',
+                      boxShadow: '0 4px 20px rgba(216, 74, 110, 0.05)',
                       maxWidth: '520px',
                       marginLeft: 'auto',
                       marginRight: 'auto',
                     }}
                   >
                     <div style={{ marginBottom: '1.25rem' }}>
-                      <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#78716C', letterSpacing: '0.04em' }}>
-                        กำลังแสดง <strong style={{ color: '#1C1917' }}>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong style={{ color: '#1C1917' }}>{filteredProducts.length}</strong> รายการ
+                      <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#706064', letterSpacing: '0.04em' }}>
+                        กำลังแสดง <strong style={{ color: '#C73D62' }}>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong style={{ color: '#2C2224' }}>{filteredProducts.length}</strong> รายการ
                       </span>
                       {/* Refined Hairline Progress bar */}
                       <div
                         style={{
                           height: '3px',
-                          background: 'rgba(28, 25, 23, 0.08)',
+                          background: '#FEECEF',
                           borderRadius: '2px',
                           overflow: 'hidden',
                           marginTop: '0.75rem',
@@ -637,7 +637,7 @@ const MainStore: React.FC = () => {
                           style={{
                             height: '100%',
                             width: `${(Math.min(visibleCount, filteredProducts.length) / filteredProducts.length) * 100}%`,
-                            background: '#1C1917',
+                            background: 'linear-gradient(90deg, #F48BA5 0%, #DF5E7E 100%)',
                             borderRadius: '2px',
                             transition: 'width 0.4s ease',
                           }}
