@@ -224,10 +224,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       <div className="navbar-container" style={{ padding: '0.75rem 1.75rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', width: '100%' }}>
+        <div className="navbar-main-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', width: '100%' }}>
           {/* Brand Logo */}
           <a
             href="#"
+            className="navbar-brand-link"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -238,6 +239,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <div
+              className="navbar-brand-icon"
               style={{
                 width: 40,
                 height: 40,
@@ -608,8 +610,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Wishlist Button */}
             <button
               onClick={onOpenWishlist}
-              className="btn-icon btn-ghost"
-              style={{ position: 'relative' }}
+              className="btn-icon btn-ghost navbar-wishlist-btn"
+              style={{ position: 'relative', flexShrink: 0 }}
               title="รายการที่ถูกใจ"
             >
               <Heart size={18} color="var(--text-primary)" />
@@ -648,6 +650,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 gap: '0.45rem',
                 borderRadius: '9999px',
                 letterSpacing: '0.02em',
+                flexShrink: 0,
               }}
             >
               <ShoppingBag size={16} />
@@ -893,7 +896,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="btn-icon btn-ghost mobile-menu-btn"
-              style={{ display: 'none' }}
+              style={{ display: 'none', flexShrink: 0 }}
+              aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -1338,6 +1342,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           .desktop-only { display: none !important; }
           .announcement-text-desktop { display: none !important; }
           .announcement-text-mobile { display: inline !important; }
+          .cart-btn-text { display: none !important; }
+          .cart-btn-main { padding: 0.42rem 0.65rem !important; gap: 0.3rem !important; }
+          .navbar-main-row { gap: 0.5rem !important; }
         }
         @media (max-width: 1280px) {
           .desktop-search { width: 175px !important; }
@@ -1350,16 +1357,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           .desktop-search { width: 155px !important; }
         }
         @media (max-width: 640px) {
-          .brand-title { font-size: 1.18rem !important; }
+          .navbar-container { padding: 0.45rem 0.65rem !important; }
+          .navbar-main-row { gap: 0.35rem !important; }
+          .navbar-brand-link { gap: 0.45rem !important; }
+          .navbar-brand-icon { width: 34px !important; height: 34px !important; border-radius: 11px !important; }
+          .brand-title { font-size: 1.15rem !important; }
           .brand-subtitle { display: none !important; }
           .brand-spooky-badge span { display: none !important; }
           .brand-spooky-badge { padding: 2px 4px !important; }
-          .navbar-right-actions { gap: 0.35rem !important; }
-          .cart-btn-main { padding: 0.42rem 0.65rem !important; }
-          .theme-toggle-btn { width: 34px !important; height: 34px !important; }
+          .navbar-right-actions { gap: 0.25rem !important; }
+          .theme-toggle-btn { width: 32px !important; height: 32px !important; }
+          .navbar-wishlist-btn { width: 32px !important; height: 32px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+          .cart-btn-main { padding: 0.38rem 0.55rem !important; }
+          .mobile-menu-btn { width: 34px !important; height: 34px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
         }
         @media (max-width: 380px) {
-          .brand-title { font-size: 1.05rem !important; }
+          .navbar-container { padding: 0.4rem 0.45rem !important; }
+          .brand-title { font-size: 1rem !important; }
+          .navbar-brand-icon { width: 30px !important; height: 30px !important; }
           .brand-spooky-badge { display: none !important; }
         }
       `}</style>
