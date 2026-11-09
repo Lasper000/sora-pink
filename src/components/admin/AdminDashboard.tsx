@@ -298,12 +298,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>รายการสินค้าในระบบ ({products.length} รายการ)</h3>
                 <span style={{ fontSize: '0.8rem', color: '#64748B' }}>จัดการสต็อก ราคา และข้อมูลสินค้า</span>
               </div>
-              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
                 <input
                   type="text"
                   placeholder="ค้นหาชื่อ หรือหมวดหมู่..."
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
+                  className="admin-search-input"
                   style={{
                     padding: '0.45rem 0.85rem',
                     borderRadius: '9999px',
@@ -311,6 +312,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     fontSize: '0.82rem',
                     outline: 'none',
                     width: '220px',
+                    maxWidth: '100%',
                   }}
                 />
                 <button onClick={handleOpenAddProduct} className="btn btn-primary btn-sm">
@@ -707,7 +709,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               สรุปข้อมูลยอดขายสินค้าบิวตี้และสกินแคร์จากทุกช่องทางการสั่งซื้อ
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="admin-analytics-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
                 <h4 style={{ fontWeight: 600, marginBottom: '0.75rem' }}>สัดส่วนการชำระเงิน</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
@@ -766,7 +768,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             <form onSubmit={handleSaveProductForm} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-row-2col" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
                 <div>
                   <label className="form-label">ชื่อสินค้า *</label>
                   <input
@@ -791,7 +793,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-row-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label className="form-label">ราคาปกติ (บาท) *</label>
                   <input
@@ -853,7 +855,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="admin-form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label className="form-label">ส่วนผสมสำคัญ (Key Ingredients)</label>
                   <textarea
@@ -1033,6 +1035,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-analytics-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+          }
+          .admin-form-row-2col,
+          .admin-form-row-3col {
+            grid-template-columns: 1fr !important;
+            gap: 0.85rem !important;
+          }
+          .admin-search-input {
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

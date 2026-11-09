@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Product } from '../../types';
 import { Heart, MessageCircle, ExternalLink, ShoppingBag } from 'lucide-react';
 import { handleImageError } from '../../utils/imageFallback';
@@ -37,6 +37,7 @@ interface InstagramCommunityWallProps {
 }
 
 export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ products, onSelectProduct }) => {
+  const [activePostId, setActivePostId] = useState<string | null>(null);
   const posts: CommunityPost[] = [
     {
       id: 'ig-1',
@@ -129,10 +130,13 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
               ? products.find((p) => p.id === post.productId)
               : null;
 
+            const isActive = activePostId === post.id;
+
             return (
               <div
                 key={post.id}
-                className="community-card"
+                onClick={() => setActivePostId((prev) => (prev === post.id ? null : post.id))}
+                className={`community-card ${isActive ? 'is-active' : ''}`}
                 style={{
                   position: 'relative',
                   borderRadius: '20px',
@@ -174,6 +178,32 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
                   <InstagramIcon size={12} />
                   <span>{post.author}</span>
                 </div>
+
+                {/* Mobile Tap Indicator Tag */}
+                {linkedProduct && (
+                  <div
+                    className="community-mobile-tag"
+                    style={{
+                      display: 'none',
+                      position: 'absolute',
+                      bottom: '8px',
+                      right: '8px',
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(6px)',
+                      color: '#BE123C',
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      alignItems: 'center',
+                      gap: '4px',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                      zIndex: 2,
+                    }}
+                  >
+                    <ShoppingBag size={11} /> ช้อปในรูป
+                  </div>
+                )}
 
                 {/* Hover Overlay */}
                 <div className="community-overlay">
@@ -291,8 +321,10 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
           transition: opacity 0.3s ease;
           z-index: 3;
         }
-        .community-card:hover .community-overlay {
+        .community-card:hover .community-overlay,
+        .community-card.is-active .community-overlay {
           opacity: 1;
+          pointer-events: auto;
         }
         @media (max-width: 1024px) {
           .community-grid {
@@ -303,6 +335,9 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
           .community-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.65rem;
+          }
+          .community-mobile-tag {
+            display: inline-flex !important;
           }
         }
       `}</style>

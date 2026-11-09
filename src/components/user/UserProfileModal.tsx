@@ -393,21 +393,21 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                         <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#E11D48', marginTop: '2px' }}>
                           ฿{(item.discount_price || item.price).toLocaleString()}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.4rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
                           <button
                             onClick={() => {
                               const res = addToCart(item, 1);
                               showToast(res.message, res.success ? 'success' : 'error');
                             }}
                             className="btn btn-primary btn-sm"
-                            style={{ padding: '0.25rem 0.6rem', fontSize: '0.75rem' }}
+                            style={{ padding: '0.4rem 0.85rem', fontSize: '0.78rem', borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                           >
-                            <ShoppingBag size={12} /> ใส่ตะกร้า
+                            <ShoppingBag size={13} /> ใส่ตะกร้า
                           </button>
                           <button
                             onClick={() => toggleWishlist(item)}
                             className="btn btn-ghost btn-sm"
-                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: '#EF4444' }}
+                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.78rem', color: '#EF4444', borderRadius: '9999px' }}
                           >
                             ลบ
                           </button>

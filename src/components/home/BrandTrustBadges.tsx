@@ -137,11 +137,22 @@ export const BrandTrustBadges: React.FC = () => {
         }
         @media (max-width: 640px) {
           .trust-badges-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.65rem;
           }
           .trust-badge-card {
-            padding: 0.9rem 1rem !important;
+            padding: 0.85rem 0.75rem !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.5rem !important;
+            border-radius: 18px !important;
+          }
+          .trust-badge-title {
+            font-size: 0.82rem !important;
+          }
+          .trust-badge-subtitle {
+            font-size: 0.72rem !important;
+            line-height: 1.35 !important;
           }
         }
         [data-theme="dark"] .trust-badge-card {

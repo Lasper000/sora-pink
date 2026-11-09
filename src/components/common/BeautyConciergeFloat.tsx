@@ -80,6 +80,8 @@ export const BeautyConciergeFloat: React.FC<BeautyConciergeFloatProps> = ({
             right: '24px',
             zIndex: 996,
             width: '320px',
+            maxWidth: 'calc(100vw - 32px)',
+            boxSizing: 'border-box',
             background: '#FFFFFF',
             borderRadius: '24px',
             boxShadow: '0 16px 40px rgba(0, 0, 0, 0.18)',

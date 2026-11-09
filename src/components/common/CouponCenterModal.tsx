@@ -415,6 +415,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
 
         {/* Footer info bar */}
         <div
+          className="coupon-modal-footer"
           style={{
             marginTop: '1.25rem',
             paddingTop: '1rem',
@@ -423,6 +424,8 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             fontSize: '0.85rem',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
           }}
         >
           <div style={{ color: '#6B7280', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -440,8 +443,8 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
               style={{
                 background: '#1F2937',
                 color: '#FFFFFF',
-                borderRadius: '10px',
-                padding: '0.45rem 1rem',
+                borderRadius: '9999px',
+                padding: '0.45rem 1.15rem',
                 fontSize: '0.82rem',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -462,6 +465,21 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
           .coupon-modal-content {
             padding: 1.25rem 1rem !important;
             border-radius: 20px !important;
+          }
+          .coupon-modal-footer {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.65rem !important;
+            text-align: center !important;
+          }
+          .coupon-modal-footer > div {
+            justify-content: center !important;
+            font-size: 0.78rem !important;
+          }
+          .coupon-modal-footer button {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.6rem 1rem !important;
           }
           .coupon-tabs-bar {
             flex-wrap: nowrap !important;

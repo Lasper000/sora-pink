@@ -153,8 +153,9 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
             margin-bottom: 0.1rem !important;
           }
           .category-card-desc {
-            -webkit-line-clamp: 1 !important;
+            -webkit-line-clamp: 2 !important;
             font-size: 0.72rem !important;
+            line-height: 1.3 !important;
           }
           .category-card-badge {
             font-size: 0.65rem !important;

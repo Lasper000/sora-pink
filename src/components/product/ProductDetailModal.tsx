@@ -537,7 +537,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     </div>
 
                     {/* Skin Tone Selector */}
-                    <div style={{ display: 'flex', gap: '3px', background: '#FCE7D4', padding: '2px', borderRadius: '9999px' }}>
+                    <div style={{ display: 'flex', gap: '4px', background: '#FCE7D4', padding: '3px', borderRadius: '9999px', flexWrap: 'wrap' }}>
                       <button
                         type="button"
                         onClick={() => setSelectedSkinTone('fair')}
@@ -545,11 +545,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                           background: selectedSkinTone === 'fair' ? '#FFFFFF' : 'transparent',
                           border: 'none',
                           borderRadius: '9999px',
-                          padding: '2px 8px',
-                          fontSize: '0.72rem',
+                          padding: '5px 12px',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
                           cursor: 'pointer',
                           color: '#BE123C',
+                          transition: 'all 0.2s ease',
                         }}
                       >
                         ผิวขาว
@@ -561,11 +562,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                           background: selectedSkinTone === 'natural' ? '#FFFFFF' : 'transparent',
                           border: 'none',
                           borderRadius: '9999px',
-                          padding: '2px 8px',
-                          fontSize: '0.72rem',
+                          padding: '5px 12px',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
                           cursor: 'pointer',
                           color: '#9A3412',
+                          transition: 'all 0.2s ease',
                         }}
                       >
                         ผิวสองสี
@@ -577,11 +579,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                           background: selectedSkinTone === 'tan' ? '#FFFFFF' : 'transparent',
                           border: 'none',
                           borderRadius: '9999px',
-                          padding: '2px 8px',
-                          fontSize: '0.72rem',
+                          padding: '5px 12px',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
                           cursor: 'pointer',
                           color: '#7C2D12',
+                          transition: 'all 0.2s ease',
                         }}
                       >
                         ผิวแทน
@@ -975,13 +978,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1 || isOutOfStock}
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '36px',
+                    height: '36px',
                     borderRadius: '50%',
                     border: 'none',
                     background: '#fff',
                     cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                     fontWeight: 700,
+                    fontSize: '1.05rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                   }}
                 >
                   -
@@ -993,13 +1001,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                   onClick={() => setQuantity((q) => Math.min(product.stock_quantity, q + 1))}
                   disabled={quantity >= product.stock_quantity || isOutOfStock}
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '36px',
+                    height: '36px',
                     borderRadius: '50%',
                     border: 'none',
                     background: '#fff',
                     cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                     fontWeight: 700,
+                    fontSize: '1.05rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                   }}
                 >
                   +

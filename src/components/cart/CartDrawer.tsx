@@ -221,7 +221,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                               border: 'none',
                               color: '#A09296',
                               cursor: 'pointer',
-                              padding: '2px',
+                              padding: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              margin: '-4px -6px 0 0',
+                              borderRadius: '50%',
+                              transition: 'color 0.2s',
                             }}
                             title="ลบรายการ"
                           >
@@ -257,27 +263,30 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             background: '#FFF5F8',
                             border: '1px solid #FAD1DC',
                             borderRadius: '9999px',
-                            padding: '2px 4px',
+                            padding: '3px 5px',
                           }}
                         >
                           <button
                             onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                             style={{
-                              width: '24px',
-                              height: '24px',
+                              width: '30px',
+                              height: '30px',
                               borderRadius: '50%',
                               border: 'none',
                               background: '#FFFFFF',
                               cursor: 'pointer',
-                              fontSize: '0.85rem',
+                              fontSize: '0.95rem',
                               fontWeight: 700,
                               color: '#C73D62',
                               boxShadow: '0 1px 3px rgba(216,74,110,0.15)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           >
                             -
                           </button>
-                          <span style={{ width: '28px', textAlign: 'center', fontSize: '0.82rem', fontWeight: 600, color: '#2C2224' }}>
+                          <span style={{ width: '32px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600, color: '#2C2224' }}>
                             {item.quantity}
                           </span>
                           <button
@@ -287,16 +296,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             }}
                             disabled={item.quantity >= item.product.stock_quantity}
                             style={{
-                              width: '24px',
-                              height: '24px',
+                              width: '30px',
+                              height: '30px',
                               borderRadius: '50%',
                               border: 'none',
                               background: '#FFFFFF',
                               cursor: 'pointer',
-                              fontSize: '0.85rem',
+                              fontSize: '0.95rem',
                               fontWeight: 700,
                               color: '#C73D62',
                               boxShadow: '0 1px 3px rgba(216,74,110,0.15)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           >
                             +
@@ -336,7 +348,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                     background: '#FAF8F5',
                     border: '1px solid rgba(197, 168, 128, 0.4)',
                     padding: '0.5rem 0.85rem',
-                    borderRadius: '6px',
+                    borderRadius: '14px',
                     fontSize: '0.8rem',
                     color: '#1C1917',
                   }}
