@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Product } from '../../types';
 import { X, Star, ShoppingBag, Heart, ArrowRight, Copy, Check } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
@@ -23,6 +23,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   const [quantity, setQuantity] = useState(1);
   const [isCopied, setIsCopied] = useState(false);
 
+  useEffect(() => {
+    setQuantity(1);
+    setIsCopied(false);
+  }, [product?.id]);
+
   if (!product) return null;
 
   const isFavorited = isInWishlist(product.id);
@@ -32,7 +37,9 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   const handleAddToCart = () => {
     const res = addToCart(product, quantity);
     showToast(res.message, res.success ? 'success' : 'error');
-    onClose();
+    if (res.success) {
+      onClose();
+    }
   };
 
   const handleWishlist = () => {

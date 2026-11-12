@@ -306,6 +306,28 @@ export const placeNewOrder = async (
     product: item.product,
   }));
 
+  // Upload slip image to Supabase Storage bucket ('order-slips') if connected
+  let finalSlipUrl = slipUrl || null;
+  if (isSupabaseConfigured() && slipUrl && slipUrl.startsWith('data:image/')) {
+    try {
+      const res = await fetch(slipUrl);
+      const blob = await res.blob();
+      const ext = blob.type.includes('png') ? 'png' : blob.type.includes('webp') ? 'webp' : 'jpg';
+      const filePath = `${userId || 'guest'}/${orderId}-${Date.now()}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('order-slips')
+        .upload(filePath, blob, { contentType: blob.type, upsert: true });
+      if (!uploadErr) {
+        const { data: pubData } = supabase.storage.from('order-slips').getPublicUrl(filePath);
+        if (pubData?.publicUrl) {
+          finalSlipUrl = pubData.publicUrl;
+        }
+      }
+    } catch {
+      // Safe fallback to compressed Data URL
+    }
+  }
+
   const orderData: Order = {
     id: orderId,
     user_id: userId || 'guest-user',
@@ -317,7 +339,7 @@ export const placeNewOrder = async (
     payment_status: 'pending',
     order_status: 'pending', // Requires admin inspection & confirmation before proceeding
     tracking_number: null,
-    slip_url: slipUrl || null,
+    slip_url: finalSlipUrl,
     admin_verified: false,
     verified_at: null,
     created_at: new Date().toISOString(),
@@ -344,7 +366,7 @@ export const placeNewOrder = async (
           .from('orders')
           .insert({
             ...basePayload,
-            slip_url: slipUrl || null,
+            slip_url: finalSlipUrl,
             admin_verified: false,
           })
           .select()
@@ -592,8 +614,16 @@ export const adminSaveProduct = async (product: Partial<Product>): Promise<Produ
       }
     }
   } else {
+    const generatedUuid =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = (Math.random() * 16) | 0;
+            const v = c === 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          });
     targetProduct = {
-      id: 'p-' + Date.now(),
+      id: generatedUuid,
       category_id: product.category_id || INITIAL_CATEGORIES[0].id,
       name: product.name || 'สินค้าใหม่',
       description: product.description || '',

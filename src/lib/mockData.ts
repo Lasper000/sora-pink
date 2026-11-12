@@ -2314,6 +2314,31 @@ export const INITIAL_REVIEWS: Review[] = [
 ];
 
 export const PROMO_CODES: PromoCode[] = [
+  {
+    code: 'SORAPINK15',
+    discountPercent: 15,
+    minSpend: 500,
+    description: 'ลด 15% เมื่อช้อปครบ ฿500',
+  },
+  {
+    code: 'XMAS30',
+    discountPercent: 30,
+    minSpend: 700,
+    description: 'ดีลคริสต์มาสและปีใหม่ ลด 30% เมื่อช้อปครบ ฿700',
+  },
+  {
+    code: 'LOVE25',
+    discountPercent: 25,
+    minSpend: 600,
+    description: 'ดีลวาเลนไทน์ ลด 25% เมื่อช้อปครบ ฿600',
+  },
+  {
+    code: 'SONGKRAN',
+    freeShipping: true,
+    discountAmount: 60,
+    minSpend: 499,
+    description: 'ต้อนรับสงกรานต์ ส่งฟรี + ลดเพิ่ม ฿60 เมื่อช้อปครบ ฿499',
+  },
 {
     code: 'SPOOKY31',
     discountPercent: 31,

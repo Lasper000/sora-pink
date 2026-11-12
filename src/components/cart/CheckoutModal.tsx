@@ -5,7 +5,6 @@ import {
   CreditCard,
   QrCode,
   Truck,
-  CheckCircle2,
   Package,
   Sparkles,
   Upload,
@@ -64,6 +63,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     }
   }, [profile]);
 
+  // Reset checkout step & slip state whenever modal opens for a new order
+  useEffect(() => {
+    if (isOpen) {
+      setStep('form');
+      setCompletedOrder(null);
+      setSlipImage(null);
+      setSlipFileName('');
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('promptpay');
 
   // Auto-generate real PromptPay QR Code whenever grandTotal changes or promptpay is selected
@@ -84,6 +94,41 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     setTimeout(() => setCopiedPhone(false), 2500);
   };
 
+  const compressSlipImage = (dataUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const MAX_DIMENSION = 1000;
+          let { width, height } = img;
+          if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIMENSION) / width);
+              width = MAX_DIMENSION;
+            } else {
+              width = Math.round((width * MAX_DIMENSION) / height);
+              height = MAX_DIMENSION;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(dataUrl);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        } catch {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  };
+
   const handleSlipFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -100,8 +145,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
     setSlipFileName(file.name);
     const reader = new FileReader();
-    reader.onload = () => {
-      setSlipImage(reader.result as string);
+    reader.onload = async () => {
+      const rawDataUrl = reader.result as string;
+      const compressed = await compressSlipImage(rawDataUrl);
+      setSlipImage(compressed);
       showToast('แนบสลิปโอนเงินเรียบร้อยแล้วค่ะ ✨', 'success');
     };
     reader.onerror = () => {
@@ -197,10 +244,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             </div>
             <div>
               <h3 className="font-serif" style={{ fontSize: '1.35rem', fontWeight: 700, color: '#2C2224', margin: 0 }}>
-                {step === 'form' ? 'Checkout & Shipping' : 'คำสั่งซื้อสำเร็จ!'}
+                {step === 'form' ? 'Checkout & Shipping' : 'ส่งคำสั่งซื้อเรียบร้อยแล้ว!'}
               </h3>
               <p style={{ fontSize: '0.78rem', color: '#706064', margin: '2px 0 0 0' }}>
-                {step === 'form' ? 'ขั้นตอนสุดท้ายเพื่อยืนยันคำสั่งซื้อสกินแคร์ที่คุณชื่นชอบ' : 'จัดเตรียมและตัดสต็อกสินค้าเรียบร้อยแล้ว'}
+                {step === 'form' ? 'ขั้นตอนสุดท้ายเพื่อยืนยันคำสั่งซื้อสกินแคร์ที่คุณชื่นชอบ' : 'อยู่ระหว่างรอแอดมินตรวจสอบและยืนยันคำสั่งซื้อของคุณ'}
               </p>
             </div>
           </div>
@@ -703,30 +750,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 width: 80,
                 height: 80,
                 borderRadius: '50%',
-                background: completedOrder?.payment_method === 'promptpay' ? '#FEF3C7' : '#ECFDF5',
-                border: `3px solid ${completedOrder?.payment_method === 'promptpay' ? '#F59E0B' : '#10B981'}`,
+                background: '#FEF3C7',
+                border: '3px solid #F59E0B',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 1.25rem auto',
               }}
             >
-              {completedOrder?.payment_method === 'promptpay' ? (
-                <Clock size={44} color="#D97706" />
-              ) : (
-                <CheckCircle2 size={48} color="#10B981" />
-              )}
+              <Clock size={44} color="#D97706" />
             </div>
 
-            <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: completedOrder?.payment_method === 'promptpay' ? '#92400E' : '#065F46', marginBottom: '0.4rem' }}>
+            <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#92400E', marginBottom: '0.4rem' }}>
               {completedOrder?.payment_method === 'promptpay'
                 ? 'ส่งคำสั่งซื้อและแนบสลิปเรียบร้อยแล้ว!'
-                : 'การสั่งซื้อเสร็จสมบูรณ์!'}
+                : 'ส่งคำสั่งซื้อเข้าระบบเรียบร้อยแล้ว!'}
             </h3>
             <p style={{ fontSize: '0.92rem', color: '#4B5563', maxWidth: '480px', margin: '0 auto 1.5rem auto' }}>
               {completedOrder?.payment_method === 'promptpay'
                 ? 'คำสั่งซื้อของคุณถูกส่งเข้าระบบเรียบร้อยแล้ว ขณะนี้รอแอดมินตรวจสอบความถูกต้องของสลิปและกดยืนยันออเดอร์ เมื่อได้รับการอนุมัติแล้ว ทีมงานจะเริ่มแพ็กสินค้าและจัดส่งให้ทันทีค่ะ'
-                : 'เราได้รับคำสั่งซื้อของคุณแล้ว ระบบได้ทำการตัดสต็อกสินค้าอัตโนมัติ และฝ่ายคลังสินค้ากำลังจัดเตรียมแพ็กเกจสุดพิเศษเพื่อคุณ'}
+                : 'คำสั่งซื้อของคุณถูกส่งเข้าระบบเรียบร้อยแล้ว ขณะนี้รอแอดมินตรวจสอบรายละเอียดและกดยืนยันคำสั่งซื้อ เมื่อได้รับการอนุมัติแล้ว ฝ่ายคลังสินค้าจะเริ่มจัดเตรียมแพ็กเกจและจัดส่งให้คุณทันทีค่ะ'}
             </p>
 
             <div
@@ -750,13 +793,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', alignItems: 'center' }}>
                 <span style={{ color: '#6B7280' }}>สถานะออเดอร์:</span>
-                {completedOrder?.payment_method === 'promptpay' ? (
-                  <span className="badge badge-warning" style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}>
-                    ⏳ รอแอดมินตรวจสอบสลิป
-                  </span>
-                ) : (
-                  <span className="badge badge-blue">กำลังจัดเตรียมสินค้า</span>
-                )}
+                <span className="badge badge-warning" style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}>
+                  {completedOrder?.payment_method === 'promptpay'
+                    ? '⏳ รอแอดมินตรวจสอบสลิป'
+                    : '⏳ รอแอดมินตรวจสอบและยืนยัน'}
+                </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                 <span style={{ color: '#6B7280' }}>ผู้รับ:</span>

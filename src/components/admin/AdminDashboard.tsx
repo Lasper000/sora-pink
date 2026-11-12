@@ -28,7 +28,7 @@ import {
   adminVerifyOrderSlip,
 } from '../../services/api';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 import { useAuth } from '../../context/AuthContext';
 
 interface AdminDashboardProps {
@@ -85,9 +85,49 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   if (!isOpen || role !== 'admin') return null;
 
-  // Analytics Metrics
-  const totalRevenue = orders.reduce((sum, o) => sum + o.total_amount, 0);
+  // Analytics Metrics (Exclude cancelled orders from revenue & breakdown)
+  const validOrders = orders.filter((o) => o.order_status !== 'cancelled');
+  const totalRevenue = validOrders.reduce((sum, o) => sum + o.total_amount, 0);
   const lowStockCount = products.filter((p) => p.stock_quantity <= 5).length;
+
+  const totalValidCount = validOrders.length;
+  const promptpayPct = totalValidCount
+    ? Math.round((validOrders.filter((o) => o.payment_method === 'promptpay').length / totalValidCount) * 100)
+    : 75;
+  const cardPct = totalValidCount
+    ? Math.round((validOrders.filter((o) => o.payment_method === 'credit_card').length / totalValidCount) * 100)
+    : 15;
+  const codPct = totalValidCount ? Math.max(0, 100 - promptpayPct - cardPct) : 10;
+
+  const categoryBreakdown = (() => {
+    const counts: Record<string, number> = {};
+    let totalItemsSold = 0;
+    validOrders.forEach((o) => {
+      (o.items || []).forEach((item) => {
+        const catId = item.product?.category_id || products.find((p) => p.id === item.product_id)?.category_id;
+        if (catId) {
+          counts[catId] = (counts[catId] || 0) + item.quantity;
+          totalItemsSold += item.quantity;
+        }
+      });
+    });
+
+    if (totalItemsSold === 0) {
+      return [
+        { name: 'ดูแลผิวหน้า (Facial Skincare)', pct: 52 },
+        { name: 'เครื่องสำอาง (Cosmetics)', pct: 33 },
+        { name: 'ดูแลผิวกาย (Body Care)', pct: 15 },
+      ];
+    }
+
+    return categories
+      .map((cat) => ({
+        name: cat.name,
+        pct: Math.round(((counts[cat.id] || 0) / totalItemsSold) * 100),
+      }))
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 4);
+  })();
 
   const handleOpenAddProduct = () => {
     setEditingProduct({
@@ -138,7 +178,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const tracking = trackingInputs[orderId];
     await adminUpdateOrderStatus(orderId, newStatus, tracking);
     showToast(`อัปเดตสถานะออเดอร์ ${orderId} เป็น "${newStatus}" แล้ว`, 'success');
-    loadOrders();
+    await loadOrders();
+    onRefreshProducts();
   };
 
   const handleSaveTracking = async (orderId: string) => {
@@ -157,16 +198,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       showToast(
         approved
           ? 'ยืนยันยอดเงินและอนุมัติคำสั่งซื้อเรียบร้อยแล้วค่ะ ✅'
-          : 'ปฏิเสธสลิปและยกเลิกคำสั่งซื้อแล้ว ❌',
+          : 'ปฏิเสธและยกเลิกคำสั่งซื้อพร้อมคืนสต็อกแล้ว ❌',
         approved ? 'success' : 'info'
       );
       if (viewingSlipOrder && viewingSlipOrder.id === orderId) {
         setViewingSlipOrder(null);
       }
       await loadOrders();
+      onRefreshProducts();
     } catch (err) {
       console.error('Verify slip error:', err);
-      showToast('เกิดข้อผิดพลาดในการตรวจสอบสลิป', 'error');
+      showToast('เกิดข้อผิดพลาดในการตรวจสอบคำสั่งซื้อ', 'error');
     } finally {
       setIsVerifying(null);
     }
@@ -518,6 +560,125 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </div>
                     </div>
 
+                    {/* Ordered Product Items List */}
+                    {order.items && order.items.length > 0 && (
+                      <div
+                        style={{
+                          marginTop: '0.85rem',
+                          padding: '0.75rem 0.9rem',
+                          background: '#FFFFFF',
+                          borderRadius: '12px',
+                          border: '1px solid #E2E8F0',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#475569', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <Package size={14} color="#DF5E7E" /> รายการสินค้าที่สั่งซื้อ ({order.items.reduce((s, i) => s + i.quantity, 0)} ชิ้น):
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                          {order.items.map((item) => {
+                            const prod = item.product || products.find((p) => p.id === item.product_id);
+                            return (
+                              <div
+                                key={item.id}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  gap: '0.65rem',
+                                  fontSize: '0.82rem',
+                                  paddingBottom: '0.35rem',
+                                  borderBottom: '1px dashed #F1F5F9',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', minWidth: 0 }}>
+                                  <img
+                                    src={prod?.images?.[0] || DEFAULT_FALLBACK_IMAGE}
+                                    alt={prod?.name || 'สินค้า'}
+                                    onError={handleImageError}
+                                    style={{ width: 34, height: 34, borderRadius: 8, objectFit: 'cover', flexShrink: 0, border: '1px solid #F1F5F9' }}
+                                  />
+                                  <div style={{ minWidth: 0 }}>
+                                    <div style={{ fontWeight: 600, color: '#1E293B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                      {prod?.name || `รหัสสินค้า ${item.product_id}`}
+                                    </div>
+                                    <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                                      ฿{item.price_at_purchase.toLocaleString()} × {item.quantity} ชิ้น
+                                    </div>
+                                  </div>
+                                </div>
+                                <div style={{ fontWeight: 700, color: '#BE123C', flexShrink: 0 }}>
+                                  ฿{(item.price_at_purchase * item.quantity).toLocaleString()}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Non-PromptPay Pending Order Approval Panel */}
+                    {order.payment_method !== 'promptpay' && !order.slip_url && order.order_status === 'pending' && (
+                      <div
+                        style={{
+                          marginTop: '0.85rem',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '12px',
+                          background: '#FEF3C7',
+                          border: '1.5px solid #FDE68A',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.75rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: '#92400E', fontWeight: 600 }}>
+                          <Clock size={16} color="#D97706" /> รอแอดมินตรวจสอบและยืนยันคำสั่งซื้อ ({order.payment_method.toUpperCase()})
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <button
+                            onClick={() => handleVerifySlip(order.id, true)}
+                            disabled={isVerifying === order.id}
+                            className="btn btn-sm"
+                            style={{
+                              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              fontSize: '0.8rem',
+                              padding: '0.4rem 0.85rem',
+                              fontWeight: 700,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '5px',
+                              borderRadius: '9999px',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <Check size={14} /> ยืนยันและอนุมัติออเดอร์
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm('คุณต้องการยกเลิกคำสั่งซื้อนี้ใช่หรือไม่?')) {
+                                handleVerifySlip(order.id, false);
+                              }
+                            }}
+                            disabled={isVerifying === order.id}
+                            className="btn btn-ghost btn-sm"
+                            style={{
+                              color: '#EF4444',
+                              fontSize: '0.8rem',
+                              padding: '0.4rem 0.75rem',
+                              border: '1px solid #FECDD3',
+                              background: '#FFFFFF',
+                              borderRadius: '9999px',
+                            }}
+                          >
+                            ยกเลิกออเดอร์
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
                     {/* PromptPay & Slip Verification Panel */}
                     {(order.payment_method === 'promptpay' || order.slip_url) && (
                       <div
@@ -715,15 +876,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>PromptPay QR Code</span>
-                    <strong>75%</strong>
+                    <strong>{promptpayPct}%</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Credit / Debit Card</span>
-                    <strong>15%</strong>
+                    <strong>{cardPct}%</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Cash on Delivery (COD)</span>
-                    <strong>10%</strong>
+                    <strong>{codPct}%</strong>
                   </div>
                 </div>
               </div>
@@ -731,18 +892,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div style={{ background: '#FFF5F8', padding: '1.5rem', borderRadius: '16px', border: '1px solid #FFE4E6' }}>
                 <h4 style={{ fontWeight: 600, marginBottom: '0.75rem', color: '#BE123C' }}>หมวดหมู่ที่ขายดีที่สุด</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>ดูแลผิวหน้า (Facial Skincare)</span>
-                    <strong>52%</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>เครื่องสำอาง (Cosmetics)</span>
-                    <strong>33%</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>ดูแลผิวกาย (Body Care)</span>
-                    <strong>15%</strong>
-                  </div>
+                  {categoryBreakdown.map((cat) => (
+                    <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{cat.name}</span>
+                      <strong>{cat.pct}%</strong>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

@@ -110,7 +110,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
           };
         }
         return {
-          label: '⏳ รอชำระเงิน',
+          label: '⏳ รอแอดมินตรวจสอบและยืนยัน',
           color: '#D97706',
           bg: '#FEF3C7',
           borderColor: '#FDE68A',

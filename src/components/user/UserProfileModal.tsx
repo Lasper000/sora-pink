@@ -16,7 +16,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
 import { fetchOrders } from '../../services/api';
 import { showToast } from '../common/Toast';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -103,7 +103,14 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             </span>
           );
         }
-        return <span className="badge badge-warning">รอชำระเงิน</span>;
+        return (
+          <span
+            className="badge badge-warning"
+            style={{ background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}
+          >
+            ⏳ รอแอดมินตรวจสอบและยืนยัน
+          </span>
+        );
       case 'processing':
         return <span className="badge badge-blue">กำลังจัดเตรียมสินค้า</span>;
       case 'shipped':
@@ -267,8 +274,72 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                         </div>
                       </div>
 
+                      {/* Ordered Items List */}
+                      {order.items && order.items.length > 0 && (
+                        <div
+                          style={{
+                            marginBottom: '0.85rem',
+                            padding: '0.65rem 0.85rem',
+                            background: '#FFF9FB',
+                            borderRadius: '12px',
+                            border: '1px solid #FCE7F3',
+                          }}
+                        >
+                          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#9D174D', marginBottom: '0.45rem' }}>
+                            รายการสินค้า ({order.items.reduce((s, i) => s + i.quantity, 0)} ชิ้น):
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                            {order.items.map((item) => (
+                              <div
+                                key={item.id}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  gap: '0.5rem',
+                                  fontSize: '0.8rem',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                                  <img
+                                    src={item.product?.images?.[0] || DEFAULT_FALLBACK_IMAGE}
+                                    alt={item.product?.name || 'สินค้า'}
+                                    onError={handleImageError}
+                                    style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, border: '1px solid #FCE7F3' }}
+                                  />
+                                  <span style={{ color: '#374151', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {item.product?.name || 'สินค้าสกินแคร์'}
+                                  </span>
+                                  <span style={{ color: '#6B7280', flexShrink: 0 }}>×{item.quantity}</span>
+                                </div>
+                                <span style={{ fontWeight: 700, color: '#BE123C', flexShrink: 0 }}>
+                                  ฿{(item.price_at_purchase * item.quantity).toLocaleString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Tracking Number Section */}
-                      {order.tracking_number ? (
+                      {order.order_status === 'cancelled' ? (
+                        <div
+                          style={{
+                            fontSize: '0.82rem',
+                            color: '#EF4444',
+                            background: '#FEF2F2',
+                            border: '1px solid #FECACA',
+                            padding: '0.5rem 0.75rem',
+                            borderRadius: '10px',
+                            marginBottom: '0.75rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          คำสั่งซื้อนี้ถูกยกเลิกแล้วค่ะ
+                        </div>
+                      ) : order.tracking_number ? (
                         <div
                           style={{
                             background: '#F0F9FF',
@@ -287,11 +358,15 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                           <button
                             onClick={() => copyTracking(order.tracking_number!)}
                             className="btn btn-outline btn-sm"
-                            style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderColor: '#38BDF8', color: '#0284C7' }}
+                            style={{ padding: '0.2rem 0.6rem', fontSize: '0.75rem', borderColor: '#38BDF8', color: '#0284C7', borderRadius: '9999px' }}
                           >
                             {copiedTracking === order.tracking_number ? <Check size={12} /> : <Copy size={12} />}
                             {copiedTracking === order.tracking_number ? 'คัดลอกแล้ว' : 'คัดลอก'}
                           </button>
+                        </div>
+                      ) : order.order_status === 'pending' ? (
+                        <div style={{ fontSize: '0.82rem', color: '#B45309', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Package size={14} color="#D97706" /> คำสั่งซื้ออยู่ระหว่างรอแอดมินตรวจสอบและยืนยันค่ะ
                         </div>
                       ) : (
                         <div style={{ fontSize: '0.82rem', color: '#6B7280', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -300,11 +375,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                       )}
 
                       {/* Action & Tracking Button */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                         <div style={{ fontSize: '0.82rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <MapPin size={14} color="#9CA3AF" /> ผู้รับ: {order.shipping_address.fullName} ({order.shipping_address.phone})
                         </div>
-                        {onTrackOrder && (
+                        {onTrackOrder && order.order_status !== 'cancelled' && (
                           <button
                             onClick={() => onTrackOrder(order)}
                             className="btn btn-sm"
@@ -312,8 +387,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                               background: 'linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)',
                               color: '#FFFFFF',
                               border: 'none',
-                              borderRadius: '8px',
-                              padding: '0.35rem 0.8rem',
+                              borderRadius: '9999px',
+                              padding: '0.35rem 0.9rem',
                               fontSize: '0.78rem',
                               display: 'inline-flex',
                               alignItems: 'center',

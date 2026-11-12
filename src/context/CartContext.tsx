@@ -84,18 +84,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return sum + unitPrice * item.quantity;
   }, 0);
 
-  // คำนวณส่วนลด
+  // ยกเลิกโค้ดส่วนลดอัตโนมัติหากยอดซื้อลดลงต่ำกว่าขั้นต่ำ (minSpend) หรือตะกร้าว่าง
+  useEffect(() => {
+    if (appliedPromo) {
+      if (cart.length === 0 || (appliedPromo.minSpend && subtotal < appliedPromo.minSpend)) {
+        setAppliedPromo(null);
+      }
+    }
+  }, [subtotal, cart.length, appliedPromo]);
+
+  // คำนวณส่วนลด (ตรวจสอบยอดขั้นต่ำเสมอ และจำกัดไม่ให้เกินราคาสินค้า)
   let discountAmount = 0;
-  if (appliedPromo) {
+  const isPromoEligible = appliedPromo && (!appliedPromo.minSpend || subtotal >= appliedPromo.minSpend);
+  if (isPromoEligible && appliedPromo) {
     if (appliedPromo.discountAmount) {
-      discountAmount = appliedPromo.discountAmount;
+      discountAmount = Math.min(subtotal, appliedPromo.discountAmount);
     } else if (appliedPromo.discountPercent) {
-      discountAmount = Math.round((subtotal * appliedPromo.discountPercent) / 100);
+      discountAmount = Math.min(subtotal, Math.round((subtotal * appliedPromo.discountPercent) / 100));
     }
   }
 
-  // คำนวณค่าส่ง: ฟรีเมื่อซื้อครบ 500 บาท หรือใส่โค้ด FREESHIP มิฉะนั้น 50 บาท
-  const shippingFee = (subtotal >= 500 || appliedPromo?.freeShipping || cart.length === 0) ? 0 : 50;
+  // คำนวณค่าส่ง: ฟรีเมื่อซื้อครบ 500 บาท หรือใส่โค้ดส่งฟรีที่ผ่านเกณฑ์ขั้นต่ำ มิฉะนั้น 50 บาท
+  const shippingFee = (subtotal >= 500 || (isPromoEligible && appliedPromo?.freeShipping) || cart.length === 0) ? 0 : 50;
 
   const grandTotal = Math.max(0, subtotal - discountAmount + shippingFee);
 
