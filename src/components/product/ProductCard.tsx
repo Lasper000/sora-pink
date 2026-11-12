@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Product } from '../../types';
-import { Star, Heart, ShoppingBag, Eye } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Eye, Scale } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
@@ -10,9 +10,17 @@ interface ProductCardProps {
   product: Product;
   onClick: () => void;
   onQuickView?: (product: Product) => void;
+  onToggleCompare?: (product: Product) => void;
+  isCompared?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQuickView }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onClick,
+  onQuickView,
+  onToggleCompare,
+  isCompared = false,
+}) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedShade, setSelectedShade] = useState(0);
@@ -222,6 +230,37 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, onQu
               className={isFavorited ? 'animate-heart' : ''}
             />
           </button>
+
+          {/* Compare Button */}
+          {onToggleCompare && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCompare(product);
+              }}
+              className="product-card-compare-btn"
+              style={{
+                position: 'absolute',
+                top: '52px',
+                right: '12px',
+                width: '34px',
+                height: '34px',
+                borderRadius: '50%',
+                background: isCompared ? '#DF5E7E' : 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(222, 83, 119, 0.16)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 2px 10px rgba(223, 94, 126, 0.12)',
+                transition: 'transform 0.2s ease, background 0.2s ease',
+              }}
+              title={isCompared ? 'นำออกจากตารางเปรียบเทียบ' : 'เปรียบเทียบสินค้า'}
+            >
+              <Scale size={14} color={isCompared ? '#FFFFFF' : '#8F8881'} />
+            </button>
+          )}
 
           {/* Quick View Button on Image */}
           {onQuickView && (

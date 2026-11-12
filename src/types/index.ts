@@ -106,6 +106,15 @@ export interface Review {
   created_at: string;
   user_name?: string;
   user_avatar?: string;
+  images?: string[];
+  verified_buyer?: boolean;
+}
+
+export interface AdminNotificationConfig {
+  enabled: boolean;
+  telegramBotToken: string;
+  telegramChatId: string;
+  webhookUrl: string;
 }
 
 export interface WishlistItem {

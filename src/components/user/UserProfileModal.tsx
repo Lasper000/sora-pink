@@ -10,6 +10,9 @@ import {
   Check,
   ShoppingBag,
   Truck,
+  Sparkles,
+  Printer,
+  Award,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -17,6 +20,7 @@ import { useCart } from '../../context/CartContext';
 import { fetchOrders } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
+import { printOrderReceipt } from '../../utils/printDocuments';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -37,7 +41,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 }) => {
   const { profile, updateProfile } = useAuth();
   const { wishlist, toggleWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const { addToCart, collectVoucher, isVoucherCollected } = useCart();
 
   const [activeTab, setActiveTab] = useState<'orders' | 'profile' | 'wishlist'>(initialTab);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -170,6 +174,103 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <X size={20} />
           </button>
         </div>
+
+        {/* Sora Pink Glow Points & Loyalty Tier Card */}
+        {profile && (() => {
+          const validOrders = orders.filter((o) => o.order_status !== 'cancelled');
+          const totalSpent = validOrders.reduce((s, o) => s + o.total_amount, 0);
+          const glowPoints = 50 + Math.floor(totalSpent / 25);
+          const tierName =
+            glowPoints >= 500
+              ? '💎 Diamond Glow VIP'
+              : glowPoints >= 200
+              ? '✨ Rose Gold VIP'
+              : '🌸 Pink Member';
+          const nextTierTarget = glowPoints >= 500 ? 500 : glowPoints >= 200 ? 500 : 200;
+          const progressPct = Math.min(100, Math.round((glowPoints / nextTierTarget) * 100));
+          const hasVipCoupon = isVoucherCollected('GLOWVIP100');
+
+          return (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #FFF0F5 0%, #FDF2F8 55%, #F0F9FF 100%)',
+                border: '1.5px solid #FAD1DC',
+                borderRadius: '20px',
+                padding: '1rem 1.25rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.85rem',
+              }}
+            >
+              <div style={{ flex: 1, minWidth: '210px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      background: 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                      color: '#FFFFFF',
+                      padding: '2px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <Award size={12} /> {tierName}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#9D174D' }}>
+                    คะแนนสะสม: <strong>{glowPoints.toLocaleString()} Glow Points</strong>
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '6px' }}>
+                  ทุกยอดช้อป ฿25 รับ 1 คะแนน (ฟรีโบนัสสมาชิกใหม่ +50 คะแนน)
+                </div>
+                <div style={{ height: '6px', background: '#FCE7F3', borderRadius: '9999px', overflow: 'hidden', maxWidth: '300px' }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${progressPct}%`,
+                      background: 'linear-gradient(90deg, #F48BA5 0%, #C73D62 100%)',
+                      borderRadius: '9999px',
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  disabled={hasVipCoupon}
+                  onClick={() => {
+                    const res = collectVoucher('GLOWVIP100');
+                    showToast(res.message, res.success ? 'success' : 'info');
+                  }}
+                  className="btn btn-sm"
+                  style={{
+                    borderRadius: '9999px',
+                    background: hasVipCoupon ? '#E2E8F0' : 'linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%)',
+                    color: hasVipCoupon ? '#64748B' : '#FFFFFF',
+                    border: 'none',
+                    padding: '0.45rem 1rem',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: hasVipCoupon ? 'default' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                  }}
+                >
+                  <Sparkles size={13} />
+                  {hasVipCoupon ? 'เก็บโค้ด GLOWVIP100 แล้ว' : 'แลกโค้ดลด ฿100 (GLOWVIP100)'}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Tab Navigation */}
         <div
@@ -379,28 +480,47 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                         <div style={{ fontSize: '0.82rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <MapPin size={14} color="#9CA3AF" /> ผู้รับ: {order.shipping_address.fullName} ({order.shipping_address.phone})
                         </div>
-                        {onTrackOrder && order.order_status !== 'cancelled' && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                           <button
-                            onClick={() => onTrackOrder(order)}
-                            className="btn btn-sm"
+                            onClick={() => printOrderReceipt(order)}
+                            className="btn btn-outline btn-sm"
                             style={{
-                              background: 'linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)',
-                              color: '#FFFFFF',
-                              border: 'none',
                               borderRadius: '9999px',
-                              padding: '0.35rem 0.9rem',
-                              fontSize: '0.78rem',
+                              padding: '0.32rem 0.8rem',
+                              fontSize: '0.76rem',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '5px',
-                              cursor: 'pointer',
-                              fontWeight: 700,
-                              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+                              borderColor: '#FAD1DC',
+                              color: '#C73D62',
                             }}
                           >
-                            <Truck size={13} /> ติดตามพัสดุเรียลไทม์
+                            <Printer size={13} /> ใบเสร็จรับเงิน
                           </button>
-                        )}
+
+                          {onTrackOrder && order.order_status !== 'cancelled' && (
+                            <button
+                              onClick={() => onTrackOrder(order)}
+                              className="btn btn-sm"
+                              style={{
+                                background: 'linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '9999px',
+                                padding: '0.35rem 0.9rem',
+                                fontSize: '0.78rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                cursor: 'pointer',
+                                fontWeight: 700,
+                                boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+                              }}
+                            >
+                              <Truck size={13} /> ติดตามพัสดุเรียลไทม์
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

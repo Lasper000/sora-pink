@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, Ticket } from 'lucide-react';
+import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, Ticket, Gift } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
@@ -322,6 +322,41 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                   </div>
                 );
               })}
+
+              {/* Auto-unlocked Free Gifts Section */}
+              {subtotal >= 800 && (
+                <div
+                  style={{
+                    padding: '0.8rem 0.95rem',
+                    borderRadius: '18px',
+                    background: 'linear-gradient(135deg, #FFF5F8 0%, #FDF2F8 100%)',
+                    border: '1.5px dashed #F48BA5',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.55rem',
+                  }}
+                >
+                  <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#C73D62', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Gift size={14} color="#C73D62" /> ของขวัญพิเศษที่ได้รับฟรีในออเดอร์นี้ (Complimentary Gifts)
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.8rem', color: '#2C2224' }}>
+                    <span>🎁 ฟองน้ำมาร์ชแมลโลว์ Sora Pink Puff (1 ชิ้น)</span>
+                    <span style={{ fontWeight: 700, color: '#059669', background: '#ECFDF5', padding: '1px 8px', borderRadius: '9999px', fontSize: '0.72rem' }}>
+                      ฟรี ฿0
+                    </span>
+                  </div>
+
+                  {subtotal >= 1200 && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.8rem', color: '#2C2224' }}>
+                      <span>🎁 กระเป๋าเครื่องสำอาง Sora Pink Atelier Pouch (1 ใบ)</span>
+                      <span style={{ fontWeight: 700, color: '#059669', background: '#ECFDF5', padding: '1px 8px', borderRadius: '9999px', fontSize: '0.72rem' }}>
+                        ฟรี ฿0
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

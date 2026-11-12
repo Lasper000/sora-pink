@@ -2315,6 +2315,12 @@ export const INITIAL_REVIEWS: Review[] = [
 
 export const PROMO_CODES: PromoCode[] = [
   {
+    code: 'GLOWVIP100',
+    discountAmount: 100,
+    minSpend: 500,
+    description: 'แลกคะแนนสะสม Glow Points ลดทันที ฿100 (เมื่อช้อปครบ ฿500)',
+  },
+  {
     code: 'SORAPINK15',
     discountPercent: 15,
     minSpend: 500,

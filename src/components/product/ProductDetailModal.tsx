@@ -17,6 +17,7 @@ import {
   Palette,
   Check,
   Share2,
+  Camera,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -43,6 +44,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
+  const [reviewImage, setReviewImage] = useState<string | null>(null);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   // Feature 3: Swatch visualizer state
@@ -176,6 +178,44 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     );
   };
 
+  const handleReviewPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('กรุณาเลือกไฟล์รูปภาพเท่านั้นค่ะ', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_DIM = 800;
+        let { width, height } = img;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          setReviewImage(canvas.toDataURL('image/jpeg', 0.8));
+        } else {
+          setReviewImage(reader.result as string);
+        }
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -188,10 +228,12 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
         profile?.full_name || 'ลูกค้าผู้ใช้งาน (Verified Buyer)',
         profile?.avatar_url || '',
         newRating,
-        newComment
+        newComment,
+        reviewImage ? [reviewImage] : undefined
       );
       setReviews([added, ...reviews]);
       setNewComment('');
+      setReviewImage(null);
       showToast('ขอบคุณสำหรับการรีวิวสินค้านะคะ', 'success');
     } catch {
       showToast('ไม่สามารถส่งรีวิวได้ในขณะนี้', 'error');
@@ -817,13 +859,71 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                         className="form-textarea"
                         style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}
                       />
-                      <button
-                        type="submit"
-                        disabled={isSubmittingReview}
-                        className="btn btn-primary btn-sm"
-                      >
-                        <Send size={14} /> ส่งรีวิว
-                      </button>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <label
+                            htmlFor="review-photo-upload"
+                            className="btn btn-outline btn-sm"
+                            style={{
+                              borderRadius: '9999px',
+                              padding: '0.35rem 0.75rem',
+                              fontSize: '0.76rem',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <Camera size={13} /> {reviewImage ? 'เปลี่ยนรูปภาพรีวิว' : 'แนบรูปภาพรีวิว'}
+                          </label>
+                          <input
+                            id="review-photo-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleReviewPhotoChange}
+                            style={{ display: 'none' }}
+                          />
+                          {reviewImage && (
+                            <div style={{ position: 'relative', width: 36, height: 36 }}>
+                              <img
+                                src={reviewImage}
+                                alt="พรีวิวรูป"
+                                style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid #FAD1DC' }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setReviewImage(null)}
+                                style={{
+                                  position: 'absolute',
+                                  top: -5,
+                                  right: -5,
+                                  width: 16,
+                                  height: 16,
+                                  borderRadius: '50%',
+                                  background: '#EF4444',
+                                  color: '#FFF',
+                                  border: 'none',
+                                  fontSize: '10px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={isSubmittingReview}
+                          className="btn btn-primary btn-sm"
+                          style={{ borderRadius: '9999px' }}
+                        >
+                          <Send size={14} /> ส่งรีวิว
+                        </button>
+                      </div>
                     </form>
 
                     {/* Review List */}
@@ -875,6 +975,25 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                             <p style={{ fontSize: '0.85rem', color: '#4B5563', lineHeight: 1.5 }}>
                               {rev.comment}
                             </p>
+                            {rev.images && rev.images.length > 0 && (
+                              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                                {rev.images.map((imgUrl, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={imgUrl}
+                                    alt="รูปรีวิวจากลูกค้า"
+                                    onError={handleImageError}
+                                    style={{
+                                      width: 68,
+                                      height: 68,
+                                      objectFit: 'cover',
+                                      borderRadius: '10px',
+                                      border: '1px solid #FAD1DC',
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))
                       )}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { CartItem, Product, PromoCode } from '../types';
-import { PROMO_CODES } from '../lib/mockData';
+import { getStoredPromoCodes } from '../services/api';
 
 interface CartContextType {
   cart: CartItem[];
@@ -38,6 +38,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+  const [availableVouchers, setAvailableVouchers] = useState<PromoCode[]>(() => getStoredPromoCodes());
+
+  useEffect(() => {
+    const refreshPromos = () => setAvailableVouchers(getStoredPromoCodes());
+    window.addEventListener('sora-promos-updated', refreshPromos);
+    return () => window.removeEventListener('sora-promos-updated', refreshPromos);
+  }, []);
 
   const [collectedVouchers, setCollectedVouchers] = useState<string[]>(() => {
     try {
@@ -188,7 +195,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // ใช้คูปองส่วนลด
   const applyPromoCode = (codeStr: string): { success: boolean; message: string } => {
     const cleanCode = codeStr.trim().toUpperCase();
-    const found = PROMO_CODES.find((p) => p.code === cleanCode);
+    const livePromos = getStoredPromoCodes();
+    const found = livePromos.find((p) => p.code.toUpperCase() === cleanCode);
 
     if (!found) {
       return { success: false, message: 'โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุ' };
@@ -228,7 +236,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         collectedVouchers,
         collectVoucher,
         isVoucherCollected,
-        availableVouchers: PROMO_CODES,
+        availableVouchers,
       }}
     >
       {children}

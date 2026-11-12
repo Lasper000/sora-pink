@@ -2,8 +2,18 @@
 // SORA PINK - UNIFIED API SERVICE (SUPABASE LIVE + LOCALSTORAGE DEMO STORE)
 // ============================================================================
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { INITIAL_CATEGORIES, INITIAL_PRODUCTS, INITIAL_REVIEWS } from '../lib/mockData';
-import type { Category, Product, Review, Order, OrderItem, ShippingAddress, CartItem } from '../types';
+import { INITIAL_CATEGORIES, INITIAL_PRODUCTS, INITIAL_REVIEWS, PROMO_CODES } from '../lib/mockData';
+import type {
+  Category,
+  Product,
+  Review,
+  Order,
+  OrderItem,
+  ShippingAddress,
+  CartItem,
+  PromoCode,
+  AdminNotificationConfig,
+} from '../types';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'sora_pink_products',
@@ -11,6 +21,8 @@ const STORAGE_KEYS = {
   REVIEWS: 'sora_pink_reviews',
   ORDERS: 'sora_pink_orders',
   WISHLIST: 'sora_pink_wishlist',
+  PROMO_CODES: 'sora_pink_promos_v1',
+  NOTIFICATION_CONFIG: 'sora_pink_notify_config_v1',
 };
 
 // ----------------------------------------------------------------------------
@@ -233,14 +245,27 @@ export const fetchReviewsByProductId = async (productId: string): Promise<Review
   return allReviews.filter((r) => r.product_id === productId);
 };
 
+export const hasUserPurchasedProduct = (userId: string | undefined, productId: string): boolean => {
+  if (!userId) return false;
+  const allOrders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  return allOrders.some(
+    (o) =>
+      o.user_id === userId &&
+      o.order_status !== 'cancelled' &&
+      (o.items || []).some((item) => item.product_id === productId)
+  );
+};
+
 export const submitProductReview = async (
   productId: string,
   userId: string,
   userName: string,
   userAvatar: string,
   rating: number,
-  comment: string
+  comment: string,
+  images?: string[]
 ): Promise<Review> => {
+  const isVerifiedBuyer = hasUserPurchasedProduct(userId, productId) || !userId.startsWith('guest-');
   const newReview: Review = {
     id: 'rev-' + Date.now(),
     product_id: productId,
@@ -249,6 +274,8 @@ export const submitProductReview = async (
     user_avatar: userAvatar,
     rating,
     comment,
+    images: images && images.length > 0 ? images : undefined,
+    verified_buyer: isVerifiedBuyer,
     created_at: new Date().toISOString(),
   };
 
@@ -419,6 +446,9 @@ export const placeNewOrder = async (
   const orders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
   orders.unshift(orderData);
   setStoredData(STORAGE_KEYS.ORDERS, orders);
+
+  // Trigger instant notification alert (Telegram / Webhook) in background
+  sendOrderNotificationAlert(orderData).catch(() => {});
 
   return orderData;
 };
@@ -669,4 +699,137 @@ export const adminDeleteProduct = async (productId: string): Promise<boolean> =>
   const filtered = products.filter((p) => p.id !== productId);
   setStoredData(STORAGE_KEYS.PRODUCTS, filtered);
   return true;
+};
+
+// ----------------------------------------------------------------------------
+// Dynamic Promo Code Management API (Admin Promo Manager)
+// ----------------------------------------------------------------------------
+export const getStoredPromoCodes = (): PromoCode[] => {
+  const stored = getStoredData<PromoCode[]>(STORAGE_KEYS.PROMO_CODES, PROMO_CODES);
+  const map = new Map<string, PromoCode>();
+  PROMO_CODES.forEach((p) => map.set(p.code.toUpperCase(), p));
+  stored.forEach((p) => map.set(p.code.toUpperCase(), p));
+  return Array.from(map.values());
+};
+
+export const adminSavePromoCode = (promo: PromoCode): PromoCode[] => {
+  const current = getStoredPromoCodes();
+  const cleanCode = promo.code.trim().toUpperCase();
+  const updatedPromo: PromoCode = { ...promo, code: cleanCode };
+  const existsIdx = current.findIndex((p) => p.code.toUpperCase() === cleanCode);
+  let nextList: PromoCode[];
+  if (existsIdx > -1) {
+    nextList = current.map((p, i) => (i === existsIdx ? updatedPromo : p));
+  } else {
+    nextList = [updatedPromo, ...current];
+  }
+  setStoredData(STORAGE_KEYS.PROMO_CODES, nextList);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('sora-promos-updated'));
+  }
+  return nextList;
+};
+
+export const adminDeletePromoCode = (code: string): PromoCode[] => {
+  const current = getStoredPromoCodes();
+  const cleanCode = code.trim().toUpperCase();
+  const nextList = current.filter((p) => p.code.toUpperCase() !== cleanCode);
+  setStoredData(STORAGE_KEYS.PROMO_CODES, nextList);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('sora-promos-updated'));
+  }
+  return nextList;
+};
+
+// ----------------------------------------------------------------------------
+// Real-time Order Notification Alert (Telegram Bot & Custom Webhook)
+// ----------------------------------------------------------------------------
+const DEFAULT_NOTIFY_CONFIG: AdminNotificationConfig = {
+  enabled: false,
+  telegramBotToken: '',
+  telegramChatId: '',
+  webhookUrl: '',
+};
+
+export const getNotificationConfig = (): AdminNotificationConfig => {
+  return getStoredData<AdminNotificationConfig>(STORAGE_KEYS.NOTIFICATION_CONFIG, DEFAULT_NOTIFY_CONFIG);
+};
+
+export const saveNotificationConfig = (config: AdminNotificationConfig): void => {
+  setStoredData(STORAGE_KEYS.NOTIFICATION_CONFIG, config);
+};
+
+export const sendOrderNotificationAlert = async (
+  order: Order,
+  isTest = false
+): Promise<{ sent: boolean; message: string }> => {
+  const config = getNotificationConfig();
+  if (!config.enabled && !isTest) {
+    return { sent: false, message: 'ระบบแจ้งเตือนปิดอยู่' };
+  }
+
+  const itemSummary = (order.items || [])
+    .map((i) => `• ${i.product?.name || i.product_id} (x${i.quantity})`)
+    .join('\n');
+
+  const textMsg =
+    `${isTest ? '🔔 [ทดสอบระบบแจ้งเตือน] ' : '🛍️ [ออเดอร์ใหม่ SORA PINK] '}\n` +
+    `━━━━━━━━━━━━━━━\n` +
+    `📦 เลขออเดอร์: ${order.id}\n` +
+    `👤 ลูกค้า: ${order.shipping_address.fullName} (${order.shipping_address.phone})\n` +
+    `💳 ช่องทางชำระ: ${order.payment_method.toUpperCase()}${order.slip_url ? ' (แนบสลิปแล้ว ✅)' : ''}\n` +
+    `💰 ยอดสุทธิ: ฿${order.total_amount.toLocaleString()}\n` +
+    `📍 ที่อยู่: ${order.shipping_address.address} จ.${order.shipping_address.province} ${order.shipping_address.postalCode}\n` +
+    (itemSummary ? `📋 รายการสินค้า:\n${itemSummary}\n` : '') +
+    `━━━━━━━━━━━━━━━\n` +
+    `⏳ สถานะ: รอแอดมินตรวจสอบและยืนยันในระบบหลังบ้าน`;
+
+  let sentAny = false;
+
+  // 1. Send via Telegram Bot API if configured
+  if (config.telegramBotToken.trim() && config.telegramChatId.trim()) {
+    try {
+      const tgUrl = `https://api.telegram.org/bot${config.telegramBotToken.trim()}/sendMessage`;
+      const res = await fetch(tgUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: config.telegramChatId.trim(),
+          text: textMsg,
+        }),
+      });
+      if (res.ok) sentAny = true;
+    } catch (err) {
+      console.warn('Telegram notification error:', err);
+    }
+  }
+
+  // 2. Send via Custom / Discord / Make / Zapier / LINE Proxy Webhook if configured
+  if (config.webhookUrl.trim()) {
+    try {
+      const res = await fetch(config.webhookUrl.trim(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: textMsg,
+          text: textMsg,
+          order_id: order.id,
+          total_amount: order.total_amount,
+          customer: order.shipping_address.fullName,
+          payment_method: order.payment_method,
+        }),
+      });
+      if (res.ok) sentAny = true;
+    } catch (err) {
+      console.warn('Webhook notification error:', err);
+    }
+  }
+
+  if (sentAny) {
+    return { sent: true, message: 'ส่งแจ้งเตือนออเดอร์เข้าช่องทางที่ตั้งค่าไว้สำเร็จแล้วค่ะ!' };
+  }
+  return {
+    sent: false,
+    message: 'ยังไม่ได้ระบุ Telegram Bot Token / Chat ID หรือ Webhook URL ที่ถูกต้องค่ะ',
+  };
 };

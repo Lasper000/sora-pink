@@ -19,6 +19,7 @@ import { ProductCard } from './components/product/ProductCard';
 import { ProductFilter } from './components/product/ProductFilter';
 import { ProductDetailModal } from './components/product/ProductDetailModal';
 import { QuickViewModal } from './components/product/QuickViewModal';
+import { CompareModal } from './components/product/CompareModal';
 import { SkeletonProductCard } from './components/common/SkeletonProductCard';
 import { LiveSalesNotification } from './components/common/LiveSalesNotification';
 import { BeautyConciergeFloat } from './components/common/BeautyConciergeFloat';
@@ -79,6 +80,24 @@ const MainStore: React.FC = () => {
   const [isCouponCenterOpen, setIsCouponCenterOpen] = useState(false);
   const [trackingOrder, setTrackingOrder] = useState<Order | null>(null);
   const [visibleCount, setVisibleCount] = useState<number>(24);
+  const [compareList, setCompareList] = useState<Product[]>([]);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+
+  const handleToggleCompare = (product: Product) => {
+    setCompareList((prev) => {
+      const exists = prev.some((p) => p.id === product.id);
+      if (exists) {
+        showToast(`นำ "${product.name}" ออกจากรายการเปรียบเทียบแล้วค่ะ`, 'info');
+        return prev.filter((p) => p.id !== product.id);
+      }
+      if (prev.length >= 3) {
+        showToast('เปรียบเทียบสินค้าได้สูงสุดครั้งละ 3 รายการค่ะ', 'error');
+        return prev;
+      }
+      showToast(`เพิ่ม "${product.name}" ในตารางเปรียบเทียบแล้ว (${prev.length + 1}/3)`, 'success');
+      return [...prev, product];
+    });
+  };
 
   // Synchronize product selection with browser address bar and history
   const handleSelectProduct = (product: Product | null, pushHistory = true) => {
@@ -596,6 +615,8 @@ const MainStore: React.FC = () => {
                       product={product}
                       onClick={() => handleSelectProduct(product)}
                       onQuickView={(p) => setQuickViewProduct(p)}
+                      onToggleCompare={handleToggleCompare}
+                      isCompared={compareList.some((c) => c.id === product.id)}
                     />
                   ))}
                 </div>
@@ -711,6 +732,19 @@ const MainStore: React.FC = () => {
           onOpenFullDetail={(p) => handleSelectProduct(p)}
         />
       </ErrorBoundary>
+
+      <CompareModal
+        compareList={compareList}
+        isOpen={isCompareOpen}
+        onOpen={() => setIsCompareOpen(true)}
+        onClose={() => setIsCompareOpen(false)}
+        onRemoveProduct={(id) => setCompareList((prev) => prev.filter((p) => p.id !== id))}
+        onClearAll={() => {
+          setCompareList([]);
+          setIsCompareOpen(false);
+        }}
+        onSelectProduct={(p) => handleSelectProduct(p)}
+      />
 
       {/* Floating Concierge & Live Sales Social Proof Toast */}
       <LiveSalesNotification

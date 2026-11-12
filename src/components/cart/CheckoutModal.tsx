@@ -13,12 +13,14 @@ import {
   Copy,
   Check,
   Clock,
+  Printer,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { placeNewOrder } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { generatePromptPayQR, PROMPTPAY_PHONE_FORMATTED, PROMPTPAY_NAME } from '../../utils/promptpay';
+import { printOrderReceipt } from '../../utils/printDocuments';
 import confetti from 'canvas-confetti';
 
 interface CheckoutModalProps {
@@ -816,8 +818,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
               )}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
-              <button onClick={onClose} className="btn btn-primary">
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {completedOrder && (
+                <button
+                  type="button"
+                  onClick={() => printOrderReceipt(completedOrder)}
+                  className="btn btn-outline"
+                  style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <Printer size={16} /> พิมพ์ใบสรุปคำสั่งซื้อ / ใบเสร็จ
+                </button>
+              )}
+              <button onClick={onClose} className="btn btn-primary" style={{ borderRadius: '9999px' }}>
                 กลับสู่หน้าหลัก Sora Pink
               </button>
             </div>

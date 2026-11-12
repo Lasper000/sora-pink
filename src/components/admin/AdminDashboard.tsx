@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { Product, Order, Category } from '../../types';
+import type { Product, Order, Category, PromoCode, AdminNotificationConfig } from '../../types';
 import {
   X,
   Plus,
@@ -19,6 +19,11 @@ import {
   Eye,
   Check,
   XCircle,
+  Printer,
+  Download,
+  Ticket,
+  Bell,
+  Send,
 } from 'lucide-react';
 import {
   adminFetchAllOrders,
@@ -26,9 +31,16 @@ import {
   adminSaveProduct,
   adminDeleteProduct,
   adminVerifyOrderSlip,
+  getStoredPromoCodes,
+  adminSavePromoCode,
+  adminDeletePromoCode,
+  getNotificationConfig,
+  saveNotificationConfig,
+  sendOrderNotificationAlert,
 } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
+import { printShippingLabel, printOrderReceipt, exportOrdersToCSV } from '../../utils/printDocuments';
 import { useAuth } from '../../context/AuthContext';
 
 interface AdminDashboardProps {
@@ -46,8 +58,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   categories,
   onRefreshProducts,
 }) => {
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'analytics'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'promos' | 'notifications' | 'analytics'>('products');
   const [orders, setOrders] = useState<Order[]>([]);
+
+  // Promo Code Manager state
+  const [promoCodes, setPromoCodes] = useState<PromoCode[]>(() => getStoredPromoCodes());
+  const [promoForm, setPromoForm] = useState<{
+    code: string;
+    discountType: 'amount' | 'percent' | 'shipping';
+    discountValue: number;
+    minSpend: number;
+    freeShipping: boolean;
+    description: string;
+  }>({
+    code: '',
+    discountType: 'amount',
+    discountValue: 50,
+    minSpend: 500,
+    freeShipping: false,
+    description: '',
+  });
+
+  // Notification Webhook / Telegram state
+  const [notifyConfig, setNotifyConfig] = useState<AdminNotificationConfig>(() => getNotificationConfig());
+  const [isSendingTestAlert, setIsSendingTestAlert] = useState(false);
 
   // Product CRUD Modal state
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
@@ -269,6 +303,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <Truck size={16} /> จัดการคำสั่งซื้อ ({orders.length})
           </button>
           <button
+            onClick={() => setActiveTab('promos')}
+            className={`btn btn-sm ${activeTab === 'promos' ? 'btn-primary' : 'btn-ghost'}`}
+          >
+            <Ticket size={16} /> จัดการโค้ดส่วนลด ({promoCodes.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('notifications')}
+            className={`btn btn-sm ${activeTab === 'notifications' ? 'btn-primary' : 'btn-ghost'}`}
+          >
+            <Bell size={16} /> แจ้งเตือนออเดอร์
+          </button>
+          <button
             onClick={() => setActiveTab('analytics')}
             className={`btn btn-sm ${activeTab === 'analytics' ? 'btn-primary' : 'btn-ghost'}`}
           >
@@ -458,9 +504,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* TAB 2: Orders Management */}
         {activeTab === 'orders' && (
           <div className="glass-card" style={{ background: '#FFFFFF', borderRadius: '20px', padding: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1.25rem' }}>
-              รายการสั่งซื้อทั้งหมด (Order Management)
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                  รายการสั่งซื้อทั้งหมด (Order Management)
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
+                  ตรวจสอบสลิป อนุมัติคำสั่งซื้อ พิมพ์ใบปะหน้าพัสดุ และส่งออกรายงาน Excel
+                </span>
+              </div>
+              {orders.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    exportOrdersToCSV(orders);
+                    showToast('ส่งออกไฟล์รายงานคำสั่งซื้อ CSV (Excel) เรียบร้อยแล้วค่ะ!', 'success');
+                  }}
+                  className="btn btn-outline btn-sm"
+                  style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <Download size={15} /> ส่งออกรายงาน CSV (Excel)
+                </button>
+              )}
+            </div>
 
             {orders.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#9CA3AF', padding: '2rem' }}>
@@ -558,6 +624,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <Save size={14} /> บันทึก
                         </button>
                       </div>
+                    </div>
+
+                    {/* Quick Print Actions: Shipping Label & Receipt */}
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={() => printShippingLabel(order)}
+                        className="btn btn-outline btn-sm"
+                        style={{
+                          borderRadius: '9999px',
+                          padding: '0.35rem 0.85rem',
+                          fontSize: '0.78rem',
+                          borderColor: '#CBD5E1',
+                          color: '#0F172A',
+                          background: '#FFFFFF',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                        }}
+                      >
+                        <Printer size={13} /> พิมพ์ใบปะหน้าพัสดุ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => printOrderReceipt(order)}
+                        className="btn btn-outline btn-sm"
+                        style={{
+                          borderRadius: '9999px',
+                          padding: '0.35rem 0.85rem',
+                          fontSize: '0.78rem',
+                          borderColor: '#FAD1DC',
+                          color: '#C73D62',
+                          background: '#FFFFFF',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                        }}
+                      >
+                        <Printer size={13} /> พิมพ์ใบเสร็จรับเงิน
+                      </button>
                     </div>
 
                     {/* Ordered Product Items List */}
@@ -860,7 +966,302 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* TAB 3: Sales Overview */}
+        {/* TAB 3: Promo Code Manager */}
+        {activeTab === 'promos' && (
+          <div className="glass-card" style={{ background: '#FFFFFF', borderRadius: '20px', padding: '1.75rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Ticket size={20} color="#E11D48" /> ระบบจัดการโค้ดส่วนลดและโปรโมชัน (Promo Code Manager)
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.5rem' }}>
+              สร้างโค้ดส่วนลดใหม่หรือจัดการคูปองที่มีอยู่ โค้ดที่บันทึกจะแสดงในศูนย์รวมคูปองและใช้งานในตะกร้าได้ทันที
+            </p>
+
+            {/* Create / Update Promo Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!promoForm.code.trim()) {
+                  showToast('กรุณาระบุรหัสโค้ดส่วนลด', 'error');
+                  return;
+                }
+                const newPromo: PromoCode = {
+                  code: promoForm.code.trim().toUpperCase(),
+                  minSpend: Number(promoForm.minSpend) || 0,
+                  freeShipping: promoForm.discountType === 'shipping' || promoForm.freeShipping,
+                  discountAmount: promoForm.discountType === 'amount' ? Number(promoForm.discountValue) || 0 : undefined,
+                  discountPercent: promoForm.discountType === 'percent' ? Number(promoForm.discountValue) || 0 : undefined,
+                  description:
+                    promoForm.description.trim() ||
+                    (promoForm.discountType === 'percent'
+                      ? `ลด ${promoForm.discountValue}% เมื่อช้อปครบ ฿${promoForm.minSpend}`
+                      : promoForm.discountType === 'shipping'
+                      ? `ส่งฟรีเมื่อช้อปครบ ฿${promoForm.minSpend}`
+                      : `ลดทันที ฿${promoForm.discountValue} เมื่อช้อปครบ ฿${promoForm.minSpend}`),
+                };
+                const updated = adminSavePromoCode(newPromo);
+                setPromoCodes(updated);
+                setPromoForm({
+                  code: '',
+                  discountType: 'amount',
+                  discountValue: 50,
+                  minSpend: 500,
+                  freeShipping: false,
+                  description: '',
+                });
+                showToast(`บันทึกโค้ดส่วนลด "${newPromo.code}" เรียบร้อยแล้วค่ะ!`, 'success');
+              }}
+              style={{
+                background: '#FFF5F8',
+                border: '1px solid #FAD1DC',
+                borderRadius: '18px',
+                padding: '1.25rem',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#9D174D', marginBottom: '0.85rem' }}>
+                + เพิ่มหรืออัปเดตโค้ดส่วนลดใหม่
+              </div>
+              <div className="admin-form-row-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                <div>
+                  <label className="form-label">รหัสโค้ด (เช่น PINK100) *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="เช่น PINK100"
+                    value={promoForm.code}
+                    onChange={(e) => setPromoForm({ ...promoForm, code: e.target.value.toUpperCase() })}
+                    className="form-input"
+                    style={{ textTransform: 'uppercase', fontWeight: 700 }}
+                  />
+                </div>
+                <div>
+                  <label className="form-label">ประเภทส่วนลด</label>
+                  <select
+                    value={promoForm.discountType}
+                    onChange={(e) => setPromoForm({ ...promoForm, discountType: e.target.value as 'amount' | 'percent' | 'shipping' })}
+                    className="form-select"
+                  >
+                    <option value="amount">ลดเป็นจำนวนเงิน (บาท)</option>
+                    <option value="percent">ลดเป็นเปอร์เซ็นต์ (%)</option>
+                    <option value="shipping">ส่งฟรีอย่างเดียว (Free Shipping)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label">
+                    {promoForm.discountType === 'percent' ? 'เปอร์เซ็นต์ที่ลด (%)' : 'มูลค่าส่วนลด (บาท)'}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    disabled={promoForm.discountType === 'shipping'}
+                    value={promoForm.discountValue}
+                    onChange={(e) => setPromoForm({ ...promoForm, discountValue: Number(e.target.value) })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div className="admin-form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                <div>
+                  <label className="form-label">ยอดสั่งซื้อขั้นต่ำ (บาท)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={promoForm.minSpend}
+                    onChange={(e) => setPromoForm({ ...promoForm, minSpend: Number(e.target.value) })}
+                    className="form-input"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">คำอธิบายโปรโมชัน</label>
+                  <input
+                    type="text"
+                    placeholder="เช่น ลดพิเศษ ฿100 สำหรับลูกค้าใหม่เมื่อช้อปครบ ฿500"
+                    value={promoForm.description}
+                    onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer', color: '#374151' }}>
+                  <input
+                    type="checkbox"
+                    checked={promoForm.freeShipping || promoForm.discountType === 'shipping'}
+                    onChange={(e) => setPromoForm({ ...promoForm, freeShipping: e.target.checked })}
+                  />
+                  แถมสิทธิ์จัดส่งฟรี (Free Shipping) ร่วมกับโค้ดนี้ด้วย
+                </label>
+
+                <button type="submit" className="btn btn-primary btn-sm" style={{ borderRadius: '9999px', padding: '0.5rem 1.25rem' }}>
+                  <Plus size={15} /> บันทึกโค้ดส่วนลด
+                </button>
+              </div>
+            </form>
+
+            {/* Existing Promo Codes Table */}
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem' }}>
+                <thead>
+                  <tr style={{ background: '#F8FAFC', borderBottom: '1.5px solid #E2E8F0', color: '#475569', textAlign: 'left' }}>
+                    <th style={{ padding: '0.75rem 1rem' }}>รหัสโค้ด</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>สิทธิพิเศษ</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>ขั้นต่ำ</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>คำอธิบาย</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {promoCodes.map((p) => (
+                    <tr key={p.code} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: '#C73D62' }}>{p.code}</td>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>
+                        {p.discountPercent ? `ลด ${p.discountPercent}%` : p.discountAmount ? `ลด ฿${p.discountAmount}` : ''}
+                        {p.freeShipping ? (p.discountPercent || p.discountAmount ? ' + ส่งฟรี' : 'ส่งฟรี') : ''}
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem' }}>฿{(p.minSpend || 0).toLocaleString()}</td>
+                      <td style={{ padding: '0.75rem 1rem', color: '#4B5563' }}>{p.description}</td>
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`ต้องการลบโค้ดส่วนลด "${p.code}" ใช่หรือไม่?`)) {
+                              const next = adminDeletePromoCode(p.code);
+                              setPromoCodes(next);
+                              showToast(`ลบโค้ด "${p.code}" เรียบร้อยแล้ว`, 'info');
+                            }
+                          }}
+                          className="btn btn-ghost btn-sm"
+                          style={{ color: '#EF4444' }}
+                        >
+                          <Trash2 size={14} /> ลบ
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: Real-time Order Notification Settings */}
+        {activeTab === 'notifications' && (
+          <div className="glass-card" style={{ background: '#FFFFFF', borderRadius: '20px', padding: '1.75rem', maxWidth: '720px' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Bell size={20} color="#0284C7" /> ตั้งค่าแจ้งเตือนออเดอร์ใหม่แบบเรียลไทม์ (Telegram / Webhook)
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.25rem' }}>
+              เมื่อลูกค้ากดสั่งซื้อและแนบสลิป ระบบจะส่งข้อความแจ้งเตือนพร้อมชื่อลูกค้า ยอดเงิน และรายการสินค้าเข้ามือถือของแอดมินทันที
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                saveNotificationConfig(notifyConfig);
+                showToast('บันทึกการตั้งค่าแจ้งเตือนออเดอร์เรียบร้อยแล้วค่ะ!', 'success');
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '14px',
+                  background: notifyConfig.enabled ? '#F0FDF4' : '#F8FAFC',
+                  border: notifyConfig.enabled ? '1.5px solid #86EFAC' : '1px solid #E2E8F0',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  color: '#1E293B',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={notifyConfig.enabled}
+                  onChange={(e) => setNotifyConfig({ ...notifyConfig, enabled: e.target.checked })}
+                />
+                เปิดใช้งานระบบส่งแจ้งเตือนอัตโนมัติเมื่อมีคำสั่งซื้อใหม่
+              </label>
+
+              <div>
+                <label className="form-label">Telegram Bot Token (จาก @BotFather)</label>
+                <input
+                  type="text"
+                  placeholder="เช่น 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+                  value={notifyConfig.telegramBotToken}
+                  onChange={(e) => setNotifyConfig({ ...notifyConfig, telegramBotToken: e.target.value })}
+                  className="form-input"
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Telegram Chat ID (รหัสแชทส่วนตัวหรือกลุ่มแอดมิน)</label>
+                <input
+                  type="text"
+                  placeholder="เช่น -1001234567890 หรือ 987654321"
+                  value={notifyConfig.telegramChatId}
+                  onChange={(e) => setNotifyConfig({ ...notifyConfig, telegramChatId: e.target.value })}
+                  className="form-input"
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Webhook URL เสริม (Discord / Make / Zapier / LINE Messaging Proxy)</label>
+                <input
+                  type="url"
+                  placeholder="https://discord.com/api/webhooks/..."
+                  value={notifyConfig.webhookUrl}
+                  onChange={(e) => setNotifyConfig({ ...notifyConfig, webhookUrl: e.target.value })}
+                  className="form-input"
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                <button type="submit" className="btn btn-primary" style={{ borderRadius: '9999px' }}>
+                  <Save size={16} /> บันทึกการตั้งค่า
+                </button>
+                <button
+                  type="button"
+                  disabled={isSendingTestAlert}
+                  onClick={async () => {
+                    saveNotificationConfig(notifyConfig);
+                    setIsSendingTestAlert(true);
+                    const sampleOrder: Order = orders[0] || {
+                      id: 'SP-TEST999',
+                      total_amount: 1290,
+                      discount_amount: 100,
+                      shipping_fee: 0,
+                      payment_method: 'promptpay',
+                      payment_status: 'pending',
+                      order_status: 'pending',
+                      slip_url: 'https://example.com/slip.jpg',
+                      created_at: new Date().toISOString(),
+                      shipping_address: {
+                        fullName: 'คุณณิชาภา สิริรัตน์ (ทดสอบ)',
+                        phone: '095-991-9679',
+                        address: '88/9 สุขุมวิท',
+                        province: 'กรุงเทพมหานคร',
+                        postalCode: '10110',
+                      },
+                    };
+                    const res = await sendOrderNotificationAlert(sampleOrder, true);
+                    setIsSendingTestAlert(false);
+                    showToast(res.message, res.sent ? 'success' : 'info');
+                  }}
+                  className="btn btn-outline"
+                  style={{ borderRadius: '9999px' }}
+                >
+                  <Send size={15} /> {isSendingTestAlert ? 'กำลังส่ง...' : 'ทดสอบส่งแจ้งเตือนทันที'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* TAB 5: Sales Overview */}
         {activeTab === 'analytics' && (
           <div className="glass-card" style={{ background: '#FFFFFF', borderRadius: '20px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
