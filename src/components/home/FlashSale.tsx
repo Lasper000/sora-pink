@@ -99,7 +99,7 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                   style={{
                     fontSize: '1.65rem',
                     fontWeight: 700,
-                    color: '#2C2224',
+                    color: 'var(--text-primary)',
                     letterSpacing: '-0.01em',
                     lineHeight: 1.2,
                   }}
@@ -228,6 +228,8 @@ export const FlashSale: React.FC<FlashSaleProps> = ({ products, onSelectProduct 
                       <img
                         src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
                         alt={product.name}
+                        loading="lazy"
+                        decoding="async"
                         onError={handleImageError}
                         style={{
                           width: '100%',

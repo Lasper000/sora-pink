@@ -296,13 +296,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             <p style={{ fontSize: '0.82rem', color: '#706064', marginBottom: '1.15rem', lineHeight: 1.6 }}>
               รับสิทธิพิเศษ ข่าวสารการเปิดตัวคอลเลกชันใหม่ และโค้ดส่วนลด ฿100 สำหรับคำสั่งซื้อแรก
             </p>
-            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.4rem' }}>
+            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.4rem', minWidth: 0 }}>
               <input
                 type="email"
                 required
                 placeholder="อีเมลของคุณ..."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="newsletter-input"
                 style={{
                   fontSize: '0.82rem',
                   borderRadius: '9999px',
@@ -312,6 +313,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   color: '#2C2224',
                   outline: 'none',
                   flex: 1,
+                  minWidth: 0,
                 }}
               />
               <button

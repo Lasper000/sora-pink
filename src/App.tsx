@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { HeroBanner } from './components/home/HeroBanner';
 import { BrandTrustBadges } from './components/home/BrandTrustBadges';
 import { CategoryGrid } from './components/home/CategoryGrid';
@@ -14,28 +15,53 @@ import { ShopByRoutine } from './components/home/ShopByRoutine';
 import { CustomerReviewsWall } from './components/home/CustomerReviewsWall';
 import { InstagramCommunityWall } from './components/home/InstagramCommunityWall';
 import { FAQSection } from './components/home/FAQSection';
-import { SkinQuizModal } from './components/home/SkinQuizModal';
 import { ProductCard } from './components/product/ProductCard';
 import { ProductFilter } from './components/product/ProductFilter';
-import { ProductDetailModal } from './components/product/ProductDetailModal';
-import { QuickViewModal } from './components/product/QuickViewModal';
-import { CompareModal } from './components/product/CompareModal';
 import { SkeletonProductCard } from './components/common/SkeletonProductCard';
 import { LiveSalesNotification } from './components/common/LiveSalesNotification';
 import { BeautyConciergeFloat } from './components/common/BeautyConciergeFloat';
-import { CartDrawer } from './components/cart/CartDrawer';
-import { CheckoutModal } from './components/cart/CheckoutModal';
-import { AuthModal } from './components/user/AuthModal';
-import { UserProfileModal } from './components/user/UserProfileModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { CouponCenterModal } from './components/common/CouponCenterModal';
-import { OrderTrackingModal } from './components/common/OrderTrackingModal';
 import { ToastContainer, showToast } from './components/common/Toast';
 import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
-import { TrickOrTreatModal } from './components/home/TrickOrTreatModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { getActiveSeasonalFestival } from './utils/seasonalTheme';
+
+const SkinQuizModal = lazy(() =>
+  import('./components/home/SkinQuizModal').then((m) => ({ default: m.SkinQuizModal }))
+);
+const ProductDetailModal = lazy(() =>
+  import('./components/product/ProductDetailModal').then((m) => ({ default: m.ProductDetailModal }))
+);
+const QuickViewModal = lazy(() =>
+  import('./components/product/QuickViewModal').then((m) => ({ default: m.QuickViewModal }))
+);
+const CompareModal = lazy(() =>
+  import('./components/product/CompareModal').then((m) => ({ default: m.CompareModal }))
+);
+const CartDrawer = lazy(() =>
+  import('./components/cart/CartDrawer').then((m) => ({ default: m.CartDrawer }))
+);
+const CheckoutModal = lazy(() =>
+  import('./components/cart/CheckoutModal').then((m) => ({ default: m.CheckoutModal }))
+);
+const AuthModal = lazy(() =>
+  import('./components/user/AuthModal').then((m) => ({ default: m.AuthModal }))
+);
+const UserProfileModal = lazy(() =>
+  import('./components/user/UserProfileModal').then((m) => ({ default: m.UserProfileModal }))
+);
+const AdminDashboard = lazy(() =>
+  import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
+);
+const CouponCenterModal = lazy(() =>
+  import('./components/common/CouponCenterModal').then((m) => ({ default: m.CouponCenterModal }))
+);
+const OrderTrackingModal = lazy(() =>
+  import('./components/common/OrderTrackingModal').then((m) => ({ default: m.OrderTrackingModal }))
+);
+const TrickOrTreatModal = lazy(() =>
+  import('./components/home/TrickOrTreatModal').then((m) => ({ default: m.TrickOrTreatModal }))
+);
 import {
   getProductIdFromUrl,
   findProductFromList,
@@ -59,6 +85,7 @@ const initialFilters: FilterState = {
 
 const MainStore: React.FC = () => {
   const { profile, role } = useAuth();
+  const { itemCount } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -194,6 +221,38 @@ const MainStore: React.FC = () => {
   const isHalloweenMode = activeSeasonalFestival?.id === 'halloween';
   const [isTrickOrTreatOpen, setIsTrickOrTreatOpen] = useState(false);
 
+  // Sync festival theme body class cleanly across all 4 festivals
+  useEffect(() => {
+    const festivalClasses = ['spooky-theme', 'christmas-theme', 'valentines-theme', 'songkran-theme'];
+    festivalClasses.forEach((cls) => document.body.classList.remove(cls));
+    if (activeSeasonalFestival?.bodyClass) {
+      document.body.classList.add(activeSeasonalFestival.bodyClass);
+    }
+    return () => {
+      festivalClasses.forEach((cls) => document.body.classList.remove(cls));
+    };
+  }, [activeSeasonalFestival]);
+
+  // Global background scroll-lock when any modal or drawer is open
+  const hasOpenOverlay = Boolean(
+    selectedProduct ||
+      quickViewProduct ||
+      isCartOpen ||
+      isCheckoutOpen ||
+      isAuthOpen ||
+      isProfileOpen ||
+      isAdminOpen ||
+      isSkinQuizOpen ||
+      isCouponCenterOpen ||
+      trackingOrder ||
+      isCompareOpen ||
+      isTrickOrTreatOpen
+  );
+  useEffect(() => {
+    document.body.classList.toggle('modal-open-lock', hasOpenOverlay);
+    return () => document.body.classList.remove('modal-open-lock');
+  }, [hasOpenOverlay]);
+
   // Active showcase tab: 'all' | 'best_seller' | 'new_arrival' | 'halloween'
   const [showcaseTab, setShowcaseTab] = useState<'all' | 'best_seller' | 'new_arrival' | 'halloween'>('all');
 
@@ -277,8 +336,10 @@ const MainStore: React.FC = () => {
       if (showcaseTab === 'best_seller' && (p.review_count || 0) < 60) {
         return false;
       }
-      if (showcaseTab === 'new_arrival' && (p.price < 500 && !p.discount_price)) {
-        // demo condition for new arrival
+      if (showcaseTab === 'new_arrival') {
+        const suffixNum = Number(p.id.split('-').pop() || '0');
+        const isNewCollection = !p.id.startsWith('a1000000-0000-0000-0000-') || suffixNum >= 17;
+        if (!isNewCollection) return false;
       }
 
       return true;
@@ -381,6 +442,7 @@ const MainStore: React.FC = () => {
         onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
         onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
         isHalloweenMode={isHalloweenMode}
+        activeFestival={activeSeasonalFestival}
         searchQuery={filters.searchQuery}
         onSearchChange={(q) => handleUpdateFilter({ searchQuery: q })}
         products={products}
@@ -397,6 +459,7 @@ const MainStore: React.FC = () => {
           }}
           onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
           isHalloweenMode={isHalloweenMode}
+          activeFestival={activeSeasonalFestival}
         />
 
         {/* 1. Brand Trust & Safety Badges */}
@@ -450,7 +513,7 @@ const MainStore: React.FC = () => {
                 style={{
                   fontSize: '2.4rem',
                   fontWeight: 600,
-                  color: '#2C2224',
+                  color: 'var(--text-primary)',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                   marginBottom: '0.5rem',
@@ -624,6 +687,7 @@ const MainStore: React.FC = () => {
                 {/* Load More & Catalog Progress */}
                 {filteredProducts.length > visibleCount && (
                   <div
+                    className="load-more-card"
                     style={{
                       textAlign: 'center',
                       marginTop: '3.5rem',
@@ -639,7 +703,7 @@ const MainStore: React.FC = () => {
                   >
                     <div style={{ marginBottom: '1.25rem' }}>
                       <span style={{ fontSize: '0.82rem', fontWeight: 500, color: '#706064', letterSpacing: '0.04em' }}>
-                        กำลังแสดง <strong style={{ color: '#C73D62' }}>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong style={{ color: '#2C2224' }}>{filteredProducts.length}</strong> รายการ
+                        กำลังแสดง <strong style={{ color: '#C73D62' }}>{Math.min(visibleCount, filteredProducts.length)}</strong> จากทั้งหมด <strong style={{ color: 'var(--text-primary)' }}>{filteredProducts.length}</strong> รายการ
                       </span>
                       {/* Refined Hairline Progress bar */}
                       <div
@@ -717,33 +781,28 @@ const MainStore: React.FC = () => {
       {/* Brand Footer */}
       <Footer onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined} />
 
-      {/* Modals & Drawers */}
-      <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดรายละเอียดสินค้า">
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={handleCloseProduct}
-        />
-      </ErrorBoundary>
-
-      <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดดูด่วนสินค้า">
-        <QuickViewModal
-          product={quickViewProduct}
-          onClose={() => setQuickViewProduct(null)}
-          onOpenFullDetail={(p) => handleSelectProduct(p)}
-        />
-      </ErrorBoundary>
-
-      <CompareModal
-        compareList={compareList}
-        isOpen={isCompareOpen}
-        onOpen={() => setIsCompareOpen(true)}
-        onClose={() => setIsCompareOpen(false)}
-        onRemoveProduct={(id) => setCompareList((prev) => prev.filter((p) => p.id !== id))}
-        onClearAll={() => {
-          setCompareList([]);
-          setIsCompareOpen(false);
+      {/* Mobile Sticky Bottom Navigation */}
+      <MobileBottomNav
+        itemCount={itemCount}
+        onOpenCart={() => setIsCartOpen(true)}
+        onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
+        onOpenProfile={() => {
+          if (!profile) {
+            setIsAuthOpen(true);
+            showToast('กรุณาเข้าสู่ระบบด้วย Google หรืออีเมล เพื่อดูโปรไฟล์ค่ะ', 'info');
+            return;
+          }
+          setProfileTab('orders');
+          setIsProfileOpen(true);
         }}
-        onSelectProduct={(p) => handleSelectProduct(p)}
+        onNavigateSection={(id) => {
+          if (!id) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
       />
 
       {/* Floating Concierge & Live Sales Social Proof Toast */}
@@ -760,87 +819,119 @@ const MainStore: React.FC = () => {
         }}
       />
 
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
-        onCheckout={() => {
-          setIsCartOpen(false);
-          if (!profile) {
-            setPendingCheckout(true);
-            setIsAuthOpen(true);
-            showToast('กรุณาเข้าสู่ระบบด้วย Google หรืออีเมล เพื่อดำเนินการสั่งซื้อสินค้าค่ะ', 'info');
-          } else {
-            setIsCheckoutOpen(true);
-          }
-        }}
-      />
-
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        onOrderSuccess={handleOrderSuccess}
-        onOpenAuth={() => setIsAuthOpen(true)}
-      />
-
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => {
-          setIsAuthOpen(false);
-          setPendingCheckout(false);
-        }}
-        onSuccess={() => {
-          if (pendingCheckout) {
-            setPendingCheckout(false);
-            setIsCheckoutOpen(true);
-          }
-        }}
-      />
-
-      <UserProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        initialTab={profileTab}
-        onSelectProduct={(p) => handleSelectProduct(p)}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onTrackOrder={(o) => setTrackingOrder(o)}
-      />
-
-      <CouponCenterModal
-        isOpen={isCouponCenterOpen}
-        onClose={() => setIsCouponCenterOpen(false)}
-        onOpenCart={() => setIsCartOpen(true)}
-      />
-
-      <OrderTrackingModal
-        order={trackingOrder}
-        onClose={() => setTrackingOrder(null)}
-      />
-
-      <AdminDashboard
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        products={products}
-        categories={categories}
-        onRefreshProducts={loadData}
-      />
-
-      <SkinQuizModal
-        isOpen={isSkinQuizOpen}
-        onClose={() => setIsSkinQuizOpen(false)}
-        onApplyRoutine={handleApplyRoutineQuiz}
-      />
-
       {/* Halloween Ambient & Interactive Widgets */}
       <SpookyEffects
         onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
         isHalloweenMode={isHalloweenMode}
       />
 
-      <TrickOrTreatModal
-        isOpen={isTrickOrTreatOpen}
-        onClose={() => setIsTrickOrTreatOpen(false)}
-      />
+      {/* Lazy-Loaded Modals & Drawers */}
+      <Suspense fallback={null}>
+        <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดรายละเอียดสินค้า">
+          <ProductDetailModal
+            product={selectedProduct}
+            allProducts={products}
+            onClose={handleCloseProduct}
+          />
+        </ErrorBoundary>
+
+        <ErrorBoundary fallbackTitle="เกิดข้อผิดพลาดในการโหลดดูด่วนสินค้า">
+          <QuickViewModal
+            product={quickViewProduct}
+            onClose={() => setQuickViewProduct(null)}
+            onOpenFullDetail={(p) => handleSelectProduct(p)}
+          />
+        </ErrorBoundary>
+
+        <CompareModal
+          compareList={compareList}
+          isOpen={isCompareOpen}
+          onOpen={() => setIsCompareOpen(true)}
+          onClose={() => setIsCompareOpen(false)}
+          onRemoveProduct={(id) => setCompareList((prev) => prev.filter((p) => p.id !== id))}
+          onClearAll={() => {
+            setCompareList([]);
+            setIsCompareOpen(false);
+          }}
+          onSelectProduct={(p) => handleSelectProduct(p)}
+        />
+
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
+          onCheckout={() => {
+            setIsCartOpen(false);
+            if (!profile) {
+              setPendingCheckout(true);
+              setIsAuthOpen(true);
+              showToast('กรุณาเข้าสู่ระบบด้วย Google หรืออีเมล เพื่อดำเนินการสั่งซื้อสินค้าค่ะ', 'info');
+            } else {
+              setIsCheckoutOpen(true);
+            }
+          }}
+        />
+
+        <CheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          onOrderSuccess={handleOrderSuccess}
+          onOpenAuth={() => setIsAuthOpen(true)}
+        />
+
+        <AuthModal
+          isOpen={isAuthOpen}
+          onClose={() => {
+            setIsAuthOpen(false);
+            setPendingCheckout(false);
+          }}
+          onSuccess={() => {
+            if (pendingCheckout) {
+              setPendingCheckout(false);
+              setIsCheckoutOpen(true);
+            }
+          }}
+        />
+
+        <UserProfileModal
+          isOpen={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+          initialTab={profileTab}
+          onSelectProduct={(p) => handleSelectProduct(p)}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onTrackOrder={(o) => setTrackingOrder(o)}
+        />
+
+        <CouponCenterModal
+          isOpen={isCouponCenterOpen}
+          onClose={() => setIsCouponCenterOpen(false)}
+          onOpenCart={() => setIsCartOpen(true)}
+        />
+
+        <OrderTrackingModal
+          order={trackingOrder}
+          onClose={() => setTrackingOrder(null)}
+        />
+
+        <AdminDashboard
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          products={products}
+          categories={categories}
+          onRefreshProducts={loadData}
+        />
+
+        <SkinQuizModal
+          isOpen={isSkinQuizOpen}
+          onClose={() => setIsSkinQuizOpen(false)}
+          onApplyRoutine={handleApplyRoutineQuiz}
+        />
+
+        <TrickOrTreatModal
+          isOpen={isTrickOrTreatOpen}
+          onClose={() => setIsTrickOrTreatOpen(false)}
+        />
+      </Suspense>
     </div>
   );
 };

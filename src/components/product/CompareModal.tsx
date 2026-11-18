@@ -33,6 +33,7 @@ export const CompareModal: React.FC<CompareModalProps> = ({
       {/* Floating Compare Pill Bar */}
       {!isOpen && (
         <div
+          className="compare-floating-bar"
           style={{
             position: 'fixed',
             bottom: '18px',
@@ -132,8 +133,10 @@ export const CompareModal: React.FC<CompareModalProps> = ({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
                 marginBottom: '1.25rem',
-                borderBottom: '1px solid #FCE7F3',
+                borderBottom: '1px solid rgba(252, 231, 243, 0.45)',
                 paddingBottom: '1rem',
               }}
             >
@@ -367,3 +370,4 @@ export const CompareModal: React.FC<CompareModalProps> = ({
     </>
   );
 };
+

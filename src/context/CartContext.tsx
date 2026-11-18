@@ -1,10 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { CartItem, Product, PromoCode } from '../types';
-import { getStoredPromoCodes } from '../services/api';
+import {
+  fetchPromoCodes,
+  getStoredPromoCodes,
+  validatePromoCode,
+} from '../services/api';
+import { getActiveSeasonalFestival } from '../utils/seasonalTheme';
+import { supabase } from '../lib/supabase';
+import { useAuth } from './AuthContext';
 
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product, quantity?: number) => { success: boolean; message: string };
+  addBundleToCart: (
+    products: Product[],
+    discountPercent: number,
+    bundleLabel: string
+  ) => { success: boolean; message: string };
   updateQuantity: (productId: string, quantity: number) => { success: boolean; message?: string };
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
@@ -26,8 +38,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'sora_pink_cart';
 const VOUCHER_STORAGE_KEY = 'sora_pink_vouchers';
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export const getEffectiveItemUnitPrice = (item: CartItem): number => {
+  const base = item.product.discount_price ?? item.product.price;
+  return item.bundleDiscountPercent
+    ? Math.round(base * (1 - item.bundleDiscountPercent / 100))
+    : base;
+};
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isConfigured } = useAuth();
+  const syncedUserRef = useRef<string | null>(null);
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
@@ -43,15 +66,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const refreshPromos = () => setAvailableVouchers(getStoredPromoCodes());
     window.addEventListener('sora-promos-updated', refreshPromos);
+    fetchPromoCodes().then((list) => setAvailableVouchers(list)).catch(() => {});
     return () => window.removeEventListener('sora-promos-updated', refreshPromos);
   }, []);
 
   const [collectedVouchers, setCollectedVouchers] = useState<string[]>(() => {
+    const activeFestival = getActiveSeasonalFestival();
+    const defaults = activeFestival?.promoCode
+      ? ['WELCOMEPINK', activeFestival.promoCode]
+      : ['WELCOMEPINK'];
     try {
       const saved = localStorage.getItem(VOUCHER_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : ['WELCOMEPINK', 'SPOOKY31']; // Pre-grant popular welcoming vouchers
+      return saved ? JSON.parse(saved) : defaults;
     } catch {
-      return ['WELCOMEPINK', 'SPOOKY31'];
+      return defaults;
     }
   });
 
@@ -62,6 +90,94 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Failed to save vouchers:', e);
     }
   }, [collectedVouchers]);
+
+  // Sync cart_items with Supabase when a live authenticated user signs in
+  useEffect(() => {
+    const activeUserId = isConfigured && user?.id ? user.id : null;
+    if (!activeUserId) {
+      syncedUserRef.current = null;
+      return;
+    }
+    if (syncedUserRef.current === activeUserId) return;
+    syncedUserRef.current = activeUserId;
+
+    const syncCartFromSupabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cart_items')
+          .select('id, user_id, product_id, quantity, products(*)')
+          .eq('user_id', activeUserId);
+        if (error) return;
+
+        setCart((prevLocal) => {
+          const mergedMap = new Map<string, CartItem>();
+          prevLocal.forEach((li) => mergedMap.set(li.product_id, li));
+
+          (data || []).forEach((row: any) => {
+            if (!row.products) return;
+            const existing = mergedMap.get(row.product_id);
+            const product = row.products as Product;
+            const combinedQty = Math.min(
+              Math.max(existing?.quantity || 0, row.quantity || 1),
+              Math.max(1, product.stock_quantity)
+            );
+            mergedMap.set(row.product_id, {
+              id: row.id || existing?.id || 'cart-' + Math.random().toString(36).substring(2, 9),
+              user_id: activeUserId,
+              product_id: row.product_id,
+              quantity: combinedQty,
+              product,
+              bundleDiscountPercent: existing?.bundleDiscountPercent,
+              bundleLabel: existing?.bundleLabel,
+            });
+          });
+
+          const mergedList = Array.from(mergedMap.values());
+          // Push local-only items up to Supabase
+          const dbProductIds = new Set((data || []).map((r: any) => r.product_id));
+          const toUpsert = prevLocal
+            .filter((li) => !dbProductIds.has(li.product_id) && UUID_REGEX.test(li.product_id))
+            .map((li) => ({
+              user_id: activeUserId,
+              product_id: li.product_id,
+              quantity: li.quantity,
+            }));
+          if (toUpsert.length > 0) {
+            supabase
+              .from('cart_items')
+              .upsert(toUpsert, { onConflict: 'user_id,product_id' })
+              .then();
+          }
+
+          return mergedList;
+        });
+      } catch (err) {
+        console.warn('Supabase cart sync note:', err);
+      }
+    };
+
+    syncCartFromSupabase();
+  }, [isConfigured, user?.id]);
+
+  const syncCartItemToSupabase = (productId: string, quantity: number) => {
+    if (!isConfigured || !user?.id || !UUID_REGEX.test(productId)) return;
+    if (quantity <= 0) {
+      supabase
+        .from('cart_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('product_id', productId)
+        .then();
+    } else {
+      supabase
+        .from('cart_items')
+        .upsert(
+          { user_id: user.id, product_id: productId, quantity },
+          { onConflict: 'user_id,product_id' }
+        )
+        .then();
+    }
+  };
 
   const collectVoucher = (code: string): { success: boolean; message: string } => {
     const cleanCode = code.trim().toUpperCase();
@@ -85,20 +201,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cart]);
 
-  // คำนวณยอดรวม
+  // คำนวณยอดรวม (รองรับส่วนลดเซต Bundle จริงในตะกร้า)
   const subtotal = cart.reduce((sum, item) => {
-    const unitPrice = item.product.discount_price ?? item.product.price;
+    const unitPrice = getEffectiveItemUnitPrice(item);
     return sum + unitPrice * item.quantity;
   }, 0);
 
-  // ยกเลิกโค้ดส่วนลดอัตโนมัติหากยอดซื้อลดลงต่ำกว่าขั้นต่ำ (minSpend) หรือตะกร้าว่าง
+  // ยกเลิกโค้ดส่วนลดอัตโนมัติหากตะกร้าว่างหรือไม่ผ่านเงื่อนไขโค้ด
   useEffect(() => {
     if (appliedPromo) {
-      if (cart.length === 0 || (appliedPromo.minSpend && subtotal < appliedPromo.minSpend)) {
+      if (cart.length === 0 || !validatePromoCode(appliedPromo, subtotal, user?.id).valid) {
         setAppliedPromo(null);
       }
     }
-  }, [subtotal, cart.length, appliedPromo]);
+  }, [subtotal, cart.length, appliedPromo, user?.id]);
 
   // คำนวณส่วนลด (ตรวจสอบยอดขั้นต่ำเสมอ และจำกัดไม่ให้เกินราคาสินค้า)
   let discountAmount = 0;
@@ -138,8 +254,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       const updated = [...cart];
-      updated[existingIndex].quantity = newQty;
+      updated[existingIndex] = { ...updated[existingIndex], quantity: newQty, product };
       setCart(updated);
+      syncCartItemToSupabase(product.id, newQty);
       return { success: true, message: `เพิ่ม "${product.name}" ในตะกร้าแล้ว (${newQty} ชิ้น)` };
     } else {
       if (quantity > product.stock_quantity) {
@@ -156,8 +273,73 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         product,
       };
       setCart([...cart, newItem]);
+      syncCartItemToSupabase(product.id, quantity);
       return { success: true, message: `เพิ่ม "${product.name}" ในตะกร้าแล้ว` };
     }
+  };
+
+  // เพิ่มสินค้าเป็นเซต (Bundle) พร้อมส่วนลดจริงในตะกร้า
+  const addBundleToCart = (
+    products: Product[],
+    discountPercent: number,
+    bundleLabel: string
+  ): { success: boolean; message: string } => {
+    if (!products || products.length === 0) {
+      return { success: false, message: 'ไม่พบสินค้าในเซตที่เลือก' };
+    }
+
+    // Count required quantities per product ID in case a set includes duplicate/repeated SKUs
+    const neededCounts = new Map<string, number>();
+    products.forEach((p) => {
+      neededCounts.set(p.id, (neededCounts.get(p.id) || 0) + 1);
+    });
+
+    for (const p of products) {
+      if (p.stock_quantity <= 0) {
+        return { success: false, message: `ขออภัย "${p.name}" ในเซตหมดสต็อกชั่วคราว` };
+      }
+      const existing = cart.find((item) => item.product_id === p.id);
+      const nextQty = (existing?.quantity || 0) + (neededCounts.get(p.id) || 1);
+      if (nextQty > p.stock_quantity) {
+        return {
+          success: false,
+          message: `สต็อกของ "${p.name}" คงเหลือไม่เพียงพอสำหรับเพิ่มเซตนี้ (เหลือ ${p.stock_quantity} ชิ้น)`,
+        };
+      }
+    }
+
+    const updatedCart = [...cart];
+    products.forEach((p) => {
+      const idx = updatedCart.findIndex((item) => item.product_id === p.id);
+      if (idx > -1) {
+        const current = updatedCart[idx];
+        const nextQty = current.quantity + 1;
+        updatedCart[idx] = {
+          ...current,
+          quantity: nextQty,
+          product: p,
+          bundleDiscountPercent: Math.max(current.bundleDiscountPercent || 0, discountPercent),
+          bundleLabel: current.bundleLabel || bundleLabel,
+        };
+        syncCartItemToSupabase(p.id, nextQty);
+      } else {
+        updatedCart.push({
+          id: 'cart-' + Math.random().toString(36).substring(2, 9),
+          product_id: p.id,
+          quantity: 1,
+          product: p,
+          bundleDiscountPercent: discountPercent,
+          bundleLabel,
+        });
+        syncCartItemToSupabase(p.id, 1);
+      }
+    });
+
+    setCart(updatedCart);
+    return {
+      success: true,
+      message: `เพิ่มเซต "${bundleLabel}" (${products.length} ชิ้น) พร้อมส่วนลดเซต ${discountPercent}% ลงตะกร้าแล้ว!`,
+    };
   };
 
   // ปรับจำนวนสินค้าในตะกร้า
@@ -177,36 +359,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
 
-    setCart(
-      cart.map((i) => (i.product_id === productId ? { ...i, quantity } : i))
-    );
+    setCart(cart.map((i) => (i.product_id === productId ? { ...i, quantity } : i)));
+    syncCartItemToSupabase(productId, quantity);
     return { success: true };
   };
 
   const removeFromCart = (productId: string) => {
     setCart(cart.filter((item) => item.product_id !== productId));
+    syncCartItemToSupabase(productId, 0);
   };
 
   const clearCart = () => {
     setCart([]);
     setAppliedPromo(null);
+    if (isConfigured && user?.id) {
+      supabase.from('cart_items').delete().eq('user_id', user.id).then();
+    }
   };
 
-  // ใช้คูปองส่วนลด
+  // ใช้คูปองส่วนลด (ตรวจสอบวันหมดอายุ, จำนวนสิทธิ์สูงสุด, สิทธิ์ต่อบัญชี และยอดซื้อขั้นต่ำ)
   const applyPromoCode = (codeStr: string): { success: boolean; message: string } => {
     const cleanCode = codeStr.trim().toUpperCase();
     const livePromos = getStoredPromoCodes();
     const found = livePromos.find((p) => p.code.toUpperCase() === cleanCode);
 
-    if (!found) {
-      return { success: false, message: 'โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุ' };
-    }
-
-    if (found.minSpend && subtotal < found.minSpend) {
-      return {
-        success: false,
-        message: `ต้องมียอดซื้อขั้นต่ำ ฿${found.minSpend.toLocaleString()} เพื่อใช้โค้ดนี้`,
-      };
+    const validation = validatePromoCode(found, subtotal, user?.id);
+    if (!validation.valid || !found) {
+      return { success: false, message: validation.reason || 'โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุ' };
     }
 
     setAppliedPromo(found);
@@ -222,6 +401,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         cart,
         addToCart,
+        addBundleToCart,
         updateQuantity,
         removeFromCart,
         clearCart,

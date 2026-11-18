@@ -23,7 +23,7 @@ interface ShopByRoutineProps {
 }
 
 export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelectProduct }) => {
-  const { addToCart } = useCart();
+  const { addBundleToCart } = useCart();
   const [activeRoutineId, setActiveRoutineId] = useState<string>('morning-glow');
 
   const routines: RoutineSet[] = [
@@ -51,9 +51,9 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
       themeColor: '#8C2E41',
       discountPercent: 20,
       productIds: [
-        'a1000000-0000-0000-0000-000000000004', // Sleeping Mask / Retinol
-        'a1000000-0000-0000-0000-000000000007', // Hair Elixir
-        'a1000000-0000-0000-0000-000000000006', // Cica Calming Cream
+        'a1000000-0000-0000-0000-000000000010', // Pumpkin Enzyme Glow Sleeping Mask
+        'a1000000-0000-0000-0000-000000000017', // Pro-Retinol & Collagen Firming Overnight Ampoule
+        'a1000000-0000-0000-0000-000000000006', // Rose Quartz Calming Botanical Cica Cream
       ],
       description: 'ปรนนิบัติผิวก่อนนอน เติมสารอาหารกู้เกราะป้องกันผิวที่เหนื่อยล้า บำรุงเส้นผม พร้อมกลิ่นหอมผ่อนคลายช่วยให้หลับสบาย',
     },
@@ -86,9 +86,17 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
     ? bundleProducts 
     : products.slice(0, 3);
 
-  const originalTotalPrice = resolvedProducts.reduce((sum, p) => sum + (p.price || 0), 0);
-  const bundlePrice = Math.round(originalTotalPrice * (1 - currentRoutine.discountPercent / 100));
-  const savings = originalTotalPrice - bundlePrice;
+  const originalTotalPrice = resolvedProducts.reduce(
+    (sum, p) => sum + ((p.discount_price ?? p.price) || 0),
+    0
+  );
+  const bundlePrice = resolvedProducts.reduce(
+    (sum, p) =>
+      sum +
+      Math.round(((p.discount_price ?? p.price) || 0) * (1 - currentRoutine.discountPercent / 100)),
+    0
+  );
+  const savings = Math.max(0, originalTotalPrice - bundlePrice);
   const hasOutOfStock = resolvedProducts.some((p) => p.stock_quantity <= 0);
 
   const handleAddBundleToCart = () => {
@@ -96,18 +104,13 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
       showToast('ขออภัยค่ะ มีสินค้าในเซตบางรายการหมดสต็อกชั่วคราว', 'error');
       return;
     }
-    let addedCount = 0;
-    resolvedProducts.forEach((p) => {
-      const res = addToCart(p, 1);
-      if (res.success) addedCount++;
-    });
-
-    if (addedCount > 0) {
-      showToast(
-        `เพิ่มเซต ${currentRoutine.title.split(' ')[1]} (${addedCount} ชิ้น) ลงตะกร้าแล้ว ประหยัด ฿${savings.toLocaleString()}! ✨`,
-        'success'
-      );
-    }
+    const res = addBundleToCart(resolvedProducts, currentRoutine.discountPercent, currentRoutine.title);
+    showToast(
+      res.success
+        ? `เพิ่มเซต "${currentRoutine.title}" (${resolvedProducts.length} ชิ้น) ลงตะกร้าแล้ว ประหยัด ฿${savings.toLocaleString()}! ✨`
+        : res.message,
+      res.success ? 'success' : 'error'
+    );
   };
 
   return (
@@ -230,7 +233,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                 style={{
                   fontSize: '1.65rem',
                   fontWeight: 700,
-                  color: '#2C2224',
+                  color: 'var(--text-primary)',
                   margin: 0,
                   letterSpacing: '-0.01em',
                 }}
@@ -316,6 +319,8 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   <img
                     src={(prod.images && prod.images[0]) || DEFAULT_FALLBACK_IMAGE}
                     alt={prod.name}
+                    loading="lazy"
+                    decoding="async"
                     onError={handleImageError}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -329,7 +334,7 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                     style={{
                       fontSize: '0.88rem',
                       fontWeight: 600,
-                      color: '#2C2224',
+                      color: 'var(--text-primary)',
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
@@ -340,7 +345,12 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
                   </h5>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
                     <div style={{ fontSize: '0.78rem', color: '#706064' }}>
-                      <span style={{ textDecoration: 'line-through' }}>฿{prod.price.toLocaleString()}</span>
+                      <span style={{ textDecoration: 'line-through' }}>
+                        ฿{((prod.discount_price ?? prod.price) || 0).toLocaleString()}
+                      </span>{' '}
+                      <strong style={{ color: '#C73D62' }}>
+                        ฿{Math.round(((prod.discount_price ?? prod.price) || 0) * (1 - currentRoutine.discountPercent / 100)).toLocaleString()}
+                      </strong>
                     </div>
                     {prod.stock_quantity <= 0 ? (
                       <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>

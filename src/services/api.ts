@@ -22,7 +22,81 @@ const STORAGE_KEYS = {
   ORDERS: 'sora_pink_orders',
   WISHLIST: 'sora_pink_wishlist',
   PROMO_CODES: 'sora_pink_promos_v1',
+  PROMO_USER_USAGE: 'sora_pink_promo_usage_v1',
   NOTIFICATION_CONFIG: 'sora_pink_notify_config_v1',
+};
+
+const getEffectiveCartUnitPrice = (item: CartItem): number => {
+  const base = item.product.discount_price ?? item.product.price;
+  return item.bundleDiscountPercent
+    ? Math.round(base * (1 - item.bundleDiscountPercent / 100))
+    : base;
+};
+
+const sanitizeProductDbPayload = (p: Partial<Product>) => {
+  const payload: Record<string, any> = {};
+  const allowedFields: (keyof Product)[] = [
+    'category_id',
+    'name',
+    'description',
+    'ingredients',
+    'how_to_use',
+    'skin_types',
+    'skin_concerns',
+    'price',
+    'discount_price',
+    'stock_quantity',
+    'images',
+    'is_active',
+  ];
+  allowedFields.forEach((key) => {
+    if (p[key] !== undefined) {
+      payload[key] = p[key];
+    }
+  });
+  return payload;
+};
+
+const mergeOrdersDedup = (primary: Order[], secondary: Order[]): Order[] => {
+  const map = new Map<string, Order>();
+  secondary.forEach((o) => map.set(o.id, o));
+  primary.forEach((o) => {
+    const prev = map.get(o.id);
+    map.set(o.id, {
+      ...prev,
+      ...o,
+      slip_url: o.slip_url || prev?.slip_url || null,
+      admin_verified: o.admin_verified ?? prev?.admin_verified ?? false,
+      verified_at: o.verified_at || prev?.verified_at || null,
+      items: o.items && o.items.length > 0 ? o.items : prev?.items || [],
+    });
+  });
+  return Array.from(map.values()).sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+};
+
+const mapSupabaseOrderRows = (
+  rows: any[],
+  localMetaMap: Map<string, Partial<Order>>
+): Order[] => {
+  return rows.map((o: any) => {
+    const localMeta = localMetaMap.get(o.id) || {};
+    return {
+      ...o,
+      slip_url: o.slip_url || localMeta.slip_url || null,
+      admin_verified: o.admin_verified ?? localMeta.admin_verified ?? false,
+      verified_at: o.verified_at || localMeta.verified_at || null,
+      items: (o.order_items || []).map((oi: any) => ({
+        id: oi.id,
+        order_id: oi.order_id,
+        product_id: oi.product_id,
+        quantity: oi.quantity,
+        price_at_purchase: oi.price_at_purchase,
+        product: oi.products,
+      })),
+    };
+  });
 };
 
 // ----------------------------------------------------------------------------
@@ -144,40 +218,32 @@ export const fetchProducts = async (): Promise<Product[]> => {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        // Read local storage to preserve any stock deductions from orders
-        const localProds = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, []);
-        const localStockMap = new Map<string, number>();
-        localProds.forEach((lp) => {
-          if (typeof lp.stock_quantity === 'number') {
-            localStockMap.set(lp.id, lp.stock_quantity);
-          }
-        });
-
-        // Merge Supabase products with INITIAL_PRODUCTS to guarantee all products are loaded
-        const prodMap = new Map<string, Product>();
-        INITIAL_PRODUCTS.forEach((p) => {
-          const effectiveStock = localStockMap.has(p.id)
-            ? Math.min(p.stock_quantity, localStockMap.get(p.id)!)
-            : p.stock_quantity;
-          prodMap.set(p.id, { ...p, stock_quantity: effectiveStock });
-        });
-        (data as Product[]).forEach((p) => {
-          const effectiveStock = localStockMap.has(p.id)
-            ? Math.min(p.stock_quantity, localStockMap.get(p.id)!)
-            : p.stock_quantity;
-          prodMap.set(p.id, { ...p, stock_quantity: effectiveStock });
-        });
-        
-        // Attach category object if not populated
         const catMap = new Map<string, Category>();
         INITIAL_CATEGORIES.forEach((c) => catMap.set(c.id, c));
-        
-        return Array.from(prodMap.values()).map((p) => {
+
+        // Trust live Supabase product data (including admin stock updates) when connected,
+        // while keeping unseeded demo products from INITIAL_PRODUCTS available
+        const prodMap = new Map<string, Product>();
+        INITIAL_PRODUCTS.forEach((p) => {
+          prodMap.set(p.id, p);
+        });
+        (data as Product[]).forEach((p) => {
+          prodMap.set(p.id, p);
+        });
+
+        const mergedProducts = Array.from(prodMap.values()).map((p) => {
           if (!p.category && catMap.has(p.category_id)) {
             return { ...p, category: catMap.get(p.category_id) };
           }
           return p;
         });
+
+        // Sync fresh server stock back to local cache
+        setStoredData(STORAGE_KEYS.PRODUCTS, mergedProducts);
+        return mergedProducts;
+      }
+      if (error) {
+        console.warn('Supabase fetchProducts error, falling back to local:', error.message);
       }
     } catch (err) {
       console.warn('Supabase fetchProducts error, falling back to local:', err);
@@ -217,6 +283,10 @@ export const fetchProductById = async (id: string): Promise<Product | null> => {
 // Reviews API
 // ----------------------------------------------------------------------------
 export const fetchReviewsByProductId = async (productId: string): Promise<Review[]> => {
+  const localReviews = getStoredData<Review[]>(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS).filter(
+    (r) => r.product_id === productId
+  );
+
   if (isSupabaseConfigured()) {
     try {
       const { data, error } = await supabase
@@ -226,23 +296,31 @@ export const fetchReviewsByProductId = async (productId: string): Promise<Review
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (data) {
-        return data.map((r: any) => ({
+        const dbReviews: Review[] = data.map((r: any) => ({
           id: r.id,
           product_id: r.product_id,
           user_id: r.user_id,
           rating: r.rating,
           comment: r.comment,
+          images: Array.isArray(r.images) && r.images.length > 0 ? r.images : undefined,
+          verified_buyer: Boolean(r.verified_buyer),
           created_at: r.created_at,
           user_name: r.profiles?.full_name || 'ลูกค้าผู้ใช้งาน',
           user_avatar: r.profiles?.avatar_url || '',
         }));
+
+        // Merge local/demo reviews not present in Supabase response
+        const seenKeys = new Set(dbReviews.map((r) => `${r.user_id}:${r.comment}`));
+        const extraLocal = localReviews.filter((lr) => !seenKeys.has(`${lr.user_id}:${lr.comment}`));
+        return [...dbReviews, ...extraLocal].sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
       }
     } catch (err) {
       console.warn('Supabase fetchReviews error:', err);
     }
   }
-  const allReviews = getStoredData<Review[]>(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS);
-  return allReviews.filter((r) => r.product_id === productId);
+  return localReviews;
 };
 
 export const hasUserPurchasedProduct = (userId: string | undefined, productId: string): boolean => {
@@ -266,6 +344,7 @@ export const submitProductReview = async (
   images?: string[]
 ): Promise<Review> => {
   const isVerifiedBuyer = hasUserPurchasedProduct(userId, productId) || !userId.startsWith('guest-');
+  const cleanImages = images && images.length > 0 ? images : undefined;
   const newReview: Review = {
     id: 'rev-' + Date.now(),
     product_id: productId,
@@ -274,28 +353,70 @@ export const submitProductReview = async (
     user_avatar: userAvatar,
     rating,
     comment,
-    images: images && images.length > 0 ? images : undefined,
+    images: cleanImages,
     verified_buyer: isVerifiedBuyer,
     created_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured()) {
+  if (isSupabaseConfigured() && !userId.startsWith('guest-') && !userId.startsWith('usr-')) {
     try {
-      await supabase.from('reviews').insert({
-        product_id: productId,
-        user_id: userId,
-        rating,
-        comment,
-      });
+      const { error } = await supabase.from('reviews').upsert(
+        {
+          product_id: productId,
+          user_id: userId,
+          rating,
+          comment,
+          images: cleanImages || [],
+          verified_buyer: isVerifiedBuyer,
+        },
+        { onConflict: 'product_id,user_id' }
+      );
+      if (error) {
+        // Fallback in case live PostgreSQL reviews table hasn't added images/verified_buyer yet
+        const { error: fallbackErr } = await supabase.from('reviews').upsert(
+          {
+            product_id: productId,
+            user_id: userId,
+            rating,
+            comment,
+          },
+          { onConflict: 'product_id,user_id' }
+        );
+        if (fallbackErr) {
+          console.warn('Supabase upsert review error:', fallbackErr.message);
+        }
+      }
     } catch (err) {
       console.warn('Supabase insert review error:', err);
     }
   }
 
-  // Update in LocalStorage
+  // Upsert in LocalStorage per (product_id, user_id) for authenticated users, append for guests
   const reviews = getStoredData<Review[]>(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS);
-  reviews.unshift(newReview);
+  const existingIdx =
+    !userId.startsWith('guest-')
+      ? reviews.findIndex((r) => r.product_id === productId && r.user_id === userId)
+      : -1;
+  if (existingIdx > -1) {
+    reviews[existingIdx] = newReview;
+  } else {
+    reviews.unshift(newReview);
+  }
   setStoredData(STORAGE_KEYS.REVIEWS, reviews);
+
+  // Update cached product average rating & review count locally
+  const productReviews = reviews.filter((r) => r.product_id === productId);
+  if (productReviews.length > 0) {
+    const avgRating =
+      Math.round((productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length) * 10) / 10;
+    const products = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    setStoredData(
+      STORAGE_KEYS.PRODUCTS,
+      products.map((p) =>
+        p.id === productId ? { ...p, rating: avgRating, review_count: productReviews.length } : p
+      )
+    );
+  }
 
   return newReview;
 };
@@ -311,9 +432,10 @@ export const placeNewOrder = async (
   shippingFee: number,
   shippingAddress: ShippingAddress,
   paymentMethod: Order['payment_method'],
-  slipUrl?: string | null
+  slipUrl?: string | null,
+  appliedPromoCode?: string
 ): Promise<Order> => {
-  // Pre-validate stock availability in local store
+  // Pre-validate stock availability in cached/live store
   const currentProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
   for (const item of items) {
     const liveProd = currentProducts.find((p) => p.id === item.product_id);
@@ -329,7 +451,7 @@ export const placeNewOrder = async (
     order_id: orderId,
     product_id: item.product_id,
     quantity: item.quantity,
-    price_at_purchase: item.product.discount_price ?? item.product.price,
+    price_at_purchase: getEffectiveCartUnitPrice(item),
     product: item.product,
   }));
 
@@ -373,8 +495,8 @@ export const placeNewOrder = async (
     items: orderItems,
   };
 
-  // If Supabase is connected, insert order & order_items
-  if (isSupabaseConfigured() && userId && !userId.startsWith('guest-')) {
+  // If Supabase is connected and authenticated (non-demo/guest), insert order & order_items
+  if (isSupabaseConfigured() && userId && !userId.startsWith('guest-') && !userId.startsWith('usr-')) {
     try {
       const basePayload: any = {
         user_id: userId,
@@ -388,47 +510,53 @@ export const placeNewOrder = async (
       };
 
       let dbOrder: any = null;
-      try {
-        const { data, error } = await supabase
-          .from('orders')
-          .insert({
-            ...basePayload,
-            slip_url: finalSlipUrl,
-            admin_verified: false,
-          })
-          .select()
-          .single();
-        if (!error && data) dbOrder = data;
-      } catch {
-        // Fallback in case slip_url column is not yet migrated in PostgreSQL
-      }
+      const { data: richOrder, error: richErr } = await supabase
+        .from('orders')
+        .insert({
+          ...basePayload,
+          slip_url: finalSlipUrl,
+          admin_verified: false,
+        })
+        .select()
+        .single();
 
-      if (!dbOrder) {
-        const { data, error } = await supabase
+      if (!richErr && richOrder) {
+        dbOrder = richOrder;
+      } else {
+        // Fallback in case slip_url / admin_verified column is not yet migrated in PostgreSQL
+        const { data: fallbackOrder, error: fallbackErr } = await supabase
           .from('orders')
           .insert(basePayload)
           .select()
           .single();
-        if (!error && data) dbOrder = data;
+        if (!fallbackErr && fallbackOrder) {
+          dbOrder = fallbackOrder;
+        } else if (fallbackErr) {
+          console.warn('Supabase place order insert error:', fallbackErr.message);
+        }
       }
 
       if (dbOrder) {
         orderData.id = dbOrder.id;
+        orderData.items = orderItems.map((oi) => ({ ...oi, order_id: dbOrder.id }));
         const dbItems = items.map((item) => ({
           order_id: dbOrder.id,
           product_id: item.product_id,
           quantity: item.quantity,
-          price_at_purchase: item.product.discount_price ?? item.product.price,
+          price_at_purchase: getEffectiveCartUnitPrice(item),
         }));
         // Automatic stock deduction trigger will run in PostgreSQL
-        await supabase.from('order_items').insert(dbItems);
+        const { error: itemsErr } = await supabase.from('order_items').insert(dbItems);
+        if (itemsErr) {
+          console.warn('Supabase order_items insert error:', itemsErr.message);
+        }
       }
     } catch (err) {
       console.warn('Supabase place order error:', err);
     }
   }
 
-  // Stock deduction in Mock / Local Storage
+  // Stock deduction in Local Storage cache
   const liveProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
   const updatedProducts = liveProducts.map((p) => {
     const purchased = items.find((i) => i.product_id === p.id);
@@ -441,6 +569,11 @@ export const placeNewOrder = async (
     return p;
   });
   setStoredData(STORAGE_KEYS.PRODUCTS, updatedProducts);
+
+  // Track promo usage if code applied
+  if (appliedPromoCode) {
+    incrementPromoUsage(appliedPromoCode, userId).catch(() => {});
+  }
 
   // Save order in LocalStorage
   const orders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
@@ -464,7 +597,11 @@ export const fetchOrders = async (userId?: string): Promise<Order[]> => {
     });
   });
 
-  if (isSupabaseConfigured() && userId && !userId.startsWith('guest-')) {
+  const matchingLocalOrders = !userId
+    ? localOrders
+    : localOrders.filter((o) => o.user_id === userId || o.user_id === 'guest-user');
+
+  if (isSupabaseConfigured() && userId && !userId.startsWith('guest-') && !userId.startsWith('usr-')) {
     try {
       const { data, error } = await supabase
         .from('orders')
@@ -472,33 +609,16 @@ export const fetchOrders = async (userId?: string): Promise<Order[]> => {
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      if (data && data.length > 0) {
-        return data.map((o: any) => {
-          const localMeta = localMetaMap.get(o.id) || {};
-          return {
-            ...o,
-            slip_url: o.slip_url || localMeta.slip_url || null,
-            admin_verified: o.admin_verified ?? localMeta.admin_verified ?? false,
-            verified_at: o.verified_at || localMeta.verified_at || null,
-            items: (o.order_items || []).map((oi: any) => ({
-              id: oi.id,
-              order_id: oi.order_id,
-              product_id: oi.product_id,
-              quantity: oi.quantity,
-              price_at_purchase: oi.price_at_purchase,
-              product: oi.products,
-            })),
-          };
-        });
+      if (data) {
+        const sbOrders = mapSupabaseOrderRows(data, localMetaMap);
+        return mergeOrdersDedup(sbOrders, matchingLocalOrders);
       }
     } catch (err) {
       console.warn('Supabase fetch orders error:', err);
     }
   }
 
-  const allOrders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
-  if (!userId) return allOrders;
-  return allOrders.filter((o) => o.user_id === userId || o.user_id === 'guest-user');
+  return matchingLocalOrders;
 };
 
 // ----------------------------------------------------------------------------
@@ -523,29 +643,15 @@ export const adminFetchAllOrders = async (): Promise<Order[]> => {
         .order('created_at', { ascending: false });
       if (error) throw error;
       if (data) {
-        return data.map((o: any) => {
-          const localMeta = localMetaMap.get(o.id) || {};
-          return {
-            ...o,
-            slip_url: o.slip_url || localMeta.slip_url || null,
-            admin_verified: o.admin_verified ?? localMeta.admin_verified ?? false,
-            verified_at: o.verified_at || localMeta.verified_at || null,
-            items: (o.order_items || []).map((oi: any) => ({
-              id: oi.id,
-              order_id: oi.order_id,
-              product_id: oi.product_id,
-              quantity: oi.quantity,
-              price_at_purchase: oi.price_at_purchase,
-              product: oi.products,
-            })),
-          };
-        });
+        const sbOrders = mapSupabaseOrderRows(data, localMetaMap);
+        // Merge Supabase orders with local-only Guest/offline orders so admins never lose visibility
+        return mergeOrdersDedup(sbOrders, localOrders);
       }
     } catch (err) {
       console.warn('Supabase admin orders error:', err);
     }
   }
-  return getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  return localOrders;
 };
 
 export const adminUpdateOrderStatus = async (
@@ -555,23 +661,35 @@ export const adminUpdateOrderStatus = async (
   paymentStatus?: Order['payment_status'],
   adminVerified?: boolean
 ): Promise<boolean> => {
-  if (isSupabaseConfigured()) {
+  const orders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  const targetOrder = orders.find((o) => o.id === orderId);
+
+  if (isSupabaseConfigured() && !orderId.startsWith('SP-')) {
     try {
-      const updatePayload: any = { order_status: status };
-      if (trackingNumber !== undefined) updatePayload.tracking_number = trackingNumber;
-      if (paymentStatus !== undefined) updatePayload.payment_status = paymentStatus;
+      const corePayload: Record<string, any> = { order_status: status };
+      if (trackingNumber !== undefined) corePayload.tracking_number = trackingNumber;
+      if (paymentStatus !== undefined) corePayload.payment_status = paymentStatus;
+
+      const fullPayload: Record<string, any> = { ...corePayload };
       if (adminVerified !== undefined) {
-        updatePayload.admin_verified = adminVerified;
-        if (adminVerified) updatePayload.verified_at = new Date().toISOString();
+        fullPayload.admin_verified = adminVerified;
+        if (adminVerified) fullPayload.verified_at = new Date().toISOString();
       }
-      await supabase.from('orders').update(updatePayload).eq('id', orderId);
+
+      const { error } = await supabase.from('orders').update(fullPayload).eq('id', orderId);
+      if (error) {
+        const { error: fallbackErr } = await supabase
+          .from('orders')
+          .update(corePayload)
+          .eq('id', orderId);
+        if (fallbackErr) {
+          console.warn('Supabase update order error:', fallbackErr.message);
+        }
+      }
     } catch (err) {
       console.warn('Supabase update order error:', err);
     }
   }
-
-  const orders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
-  const targetOrder = orders.find((o) => o.id === orderId);
 
   // If status transitions to cancelled, restore stock for items back into store inventory
   if (status === 'cancelled' && targetOrder && targetOrder.order_status !== 'cancelled' && targetOrder.items) {
@@ -579,9 +697,19 @@ export const adminUpdateOrderStatus = async (
     const restoredProducts = currentProducts.map((p) => {
       const returnedItem = targetOrder.items?.find((i) => i.product_id === p.id);
       if (returnedItem) {
+        const restoredStock = p.stock_quantity + returnedItem.quantity;
+        if (isSupabaseConfigured()) {
+          supabase
+            .from('products')
+            .update({ stock_quantity: restoredStock })
+            .eq('id', p.id)
+            .then(({ error }) => {
+              if (error) console.warn('Supabase restore stock error:', error.message);
+            });
+        }
         return {
           ...p,
-          stock_quantity: p.stock_quantity + returnedItem.quantity,
+          stock_quantity: restoredStock,
         };
       }
       return p;
@@ -638,7 +766,11 @@ export const adminSaveProduct = async (product: Partial<Product>): Promise<Produ
 
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('products').update(product).eq('id', product.id!);
+        const cleanPayload = sanitizeProductDbPayload(product);
+        const { error } = await supabase.from('products').update(cleanPayload).eq('id', product.id!);
+        if (error) {
+          console.warn('Supabase update product error:', error.message);
+        }
       } catch (err) {
         console.warn('Supabase update product error:', err);
       }
@@ -676,7 +808,16 @@ export const adminSaveProduct = async (product: Partial<Product>): Promise<Produ
 
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('products').insert([targetProduct]);
+        const insertPayload = {
+          id: targetProduct.id,
+          ...sanitizeProductDbPayload(targetProduct),
+          rating: targetProduct.rating,
+          review_count: targetProduct.review_count,
+        };
+        const { error } = await supabase.from('products').insert([insertPayload]);
+        if (error) {
+          console.warn('Supabase insert product error:', error.message);
+        }
       } catch (err) {
         console.warn('Supabase insert product error:', err);
       }
@@ -689,7 +830,10 @@ export const adminSaveProduct = async (product: Partial<Product>): Promise<Produ
 export const adminDeleteProduct = async (productId: string): Promise<boolean> => {
   if (isSupabaseConfigured()) {
     try {
-      await supabase.from('products').delete().eq('id', productId);
+      const { error } = await supabase.from('products').delete().eq('id', productId);
+      if (error) {
+        console.warn('Supabase delete product error:', error.message);
+      }
     } catch (err) {
       console.warn('Supabase delete product error:', err);
     }
@@ -702,8 +846,36 @@ export const adminDeleteProduct = async (productId: string): Promise<boolean> =>
 };
 
 // ----------------------------------------------------------------------------
-// Dynamic Promo Code Management API (Admin Promo Manager)
+// Dynamic Promo Code Management API (Admin Promo Manager + Supabase Sync)
 // ----------------------------------------------------------------------------
+const mapPromoFromDb = (row: any): PromoCode => ({
+  code: String(row.code || '').toUpperCase(),
+  discountPercent: row.discount_percent ?? undefined,
+  discountAmount: row.discount_amount !== null && row.discount_amount !== undefined ? Number(row.discount_amount) : undefined,
+  minSpend: row.min_spend !== null && row.min_spend !== undefined ? Number(row.min_spend) : 0,
+  freeShipping: Boolean(row.free_shipping),
+  description: row.description || '',
+  maxUses: row.max_uses ?? null,
+  usedCount: row.used_count ?? 0,
+  onePerUser: Boolean(row.one_per_user),
+  expiresAt: row.expires_at ?? null,
+  isActive: row.is_active !== false,
+});
+
+const mapPromoToDb = (promo: PromoCode) => ({
+  code: promo.code.trim().toUpperCase(),
+  discount_percent: promo.discountPercent ?? null,
+  discount_amount: promo.discountAmount ?? null,
+  min_spend: promo.minSpend ?? 0,
+  free_shipping: Boolean(promo.freeShipping),
+  description: promo.description,
+  max_uses: promo.maxUses ?? null,
+  used_count: promo.usedCount ?? 0,
+  one_per_user: Boolean(promo.onePerUser),
+  expires_at: promo.expiresAt || null,
+  is_active: promo.isActive !== false,
+});
+
 export const getStoredPromoCodes = (): PromoCode[] => {
   const stored = getStoredData<PromoCode[]>(STORAGE_KEYS.PROMO_CODES, PROMO_CODES);
   const map = new Map<string, PromoCode>();
@@ -712,10 +884,118 @@ export const getStoredPromoCodes = (): PromoCode[] => {
   return Array.from(map.values());
 };
 
+export const fetchPromoCodes = async (): Promise<PromoCode[]> => {
+  const localPromos = getStoredPromoCodes();
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) {
+        const map = new Map<string, PromoCode>();
+        localPromos.forEach((p) => map.set(p.code.toUpperCase(), p));
+        data.forEach((row: any) => {
+          const mapped = mapPromoFromDb(row);
+          map.set(mapped.code, mapped);
+        });
+        const merged = Array.from(map.values());
+        setStoredData(STORAGE_KEYS.PROMO_CODES, merged);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('sora-promos-updated'));
+        }
+        return merged;
+      }
+    } catch {
+      // Graceful fallback when promo_codes table isn't migrated yet
+    }
+  }
+  return localPromos;
+};
+
+export const hasUserUsedPromo = (code: string, userId?: string): boolean => {
+  const cleanCode = code.trim().toUpperCase();
+  const usageMap = getStoredData<Record<string, string[]>>(STORAGE_KEYS.PROMO_USER_USAGE, {});
+  const actorKey = userId && !userId.startsWith('guest-') ? userId : 'guest-browser';
+  const usedList = usageMap[actorKey] || [];
+  return usedList.includes(cleanCode);
+};
+
+export const validatePromoCode = (
+  promo: PromoCode | undefined,
+  subtotal: number,
+  userId?: string
+): { valid: boolean; reason?: string } => {
+  if (!promo || promo.isActive === false) {
+    return { valid: false, reason: 'โค้ดส่วนลดไม่ถูกต้องหรือถูกปิดใช้งานแล้วค่ะ' };
+  }
+  if (promo.expiresAt) {
+    const expMs = new Date(promo.expiresAt).getTime();
+    if (!Number.isNaN(expMs) && expMs < Date.now()) {
+      return { valid: false, reason: `โค้ด "${promo.code}" หมดอายุการใช้งานแล้วค่ะ` };
+    }
+  }
+  if (promo.maxUses && promo.maxUses > 0 && (promo.usedCount || 0) >= promo.maxUses) {
+    return { valid: false, reason: `ขออภัย โค้ด "${promo.code}" ถูกใช้ครบจำนวนสิทธิ์แล้วค่ะ` };
+  }
+  if (promo.onePerUser && hasUserUsedPromo(promo.code, userId)) {
+    return { valid: false, reason: `โค้ด "${promo.code}" จำกัด 1 สิทธิ์ต่อบัญชี คุณเคยใช้โค้ดนี้แล้วค่ะ` };
+  }
+  if (promo.minSpend && subtotal < promo.minSpend) {
+    return {
+      valid: false,
+      reason: `ต้องมียอดซื้อขั้นต่ำ ฿${promo.minSpend.toLocaleString()} เพื่อใช้โค้ดนี้`,
+    };
+  }
+  return { valid: true };
+};
+
+export const incrementPromoUsage = async (code: string, userId?: string): Promise<void> => {
+  const cleanCode = code.trim().toUpperCase();
+  const current = getStoredPromoCodes();
+  let nextCount = 1;
+  const nextList = current.map((p) => {
+    if (p.code.toUpperCase() === cleanCode) {
+      nextCount = (p.usedCount || 0) + 1;
+      return { ...p, usedCount: nextCount };
+    }
+    return p;
+  });
+  setStoredData(STORAGE_KEYS.PROMO_CODES, nextList);
+
+  const usageMap = getStoredData<Record<string, string[]>>(STORAGE_KEYS.PROMO_USER_USAGE, {});
+  const actorKey = userId && !userId.startsWith('guest-') ? userId : 'guest-browser';
+  const prevUsed = usageMap[actorKey] || [];
+  if (!prevUsed.includes(cleanCode)) {
+    usageMap[actorKey] = [...prevUsed, cleanCode];
+    setStoredData(STORAGE_KEYS.PROMO_USER_USAGE, usageMap);
+  }
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('sora-promos-updated'));
+  }
+
+  if (isSupabaseConfigured()) {
+    try {
+      await supabase
+        .from('promo_codes')
+        .update({ used_count: nextCount })
+        .eq('code', cleanCode);
+    } catch {
+      // Safe fallback
+    }
+  }
+};
+
 export const adminSavePromoCode = (promo: PromoCode): PromoCode[] => {
   const current = getStoredPromoCodes();
   const cleanCode = promo.code.trim().toUpperCase();
-  const updatedPromo: PromoCode = { ...promo, code: cleanCode };
+  const updatedPromo: PromoCode = {
+    ...promo,
+    code: cleanCode,
+    usedCount: promo.usedCount ?? 0,
+    isActive: promo.isActive !== false,
+  };
   const existsIdx = current.findIndex((p) => p.code.toUpperCase() === cleanCode);
   let nextList: PromoCode[];
   if (existsIdx > -1) {
@@ -727,6 +1007,16 @@ export const adminSavePromoCode = (promo: PromoCode): PromoCode[] => {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('sora-promos-updated'));
   }
+
+  if (isSupabaseConfigured()) {
+    supabase
+      .from('promo_codes')
+      .upsert(mapPromoToDb(updatedPromo), { onConflict: 'code' })
+      .then(({ error }) => {
+        if (error) console.warn('Supabase promo upsert note:', error.message);
+      });
+  }
+
   return nextList;
 };
 
@@ -738,6 +1028,17 @@ export const adminDeletePromoCode = (code: string): PromoCode[] => {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('sora-promos-updated'));
   }
+
+  if (isSupabaseConfigured()) {
+    supabase
+      .from('promo_codes')
+      .delete()
+      .eq('code', cleanCode)
+      .then(({ error }) => {
+        if (error) console.warn('Supabase promo delete note:', error.message);
+      });
+  }
+
   return nextList;
 };
 

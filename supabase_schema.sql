@@ -115,9 +115,15 @@ CREATE TABLE IF NOT EXISTS public.reviews (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT,
+    images TEXT[] DEFAULT '{}',
+    verified_buyer BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(product_id, user_id)
 );
+
+-- Migration safety for photo reviews & verified buyer badge
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS verified_buyer BOOLEAN DEFAULT FALSE;
 
 -- ----------------------------------------------------------------------------
 -- 8. ตาราง wishlists (รายการสินค้าที่ชื่นชอบ)
@@ -127,7 +133,26 @@ CREATE TABLE IF NOT EXISTS public.wishlists (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(user_id, product_id)
+    UNIQUE(product_id, user_id)
+);
+
+-- ----------------------------------------------------------------------------
+-- 9. ตาราง promo_codes (โค้ดส่วนลดและโปรโมชันที่จัดการจากแอดมิน)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.promo_codes (
+    code VARCHAR(40) PRIMARY KEY,
+    discount_percent INTEGER CHECK (discount_percent IS NULL OR (discount_percent >= 0 AND discount_percent <= 100)),
+    discount_amount DECIMAL(10, 2) CHECK (discount_amount IS NULL OR discount_amount >= 0),
+    min_spend DECIMAL(10, 2) DEFAULT 0,
+    free_shipping BOOLEAN DEFAULT FALSE,
+    description TEXT NOT NULL,
+    max_uses INTEGER,
+    used_count INTEGER DEFAULT 0,
+    one_per_user BOOLEAN DEFAULT FALSE,
+    expires_at TIMESTAMP WITH TIME ZONE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- ============================================================================
@@ -240,6 +265,7 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.promo_codes ENABLE ROW LEVEL SECURITY;
 
 -- Helper Function ตรวจสอบ Admin
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -274,18 +300,29 @@ CREATE POLICY "Users can insert own cart items" ON public.cart_items FOR INSERT 
 CREATE POLICY "Users can update own cart items" ON public.cart_items FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own cart items" ON public.cart_items FOR DELETE USING (auth.uid() = user_id);
 
--- --- Orders RLS ---
-CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL OR public.is_admin());
-CREATE POLICY "Users can create own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.uid() IS NULL OR user_id IS NULL);
+-- --- Orders RLS (Strict PDPA Privacy: Guests cannot read other guests' orders) ---
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
+CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users can create own orders" ON public.orders;
+CREATE POLICY "Users can create own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = user_id OR (auth.uid() IS NULL AND user_id IS NULL));
+DROP POLICY IF EXISTS "Admins can update orders" ON public.orders;
 CREATE POLICY "Admins can update orders" ON public.orders FOR UPDATE USING (public.is_admin());
 
 -- --- Order Items RLS ---
+DROP POLICY IF EXISTS "Users can view own order items" ON public.order_items;
 CREATE POLICY "Users can view own order items" ON public.order_items FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR orders.user_id IS NULL OR public.is_admin()))
+    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR public.is_admin()))
 );
+DROP POLICY IF EXISTS "Users can insert own order items" ON public.order_items;
 CREATE POLICY "Users can insert own order items" ON public.order_items FOR INSERT WITH CHECK (
-    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR auth.uid() IS NULL OR orders.user_id IS NULL))
+    EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND (orders.user_id = auth.uid() OR (auth.uid() IS NULL AND orders.user_id IS NULL)))
 );
+
+-- --- Promo Codes RLS ---
+DROP POLICY IF EXISTS "Active promo codes are readable by everyone" ON public.promo_codes;
+CREATE POLICY "Active promo codes are readable by everyone" ON public.promo_codes FOR SELECT USING (is_active = true OR public.is_admin());
+DROP POLICY IF EXISTS "Admins can manage promo codes" ON public.promo_codes;
+CREATE POLICY "Admins can manage promo codes" ON public.promo_codes FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- --- Reviews RLS ---
 CREATE POLICY "Reviews are readable by everyone" ON public.reviews FOR SELECT USING (true);

@@ -23,6 +23,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useTheme } from '../../context/ThemeContext';
 import { CutePumpkinIcon, CuteGhostIcon } from '../common/HalloweenArtwork';
 import { handleImageError } from '../../utils/imageFallback';
+import { getActiveSeasonalFestival, type FestivalEvent } from '../../utils/seasonalTheme';
 import type { Product } from '../../types';
 
 interface NavbarProps {
@@ -35,6 +36,7 @@ interface NavbarProps {
   onOpenSkinQuiz: () => void;
   onOpenTrickOrTreat: () => void;
   isHalloweenMode: boolean;
+  activeFestival?: FestivalEvent | null;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onCategorySelect?: (catId: string) => void;
@@ -52,11 +54,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSkinQuiz,
   onOpenTrickOrTreat,
   isHalloweenMode,
+  activeFestival,
   searchQuery,
   onSearchChange,
   products = [],
   onSelectProduct,
 }) => {
+  const detectedFestival = activeFestival !== undefined ? activeFestival : getActiveSeasonalFestival();
   const { profile, role, logout } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
@@ -155,6 +159,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
               <span className="announcement-text-mobile" style={{ display: 'none' }}>
                 ลด 31% โค้ด <strong>SPOOKY31</strong>
+              </span>
+            </span>
+          ) : detectedFestival ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span>{detectedFestival.emoji}</span>
+              <span className="announcement-text-desktop">
+                {detectedFestival.announcementText}
+              </span>
+              <span className="announcement-text-mobile" style={{ display: 'none' }}>
+                {detectedFestival.promoCode ? (
+                  <>
+                    โค้ด <strong>{detectedFestival.promoCode}</strong> {detectedFestival.promoDiscountText}
+                  </>
+                ) : (
+                  detectedFestival.name
+                )}
               </span>
             </span>
           ) : (
@@ -273,7 +293,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     fontWeight: 800,
                     letterSpacing: '0.06em',
                     whiteSpace: 'nowrap',
-                    color: '#2C2224',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   SORA PINK
@@ -1136,7 +1156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="#all-products"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="btn btn-ghost"
+                  className="btn btn-ghost mobile-drawer-link-row"
                   style={{ justifyContent: 'flex-start', fontSize: '0.95rem', fontWeight: 600, padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                   <Sparkles size={16} color="#F43F5E" />
@@ -1145,7 +1165,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="#flash-sale"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="btn btn-ghost"
+                  className="btn btn-ghost mobile-drawer-link-row"
                   style={{ justifyContent: 'flex-start', fontSize: '0.95rem', fontWeight: 600, color: '#E11D48', padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                   <Flame size={16} color="#E11D48" />
@@ -1154,12 +1174,34 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="#categories"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="btn btn-ghost"
+                  className="btn btn-ghost mobile-drawer-link-row"
                   style={{ justifyContent: 'flex-start', fontSize: '0.95rem', fontWeight: 600, padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                   <Layers size={16} color="#0284C7" />
                   <span>หมวดหมู่สินค้า</span>
                 </a>
+                {onOpenCouponCenter && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenCouponCenter();
+                    }}
+                    className="btn btn-ghost mobile-drawer-link-row"
+                    style={{
+                      justifyContent: 'flex-start',
+                      fontSize: '0.95rem',
+                      fontWeight: 600,
+                      color: '#C73D62',
+                      padding: '0.65rem 0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <Ticket size={16} color="#C73D62" />
+                    <span>ศูนย์รวมคูปองส่วนลด</span>
+                  </button>
+                )}
                 {isHalloweenMode && (
                   <button
                     onClick={() => {

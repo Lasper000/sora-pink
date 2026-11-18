@@ -398,7 +398,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <div
                 style={{
                   width: 38,
@@ -471,7 +471,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
               </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <span
                 style={{
                   fontSize: '1.15rem',
@@ -523,7 +523,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, o
             )}
           </div>
 
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'left' }}>
             <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>สถานะปัจจุบัน</div>
             <div
               style={{

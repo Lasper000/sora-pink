@@ -3,14 +3,22 @@ import { Sparkles, ChevronLeft, ChevronRight, Tag, ArrowRight } from 'lucide-rea
 import { showToast } from '../common/Toast';
 import { CutePumpkinIcon } from '../common/HalloweenArtwork';
 import { handleImageError } from '../../utils/imageFallback';
+import { getActiveSeasonalFestival, type FestivalEvent } from '../../utils/seasonalTheme';
 
 interface HeroBannerProps {
   onShopNow: () => void;
   onOpenSkinQuiz: () => void;
   isHalloweenMode?: boolean;
+  activeFestival?: FestivalEvent | null;
 }
 
-export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQuiz, isHalloweenMode = true }) => {
+export const HeroBanner: React.FC<HeroBannerProps> = ({
+  onShopNow,
+  onOpenSkinQuiz,
+  isHalloweenMode = true,
+  activeFestival,
+}) => {
+  const detectedFestival = activeFestival !== undefined ? activeFestival : getActiveSeasonalFestival();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const [isPaused, setIsPaused] = useState(false);
@@ -76,9 +84,39 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
     },
   ];
 
+  const seasonalFeatureSlides = [
+    ...(detectedFestival && detectedFestival.id !== 'halloween'
+      ? [
+          {
+            badge: `${detectedFestival.emoji} ${detectedFestival.id.toUpperCase()} SPECIAL`,
+            title:
+              detectedFestival.id === 'christmas'
+                ? 'Holiday Velvet Sparkle'
+                : detectedFestival.id === 'valentines'
+                ? 'Sweet Sakura Romance'
+                : 'Songkran Glass Skin Glow',
+            subtitle: detectedFestival.name,
+            desc: detectedFestival.announcementText,
+            promoCode: detectedFestival.promoCode || 'SORA50',
+            promoText: detectedFestival.promoDiscountText || 'สิทธิพิเศษประจำเทศกาล',
+            gradient:
+              detectedFestival.id === 'songkran'
+                ? 'linear-gradient(135deg, #F0F9FF 0%, #FFF1F5 100%)'
+                : 'linear-gradient(135deg, #FFF5F8 0%, #FFE4EC 50%, #FDE8EE 100%)',
+            heroImage:
+              'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80',
+            accentColor: '#C73D62',
+            productName: 'Limited Festival Curation',
+            productPrice: detectedFestival.promoDiscountText || '฿390',
+            originalPrice: '฿690',
+          },
+        ]
+      : []),
+  ];
+
   const slides = isHalloweenMode
     ? allSlides
-    : allSlides.filter((s) => !s.badge.includes('HALLOWEEN'));
+    : [...seasonalFeatureSlides, ...allSlides.filter((s) => !s.badge.includes('HALLOWEEN'))];
 
   const handlePrev = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -340,6 +378,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ onShopNow, onOpenSkinQui
                       <img
                         src={slide.heroImage}
                         alt={slide.productName}
+                        loading={idx === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        fetchPriority={idx === 0 ? 'high' : 'auto'}
                         onError={handleImageError}
                         style={{
                           width: '100%',

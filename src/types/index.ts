@@ -54,6 +54,20 @@ export interface CartItem {
   product_id: string;
   quantity: number;
   product: Product;
+  bundleDiscountPercent?: number;
+  bundleLabel?: string;
+}
+
+export interface SavedAddress {
+  id: string;
+  label: string;
+  fullName: string;
+  phone: string;
+  address: string;
+  province: string;
+  postalCode: string;
+  note?: string;
+  isDefault?: boolean;
 }
 
 export type PaymentMethod = 'promptpay' | 'credit_card' | 'cod' | 'bank_transfer';
@@ -132,6 +146,11 @@ export interface PromoCode {
   minSpend?: number;
   freeShipping?: boolean;
   description: string;
+  expiresAt?: string | null;
+  maxUses?: number | null;
+  usedCount?: number;
+  onePerUser?: boolean;
+  isActive?: boolean;
 }
 
 export interface FilterState {

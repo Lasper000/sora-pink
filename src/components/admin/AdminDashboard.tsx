@@ -31,6 +31,7 @@ import {
   adminSaveProduct,
   adminDeleteProduct,
   adminVerifyOrderSlip,
+  fetchPromoCodes,
   getStoredPromoCodes,
   adminSavePromoCode,
   adminDeletePromoCode,
@@ -70,6 +71,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     minSpend: number;
     freeShipping: boolean;
     description: string;
+    expiresAt: string;
+    maxUses: string;
+    onePerUser: boolean;
   }>({
     code: '',
     discountType: 'amount',
@@ -77,7 +81,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     minSpend: 500,
     freeShipping: false,
     description: '',
+    expiresAt: '',
+    maxUses: '',
+    onePerUser: false,
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchPromoCodes().then((list) => setPromoCodes(list)).catch(() => {});
+    }
+  }, [isOpen]);
 
   // Notification Webhook / Telegram state
   const [notifyConfig, setNotifyConfig] = useState<AdminNotificationConfig>(() => getNotificationConfig());
@@ -474,7 +487,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem 1rem' }}>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                           <button
                             onClick={() => handleOpenEditProduct(p)}
                             className="btn btn-outline btn-sm"
@@ -584,7 +597,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             borderColor: '#CBD5E1',
                           }}
                         >
-                          <option value="pending">รอชำระเงิน</option>
+                          <option value="pending">รอตรวจสอบและยืนยัน</option>
                           <option value="processing">กำลังจัดเตรียม</option>
                           <option value="shipped">จัดส่งแล้ว</option>
                           <option value="delivered">จัดส่งสำเร็จ</option>
@@ -990,6 +1003,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   freeShipping: promoForm.discountType === 'shipping' || promoForm.freeShipping,
                   discountAmount: promoForm.discountType === 'amount' ? Number(promoForm.discountValue) || 0 : undefined,
                   discountPercent: promoForm.discountType === 'percent' ? Number(promoForm.discountValue) || 0 : undefined,
+                  expiresAt: promoForm.expiresAt ? new Date(`${promoForm.expiresAt}T23:59:59`).toISOString() : null,
+                  maxUses: promoForm.maxUses ? Number(promoForm.maxUses) : null,
+                  usedCount: 0,
+                  onePerUser: promoForm.onePerUser,
+                  isActive: true,
                   description:
                     promoForm.description.trim() ||
                     (promoForm.discountType === 'percent'
@@ -1007,6 +1025,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   minSpend: 500,
                   freeShipping: false,
                   description: '',
+                  expiresAt: '',
+                  maxUses: '',
+                  onePerUser: false,
                 });
                 showToast(`บันทึกโค้ดส่วนลด "${newPromo.code}" เรียบร้อยแล้วค่ะ!`, 'success');
               }}
@@ -1084,15 +1105,48 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer', color: '#374151' }}>
+              <div className="admin-form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                <div>
+                  <label className="form-label">วันหมดอายุ (ไม่ระบุ = ไม่มีวันหมด)</label>
                   <input
-                    type="checkbox"
-                    checked={promoForm.freeShipping || promoForm.discountType === 'shipping'}
-                    onChange={(e) => setPromoForm({ ...promoForm, freeShipping: e.target.checked })}
+                    type="date"
+                    value={promoForm.expiresAt}
+                    onChange={(e) => setPromoForm({ ...promoForm, expiresAt: e.target.value })}
+                    className="form-input"
                   />
-                  แถมสิทธิ์จัดส่งฟรี (Free Shipping) ร่วมกับโค้ดนี้ด้วย
-                </label>
+                </div>
+                <div>
+                  <label className="form-label">จำกัดจำนวนครั้งสูงสุด (เว้นว่าง = ไม่จำกัด)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    placeholder="เช่น 100"
+                    value={promoForm.maxUses}
+                    onChange={(e) => setPromoForm({ ...promoForm, maxUses: e.target.value })}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer', color: '#374151' }}>
+                    <input
+                      type="checkbox"
+                      checked={promoForm.freeShipping || promoForm.discountType === 'shipping'}
+                      onChange={(e) => setPromoForm({ ...promoForm, freeShipping: e.target.checked })}
+                    />
+                    แถมสิทธิ์จัดส่งฟรี (Free Shipping)
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem', cursor: 'pointer', color: '#374151' }}>
+                    <input
+                      type="checkbox"
+                      checked={promoForm.onePerUser}
+                      onChange={(e) => setPromoForm({ ...promoForm, onePerUser: e.target.checked })}
+                    />
+                    จำกัด 1 สิทธิ์ต่อบัญชีผู้ใช้
+                  </label>
+                </div>
 
                 <button type="submit" className="btn btn-primary btn-sm" style={{ borderRadius: '9999px', padding: '0.5rem 1.25rem' }}>
                   <Plus size={15} /> บันทึกโค้ดส่วนลด
@@ -1107,7 +1161,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <tr style={{ background: '#F8FAFC', borderBottom: '1.5px solid #E2E8F0', color: '#475569', textAlign: 'left' }}>
                     <th style={{ padding: '0.75rem 1rem' }}>รหัสโค้ด</th>
                     <th style={{ padding: '0.75rem 1rem' }}>สิทธิพิเศษ</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>ขั้นต่ำ</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>ขั้นต่ำ / เงื่อนไข</th>
                     <th style={{ padding: '0.75rem 1rem' }}>คำอธิบาย</th>
                     <th style={{ padding: '0.75rem 1rem' }}>จัดการ</th>
                   </tr>
@@ -1120,7 +1174,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         {p.discountPercent ? `ลด ${p.discountPercent}%` : p.discountAmount ? `ลด ฿${p.discountAmount}` : ''}
                         {p.freeShipping ? (p.discountPercent || p.discountAmount ? ' + ส่งฟรี' : 'ส่งฟรี') : ''}
                       </td>
-                      <td style={{ padding: '0.75rem 1rem' }}>฿{(p.minSpend || 0).toLocaleString()}</td>
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        <div>฿{(p.minSpend || 0).toLocaleString()}</div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                          {p.maxUses ? `ใช้แล้ว ${p.usedCount || 0}/${p.maxUses}` : `ใช้แล้ว ${p.usedCount || 0} ครั้ง`}
+                          {p.onePerUser ? ' • 1/บัญชี' : ''}
+                          {p.expiresAt ? ` • หมดอายุ ${new Date(p.expiresAt).toLocaleDateString('th-TH')}` : ''}
+                        </div>
+                      </td>
                       <td style={{ padding: '0.75rem 1rem', color: '#4B5563' }}>{p.description}</td>
                       <td style={{ padding: '0.75rem 1rem' }}>
                         <button
@@ -1185,6 +1246,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 />
                 เปิดใช้งานระบบส่งแจ้งเตือนอัตโนมัติเมื่อมีคำสั่งซื้อใหม่
               </label>
+
+              {/* Security Warning Banner regarding client-side API tokens */}
+              <div
+                style={{
+                  background: '#FFFBEB',
+                  border: '1px solid #FDE68A',
+                  borderRadius: '12px',
+                  padding: '0.75rem 0.95rem',
+                  fontSize: '0.78rem',
+                  color: '#92400E',
+                  lineHeight: 1.5,
+                }}
+              >
+                <strong>⚠️ คำแนะนำด้านความปลอดภัย:</strong> การกรอก Bot Token โดยตรงบนฝั่งเบราว์เซอร์จะเก็บค่าไว้ในเครื่องแอดมิน (LocalStorage) เท่านั้น
+                แนะนำให้ใช้ผ่าน Server / Supabase Edge Function Webhook URL เพื่อความปลอดภัยสูงสุดค่ะ
+              </div>
 
               <div>
                 <label className="form-label">Telegram Bot Token (จาก @BotFather)</label>
@@ -1481,7 +1558,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 marginBottom: '1rem',
                 fontSize: '0.85rem',
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))',
                 gap: '0.5rem',
               }}
             >
@@ -1551,7 +1628,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 ปิดหน้าต่าง
               </button>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {!viewingSlipOrder.admin_verified && viewingSlipOrder.order_status !== 'cancelled' ? (
                   <>
                     <button

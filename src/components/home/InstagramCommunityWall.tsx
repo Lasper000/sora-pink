@@ -72,7 +72,7 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
       image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80',
       likes: '960',
       comments: '62',
-      productId: 'a1000000-0000-0000-0000-000000000006', // Sakura Body Wash
+      productId: 'a1000000-0000-0000-0000-000000000019', // Sakura & Ceramide Barrier Milky Wash
       caption: 'อาบน้ำแบบเจ้าหญิง กลิ่นซากุระหอมฟุ้งติดตัวข้ามวัน ผิวนุ่มน่ากอดสุดๆ 🛁🌸',
     },
     {
@@ -81,7 +81,7 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
       image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
       likes: '3.1k',
       comments: '245',
-      productId: 'a1000000-0000-0000-0000-000000000004', // Pumpkin Mask
+      productId: 'a1000000-0000-0000-0000-000000000010', // Pumpkin Enzyme Glow Sleeping Mask
       caption: 'ไอเทมกู้ผิวฉุกเฉินตอนนอนดึก โบกตัวนี้ตื่นมาหน้าใสปิ๊ง ไม่โทรมเลยย เลิฟฟฟ 🎃✨',
     },
     {
@@ -151,6 +151,8 @@ export const InstagramCommunityWall: React.FC<InstagramCommunityWallProps> = ({ 
                 <img
                   src={post.image}
                   alt={post.author}
+                  loading="lazy"
+                  decoding="async"
                   onError={handleImageError}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
                   className="community-img"

@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return null;
   });
-  const [role, setRole] = useState<UserRole>('customer');
+  const [role, setRole] = useState<UserRole>(() => (profile?.role === 'admin' ? 'admin' : 'customer'));
   const [isLoading, setIsLoading] = useState(true);
   const isConfigured = isSupabaseConfigured();
 

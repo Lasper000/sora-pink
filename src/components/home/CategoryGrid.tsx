@@ -65,6 +65,8 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
                 <img
                   src={cat.image_url}
                   alt={cat.name}
+                  loading="lazy"
+                  decoding="async"
                   onError={handleImageError}
                   style={{
                     position: 'absolute',

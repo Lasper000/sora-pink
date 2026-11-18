@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { ShippingAddress, PaymentMethod, Order } from '../../types';
+import type { ShippingAddress, PaymentMethod, Order, SavedAddress } from '../../types';
 import {
   X,
   CreditCard,
@@ -14,6 +14,11 @@ import {
   Check,
   Clock,
   Printer,
+  Download,
+  Tag,
+  MapPin,
+  Gift,
+  ShieldCheck,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -21,6 +26,13 @@ import { placeNewOrder } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { generatePromptPayQR, PROMPTPAY_PHONE_FORMATTED, PROMPTPAY_NAME } from '../../utils/promptpay';
 import { printOrderReceipt } from '../../utils/printDocuments';
+import {
+  THAI_PROVINCES,
+  resolveProvinceFromPostalCode,
+  getSavedAddresses,
+  saveAddressToBook,
+  deleteAddressFromBook,
+} from '../../utils/thaiLocations';
 import confetti from 'canvas-confetti';
 
 interface CheckoutModalProps {
@@ -31,7 +43,17 @@ interface CheckoutModalProps {
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onOrderSuccess, onOpenAuth }) => {
-  const { cart, subtotal, discountAmount, shippingFee, grandTotal, clearCart } = useCart();
+  const {
+    cart,
+    subtotal,
+    discountAmount,
+    shippingFee,
+    grandTotal,
+    clearCart,
+    appliedPromo,
+    applyPromoCode,
+    removePromoCode,
+  } = useCart();
   const { profile } = useAuth();
 
   const [step, setStep] = useState<'form' | 'success'>('form');
@@ -44,6 +66,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const [slipImage, setSlipImage] = useState<string | null>(null);
   const [slipFileName, setSlipFileName] = useState<string>('');
   const [copiedPhone, setCopiedPhone] = useState<boolean>(false);
+  const [copiedAmount, setCopiedAmount] = useState<boolean>(false);
+
+  // Saved address book & inline promo & credit card state
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>(() => getSavedAddresses());
+  const [saveAddressForNext, setSaveAddressForNext] = useState<boolean>(true);
+  const [addressLabel, setAddressLabel] = useState<string>('บ้าน / ที่ทำงาน');
+  const [promoCodeInput, setPromoCodeInput] = useState<string>('');
+  const [cardDetails, setCardDetails] = useState({
+    number: '',
+    name: '',
+    expiry: '',
+    cvc: '',
+  });
 
   const [address, setAddress] = useState<ShippingAddress>({
     fullName: profile?.full_name || '',
@@ -94,6 +129,54 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     setCopiedPhone(true);
     showToast('คัดลอกเบอร์พร้อมเพย์ 095-991-9679 เรียบร้อยแล้วค่ะ', 'success');
     setTimeout(() => setCopiedPhone(false), 2500);
+  };
+
+  const handleCopyAmount = () => {
+    navigator.clipboard.writeText(String(grandTotal));
+    setCopiedAmount(true);
+    showToast(`คัดลอกยอดโอน ฿${grandTotal.toLocaleString()} เรียบร้อยแล้วค่ะ`, 'success');
+    setTimeout(() => setCopiedAmount(false), 2500);
+  };
+
+  const handleDownloadQr = () => {
+    if (!qrDataUrl) return;
+    const link = document.createElement('a');
+    link.href = qrDataUrl;
+    link.download = `SoraPink-PromptPay-${grandTotal}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('บันทึกรูป PromptPay QR เรียบร้อยแล้ว สามารถนำไปสแกนในแอปธนาคารได้ทันทีค่ะ', 'success');
+  };
+
+  const handlePostalCodeChange = (rawVal: string) => {
+    const cleanPostal = rawVal.replace(/\D/g, '').slice(0, 5);
+    const detectedProvince = resolveProvinceFromPostalCode(cleanPostal);
+    setAddress((prev) => ({
+      ...prev,
+      postalCode: cleanPostal,
+      province: detectedProvince || prev.province,
+    }));
+  };
+
+  const handleApplySavedAddress = (saved: SavedAddress) => {
+    setAddress({
+      fullName: saved.fullName,
+      phone: saved.phone,
+      address: saved.address,
+      province: saved.province,
+      postalCode: saved.postalCode,
+      note: saved.note || '',
+    });
+    setAddressLabel(saved.label);
+    showToast(`เลือกใช้ที่อยู่ "${saved.label}" แล้วค่ะ`, 'info');
+  };
+
+  const handleInlineApplyPromo = () => {
+    if (!promoCodeInput.trim()) return;
+    const res = applyPromoCode(promoCodeInput);
+    showToast(res.message, res.success ? 'success' : 'error');
+    if (res.success) setPromoCodeInput('');
   };
 
   const compressSlipImage = (dataUrl: string): Promise<string> => {
@@ -182,6 +265,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       return;
     }
 
+    // Pre-validate interactive Credit Card form fields if credit card selected
+    if (paymentMethod === 'credit_card') {
+      const digits = cardDetails.number.replace(/\D/g, '');
+      if (digits.length < 13 || !cardDetails.name.trim() || cardDetails.expiry.length < 4 || cardDetails.cvc.length < 3) {
+        showToast('กรุณากรอกข้อมูลบัตรเครดิต/เดบิต ทดสอบให้ครบถ้วนค่ะ (เลขบัตร, ชื่อบนบัตร, MM/YY, CVC)', 'error');
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const order = await placeNewOrder(
@@ -192,8 +284,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
         shippingFee,
         address,
         paymentMethod,
-        slipImage
+        slipImage,
+        appliedPromo?.code
       );
+
+      if (saveAddressForNext) {
+        const nextBook = saveAddressToBook({
+          label: addressLabel.trim() || 'ที่อยู่จัดส่ง',
+          ...address,
+          isDefault: true,
+        });
+        setSavedAddresses(nextBook);
+      }
 
       // Trigger celebration confetti
       try {
@@ -298,9 +400,65 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             <div className="checkout-grid">
               {/* Left Column: Shipping Address */}
               <div>
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: '#1F2937', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Truck size={18} color="#F43F5E" /> ข้อมูลที่อยู่จัดส่ง
                 </h4>
+
+                {/* Saved Address Book Chips */}
+                {savedAddresses.length > 0 && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '0.76rem', fontWeight: 600, color: '#706064', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <MapPin size={13} color="#C73D62" /> เลือกจากสมุดที่อยู่ของคุณ:
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                      {savedAddresses.map((saved) => (
+                        <div
+                          key={saved.id}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            background: '#FFF5F8',
+                            border: '1px solid #FAD1DC',
+                            borderRadius: '9999px',
+                            padding: '0.28rem 0.65rem',
+                            fontSize: '0.76rem',
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleApplySavedAddress(saved)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#C73D62',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              padding: 0,
+                            }}
+                          >
+                            {saved.label} ({saved.postalCode})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSavedAddresses(deleteAddressFromBook(saved.id))}
+                            title="ลบที่อยู่นี้"
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#9CA3AF',
+                              cursor: 'pointer',
+                              padding: '0 2px',
+                              display: 'inline-flex',
+                            }}
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div>
@@ -341,24 +499,33 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div>
-                      <label className="form-label">จังหวัด *</label>
+                      <label className="form-label">รหัสไปรษณีย์ (เติมจังหวัดอัตโนมัติ) *</label>
                       <input
                         type="text"
+                        inputMode="numeric"
+                        maxLength={5}
                         required
-                        value={address.province}
-                        onChange={(e) => setAddress({ ...address, province: e.target.value })}
+                        placeholder="เช่น 10110"
+                        value={address.postalCode}
+                        onChange={(e) => handlePostalCodeChange(e.target.value)}
                         className="form-input"
                       />
                     </div>
                     <div>
-                      <label className="form-label">รหัสไปรษณีย์ *</label>
+                      <label className="form-label">จังหวัด *</label>
                       <input
                         type="text"
                         required
-                        value={address.postalCode}
-                        onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
+                        list="thai-provinces-datalist"
+                        value={address.province}
+                        onChange={(e) => setAddress({ ...address, province: e.target.value })}
                         className="form-input"
                       />
+                      <datalist id="thai-provinces-datalist">
+                        {THAI_PROVINCES.map((prov) => (
+                          <option key={prov} value={prov} />
+                        ))}
+                      </datalist>
                     </div>
                   </div>
 
@@ -371,6 +538,29 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                       onChange={(e) => setAddress({ ...address, note: e.target.value })}
                       className="form-input"
                     />
+                  </div>
+
+                  {/* Save to Address Book checkbox */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.25rem' }}>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#706064', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={saveAddressForNext}
+                        onChange={(e) => setSaveAddressForNext(e.target.checked)}
+                        style={{ accentColor: '#DF5E7E' }}
+                      />
+                      บันทึกที่อยู่นี้ไว้ใช้ครั้งหน้า
+                    </label>
+                    {saveAddressForNext && (
+                      <input
+                        type="text"
+                        value={addressLabel}
+                        onChange={(e) => setAddressLabel(e.target.value)}
+                        placeholder="ป้ายชื่อ (เช่น บ้าน, คอนโด)"
+                        className="form-input"
+                        style={{ padding: '0.32rem 0.7rem', fontSize: '0.78rem', width: '160px' }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -551,10 +741,32 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
                       {/* PromptPay Details */}
                       <div style={{ marginTop: '0.85rem' }}>
+                        {qrDataUrl && (
+                          <div style={{ marginBottom: '0.65rem' }}>
+                            <button
+                              type="button"
+                              onClick={handleDownloadQr}
+                              className="btn btn-outline btn-sm"
+                              style={{
+                                borderRadius: '9999px',
+                                fontSize: '0.76rem',
+                                padding: '0.35rem 0.9rem',
+                                borderColor: '#003D79',
+                                color: '#003D79',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                background: '#FFFFFF',
+                              }}
+                            >
+                              <Download size={13} /> บันทึกรูป QR Code (PNG)
+                            </button>
+                          </div>
+                        )}
                         <div style={{ fontSize: '0.85rem', color: '#2C2224', fontWeight: 600 }}>
                           ชื่อบัญชี: <span>{PROMPTPAY_NAME}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '6px', flexWrap: 'wrap' }}>
                           <span style={{ fontSize: '0.88rem', color: '#706064' }}>
                             เบอร์พร้อมเพย์: <strong style={{ color: '#2C2224', fontSize: '0.98rem' }}>{PROMPTPAY_PHONE_FORMATTED}</strong>
                           </span>
@@ -577,11 +789,31 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                             {copiedPhone ? 'คัดลอกแล้ว' : 'คัดลอกเบอร์'}
                           </button>
                         </div>
-                        <div style={{ fontSize: '0.92rem', color: '#2C2224', marginTop: '6px' }}>
-                          ยอดเงินที่ต้องโอน:{' '}
-                          <strong style={{ color: '#C73D62', fontSize: '1.25rem', fontWeight: 700 }}>
-                            ฿{grandTotal.toLocaleString()}
-                          </strong>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.92rem', color: '#2C2224', marginTop: '8px' }}>
+                          <span>
+                            ยอดเงินที่ต้องโอน:{' '}
+                            <strong style={{ color: '#C73D62', fontSize: '1.25rem', fontWeight: 700 }}>
+                              ฿{grandTotal.toLocaleString()}
+                            </strong>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={handleCopyAmount}
+                            className="btn btn-outline btn-sm"
+                            style={{
+                              padding: '2px 10px',
+                              fontSize: '0.72rem',
+                              borderRadius: '9999px',
+                              borderColor: 'rgba(222, 83, 119, 0.25)',
+                              color: '#C73D62',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            {copiedAmount ? <Check size={12} color="#C73D62" /> : <Copy size={12} />}
+                            {copiedAmount ? 'คัดลอกยอดแล้ว' : 'คัดลอกยอดเงิน'}
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -692,8 +924,81 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   </div>
                 )}
 
-                {/* Order Total Box */}
+                {/* Interactive Credit Card Form when selected */}
+                {paymentMethod === 'credit_card' && (
+                  <div
+                    className="checkout-section-card"
+                    style={{
+                      background: '#F8FAFC',
+                      border: '1px solid rgba(222, 83, 119, 0.2)',
+                      borderRadius: '20px',
+                      padding: '1.15rem',
+                      marginBottom: '1.25rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '6px' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2C2224', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <ShieldCheck size={16} color="#059669" /> ข้อมูลบัตรเครดิต / เดบิต (Demo Pre-Auth)
+                      </span>
+                      <span style={{ fontSize: '0.68rem', background: '#DCFCE7', color: '#166534', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                        VISA / Mastercard
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={19}
+                        placeholder="หมายเลขบัตร (เช่น 4242 4242 4242 4242)"
+                        value={cardDetails.number}
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+                          const formatted = raw.replace(/(.{4})/g, '$1 ').trim();
+                          setCardDetails({ ...cardDetails, number: formatted });
+                        }}
+                        className="form-input"
+                      />
+                      <input
+                        type="text"
+                        placeholder="ชื่อบนหน้าบัตร (ภาษาอังกฤษ)"
+                        value={cardDetails.name}
+                        onChange={(e) => setCardDetails({ ...cardDetails, name: e.target.value.toUpperCase() })}
+                        className="form-input"
+                      />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={5}
+                          placeholder="MM/YY"
+                          value={cardDetails.expiry}
+                          onChange={(e) => {
+                            const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+                            const nextVal = digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+                            setCardDetails({ ...cardDetails, expiry: nextVal });
+                          }}
+                          className="form-input"
+                        />
+                        <input
+                          type="password"
+                          inputMode="numeric"
+                          maxLength={4}
+                          placeholder="CVC"
+                          value={cardDetails.cvc}
+                          onChange={(e) => setCardDetails({ ...cardDetails, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                          className="form-input"
+                        />
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '0.7rem', color: '#64748B', margin: '0.6rem 0 0 0' }}>
+                      * ระบบทดสอบ Pre-Auth ในเบราว์เซอร์ (ไม่มีการส่งหรือบันทึกเลขบัตรจริงลงฐานข้อมูล แอดมินจะยืนยันคำสั่งซื้อก่อนจัดส่ง)
+                    </p>
+                  </div>
+                )}
+
+                {/* Order Total Box with Inline Promo & Free Gifts */}
                 <div
+                  className="checkout-summary-card"
                   style={{
                     background: '#FFF5F8',
                     padding: '1.25rem',
@@ -702,6 +1007,71 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     marginBottom: '1.25rem',
                   }}
                 >
+                  {/* Inline Promo Input / Applied Chip */}
+                  <div style={{ marginBottom: '0.9rem', paddingBottom: '0.75rem', borderBottom: '1px dashed rgba(222, 83, 119, 0.2)' }}>
+                    {appliedPromo ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', background: '#FFFFFF', border: '1px solid #FAD1DC', borderRadius: '12px', padding: '0.45rem 0.75rem', fontSize: '0.8rem' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#C73D62', fontWeight: 700 }}>
+                          <Tag size={13} /> โค้ด {appliedPromo.code} (-฿{discountAmount.toLocaleString()})
+                        </span>
+                        <button
+                          type="button"
+                          onClick={removePromoCode}
+                          style={{ background: 'none', border: 'none', color: '#706064', fontSize: '0.74rem', cursor: 'pointer', fontWeight: 600 }}
+                        >
+                          ยกเลิก
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '0.45rem' }}>
+                        <input
+                          type="text"
+                          placeholder="กรอกโค้ดส่วนลด (เช่น SORA50)"
+                          value={promoCodeInput}
+                          onChange={(e) => setPromoCodeInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleInlineApplyPromo();
+                            }
+                          }}
+                          className="form-input"
+                          style={{ fontSize: '0.8rem', padding: '0.45rem 0.85rem', borderRadius: '9999px', textTransform: 'uppercase', minWidth: 0, flex: 1 }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleInlineApplyPromo}
+                          className="btn btn-secondary btn-sm"
+                          style={{ borderRadius: '9999px', whiteSpace: 'nowrap', flexShrink: 0 }}
+                        >
+                          ใช้โค้ด
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Complimentary Gifts Summary */}
+                  {subtotal >= 800 && (
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.85)',
+                        border: '1px solid #FAD1DC',
+                        borderRadius: '14px',
+                        padding: '0.6rem 0.85rem',
+                        marginBottom: '0.85rem',
+                        fontSize: '0.78rem',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, color: '#C73D62', display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
+                        <Gift size={13} /> ของขวัญฟรีที่ได้รับในออเดอร์นี้:
+                      </div>
+                      <div style={{ color: '#2C2224' }}>• ฟองน้ำมาร์ชแมลโลว์ Sora Pink Puff (ฟรี ฿0)</div>
+                      {subtotal >= 1200 && (
+                        <div style={{ color: '#2C2224' }}>• กระเป๋า Atelier Curation Pouch (ฟรี ฿0)</div>
+                      )}
+                    </div>
+                  )}
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706064', marginBottom: '0.35rem' }}>
                     <span>ยอดรวมสินค้า ({cart.length} รายการ)</span>
                     <span style={{ color: '#2C2224', fontWeight: 600 }}>฿{subtotal.toLocaleString()}</span>

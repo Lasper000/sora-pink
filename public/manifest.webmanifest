@@ -1,0 +1,17 @@
+{
+  "name": "SORA PINK โซระ พิ้งค์",
+  "short_name": "SORA PINK",
+  "description": "ร้านค้าออนไลน์เครื่องสำอาง สกินแคร์บำรุงผิวหน้า และผลิตภัณฑ์ดูแลผิวกายครบวงจร สไตล์พาสเทลมินิมอล",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDFE",
+  "theme_color": "#DF5E7E",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

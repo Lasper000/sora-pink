@@ -29,11 +29,12 @@ import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting'
 
 interface ProductDetailModalProps {
   product: Product | null;
+  allProducts?: Product[];
   onClose: () => void;
 }
 
-export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClose }) => {
-  const { addToCart } = useCart();
+export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, allProducts = [], onClose }) => {
+  const { addToCart, addBundleToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { profile } = useAuth();
 
@@ -64,44 +65,33 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
     { name: '#04 Nude Almond', hex: '#C2847A', undertone: 'MLBB Nude (นู้ดธรรมชาติ)', finish: 'Soft Matte' },
   ];
 
-  // Feature 4: Frequently Bought Together bundle
-  const complementaryBundle = {
-    id: 'bundle-comp-1',
-    name: 'Sora Cloud Barrier Moisture Cream (50ml)',
-    price: 490,
-    discountPrice: 390,
-    image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=400&q=80',
-  };
+  // Feature 4: Frequently Bought Together bundle using real catalog products
+  const complementaryProduct: Product | null = React.useMemo(() => {
+    if (!product) return null;
+    const pool = allProducts.filter((p) => p.id !== product.id && p.stock_quantity > 0);
+    return (
+      pool.find((p) => p.id === 'a1000000-0000-0000-0000-000000000006') ||
+      pool.find((p) => p.id === 'a1000000-0000-0000-0000-000000000001') ||
+      pool[0] ||
+      null
+    );
+  }, [allProducts, product]);
 
   const handleAddBundle = () => {
-    if (!product) return;
-    const currentPrice = product.discount_price || product.price;
-    const bundleItemPrice = complementaryBundle.discountPrice;
-    const totalOriginal = currentPrice + bundleItemPrice;
-    const discountedBundleTotal = Math.round(totalOriginal * 0.85); // 15% OFF bundle
-    const savings = totalOriginal - discountedBundleTotal;
+    if (!product || !complementaryProduct) return;
+    const baseSelf = product.discount_price ?? product.price;
+    const basePartner = complementaryProduct.discount_price ?? complementaryProduct.price;
+    const totalOriginal = baseSelf + basePartner;
+    const discountedTotal = Math.round(baseSelf * 0.85) + Math.round(basePartner * 0.85);
+    const savings = Math.max(0, totalOriginal - discountedTotal);
 
-    // Add current product
-    addToCart(product, 1);
-    // Add bundled complementary product
-    const mockBundleProduct: Product = {
-      id: 'bundle-item-' + Date.now(),
-      category_id: product.category_id,
-      name: complementaryBundle.name,
-      description: 'คู่หูฟื้นฟูผิวสวยฉ่ำน้ำ สั่งซื้อเป็นเซ็ตสุดคุ้มรับส่วนลด 15%',
-      ingredients: 'Ceramide Complex, Hyaluronic Acid, Squalane, Vitamin E',
-      how_to_use: 'ทาบำรุงหลังเซรั่ม',
-      skin_types: ['ทุกสภาพผิว'],
-      skin_concerns: ['ความชุ่มชื้น'],
-      price: complementaryBundle.price,
-      discount_price: Math.round(complementaryBundle.discountPrice * 0.85),
-      stock_quantity: 50,
-      images: [complementaryBundle.image],
-      is_active: true,
-    };
-    addToCart(mockBundleProduct, 1);
-
-    showToast(`เพิ่มเซ็ตคู่ใจลงในตะกร้าแล้วค่ะ! คุณประหยัดทันที ฿${savings.toLocaleString()}`, 'success');
+    const res = addBundleToCart([product, complementaryProduct], 15, 'เซ็ตคู่ประหยัด 15%');
+    showToast(
+      res.success
+        ? `เพิ่มเซ็ตคู่ (${product.name} + ${complementaryProduct.name}) ลงตะกร้าแล้ว ประหยัด ฿${savings.toLocaleString()}!`
+        : res.message,
+      res.success ? 'success' : 'error'
+    );
   };
 
   // Feature 5: 1-Click Social Sharing with Product Deep Link
@@ -253,17 +243,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
         className="modal-content modal-content-lg product-detail-modal-card"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* Sticky Close Button so mobile scrolled users can close anytime */}
         <button
           onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
           className="btn-icon btn-ghost"
           style={{
-            position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            zIndex: 30,
-            background: 'rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            position: 'sticky',
+            top: '0.75rem',
+            float: 'right',
+            margin: '0.75rem 0.75rem -44px 0',
+            zIndex: 35,
+            background: 'rgba(255, 255, 255, 0.94)',
+            color: '#1F2937',
+            border: '1px solid rgba(222, 83, 119, 0.18)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.14)',
           }}
         >
           <X size={20} />
@@ -677,7 +671,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', flexWrap: 'wrap', gap: '0.4rem' }}>
                     <div>
                       <strong style={{ color: '#1F2937' }}>{sampleSwatches[selectedSwatchIdx].name}:</strong>{' '}
                       <span style={{ color: '#6B7280' }}>{sampleSwatches[selectedSwatchIdx].undertone}</span>
@@ -1003,72 +997,74 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
               </div>
 
               {/* Feature 4: Frequently Bought Together (Bundle & Save 15%) */}
-              <div
-                style={{
-                  background: 'linear-gradient(135deg, #FFF0F5 0%, #F5F3FF 100%)',
-                  borderRadius: '16px',
-                  border: '1.5px solid #FFD1DC',
-                  padding: '1rem',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 800, color: '#BE123C', marginBottom: '0.65rem' }}>
-                  <Gift size={16} /> ซื้อคู่กันประหยัดกว่า (Frequently Bought Together)
-                  <span style={{ background: '#E11D48', color: '#FFFFFF', fontSize: '0.68rem', fontWeight: 800, padding: '1px 6px', borderRadius: '9999px', marginLeft: 'auto' }}>
-                    ลด 15% เซ็ตคู่
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  {/* Item 1 (Current) */}
-                  <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
-                    <img src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE} alt="Current" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {complementaryProduct && (
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #FFF0F5 0%, #F5F3FF 100%)',
+                    borderRadius: '16px',
+                    border: '1.5px solid #FFD1DC',
+                    padding: '1rem',
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 800, color: '#BE123C', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+                    <Gift size={16} /> ซื้อคู่กันประหยัดกว่า (Frequently Bought Together)
+                    <span style={{ background: '#E11D48', color: '#FFFFFF', fontSize: '0.68rem', fontWeight: 800, padding: '1px 6px', borderRadius: '9999px', marginLeft: 'auto' }}>
+                      ลด 15% เซ็ตคู่
+                    </span>
                   </div>
 
-                  <Plus size={16} color="#94A3B8" />
-
-                  {/* Item 2 (Complementary) */}
-                  <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
-                    <img src={complementaryBundle.image} alt="Complementary" onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-
-                  {/* Pricing info */}
-                  <div style={{ flex: 1, minWidth: '140px' }}>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1F2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      + {complementaryBundle.name}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {/* Item 1 (Current) */}
+                    <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+                      <img src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE} alt={product.name} onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                      <span style={{ fontSize: '1rem', fontWeight: 800, color: '#E11D48' }}>
-                        ฿{Math.round(((product.discount_price || product.price) + complementaryBundle.discountPrice) * 0.85).toLocaleString()}
-                      </span>
-                      <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
-                        ฿{((product.discount_price || product.price) + complementaryBundle.discountPrice).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
 
-                  <button
-                    type="button"
-                    onClick={handleAddBundle}
-                    disabled={isOutOfStock}
-                    className="btn btn-sm"
-                    style={{
-                      background: isOutOfStock ? '#E2E8F0' : 'linear-gradient(135deg, #BE123C 0%, #E11D48 100%)',
-                      color: isOutOfStock ? '#94A3B8' : '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '9999px',
-                      padding: '0.45rem 1.15rem',
-                      fontWeight: 700,
-                      fontSize: '0.78rem',
-                      cursor: isOutOfStock ? 'not-allowed' : 'pointer',
-                      flexShrink: 0,
-                      boxShadow: isOutOfStock ? 'none' : '0 4px 12px rgba(190, 18, 60, 0.25)',
-                    }}
-                  >
-                    {isOutOfStock ? 'สินค้าหมด' : '+ ซื้อทั้งเซ็ต'}
-                  </button>
+                    <Plus size={16} color="#94A3B8" />
+
+                    {/* Item 2 (Complementary Real Product) */}
+                    <div style={{ width: '52px', height: '52px', borderRadius: '10px', overflow: 'hidden', background: '#FFFFFF', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+                      <img src={(complementaryProduct.images && complementaryProduct.images[0]) || DEFAULT_FALLBACK_IMAGE} alt={complementaryProduct.name} onError={handleImageError} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+
+                    {/* Pricing info */}
+                    <div style={{ flex: 1, minWidth: '140px' }}>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1F2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        + {complementaryProduct.name}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#E11D48' }}>
+                          ฿{(Math.round((product.discount_price ?? product.price) * 0.85) + Math.round((complementaryProduct.discount_price ?? complementaryProduct.price) * 0.85)).toLocaleString()}
+                        </span>
+                        <span style={{ fontSize: '0.78rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                          ฿{((product.discount_price ?? product.price) + (complementaryProduct.discount_price ?? complementaryProduct.price)).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleAddBundle}
+                      disabled={isOutOfStock}
+                      className="btn btn-sm"
+                      style={{
+                        background: isOutOfStock ? '#E2E8F0' : 'linear-gradient(135deg, #BE123C 0%, #E11D48 100%)',
+                        color: isOutOfStock ? '#94A3B8' : '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '9999px',
+                        padding: '0.45rem 1.15rem',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                        flexShrink: 0,
+                        boxShadow: isOutOfStock ? 'none' : '0 4px 12px rgba(190, 18, 60, 0.25)',
+                      }}
+                    >
+                      {isOutOfStock ? 'สินค้าหมด' : '+ ซื้อทั้งเซ็ต'}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Bottom Actions: Quantity Stepper, Add to Cart, Wishlist */}
@@ -1226,6 +1222,34 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Sticky Bottom Add-to-Cart Bar for Mobile */}
+        <div className="mobile-sticky-atc-bar">
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: '0.72rem', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              รวม {isOutOfStock ? 0 : quantity} ชิ้น
+            </div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#C73D62' }}>
+              ฿{((product.discount_price || product.price) * (isOutOfStock ? 1 : quantity)).toLocaleString()}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isOutOfStock}
+            className="btn btn-primary"
+            style={{
+              flex: 1,
+              maxWidth: '230px',
+              padding: '0.72rem 1rem',
+              opacity: isOutOfStock ? 0.65 : 1,
+              justifyContent: 'center',
+            }}
+          >
+            <ShoppingBag size={17} />
+            <span>{isOutOfStock ? 'สินค้าหมดชั่วคราว' : 'เพิ่มลงตะกร้า'}</span>
+          </button>
         </div>
       </div>
     </div>

@@ -639,12 +639,32 @@ button, input, select, textarea {
   border-radius: var(--radius-lg);
   max-width: 600px;
   width: 100%;
+  max-height: 90dvh;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 60px -12px rgba(223, 94, 126, 0.18);
   border: 1px solid rgba(222, 83, 119, 0.16);
   animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+}
+
+@supports (max-height: 90dvh) {
+  .modal-content {
+    max-height: 90dvh;
+  }
+}
+
+body.modal-open-lock {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+.mobile-sticky-atc-bar {
+  display: none;
 }
 
 .modal-content-lg {
@@ -930,10 +950,109 @@ button, input, select, textarea {
   .drawer-panel {
     max-width: 100%;
   }
+  body {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px));
+  }
+  /* Prevent iOS Safari auto-zoom on < 16px form fields */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  /* Move Toasts to top on mobile so they never overlap bottom nav or FABs */
+  .toast-container {
+    top: 76px;
+    bottom: auto;
+    left: 0.85rem;
+    right: 0.85rem;
+    align-items: center;
+  }
+  .toast {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  /* Mobile Sticky Bottom Navigation */
+  .mobile-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 950;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: center;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(222, 83, 119, 0.18);
+    box-shadow: 0 -6px 24px rgba(44, 34, 36, 0.08);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px)) 4px;
+  }
+  .mobile-bottom-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 46px;
+    border: none;
+    background: transparent;
+    color: #7D6E73;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+  .mobile-bottom-nav-btn.is-active,
+  .mobile-bottom-nav-btn:active {
+    color: #C73D62;
+    background: rgba(255, 232, 239, 0.55);
+  }
+  .mobile-bottom-nav-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9999px;
+    background: #C73D62;
+    color: #FFFFFF;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(199, 61, 98, 0.35);
+  }
+  .mobile-sticky-atc-bar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px)) 1rem;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #FAD1DC;
+    box-shadow: 0 -4px 18px rgba(44, 34, 36, 0.08);
+  }
+  .compare-floating-bar {
+    bottom: calc(130px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 0.45rem 0.75rem !important;
+    max-width: 95vw !important;
+  }
 }
 
 /* ==========================================================================
-   HALLOWEEN SPOOKY CHIC & ENHANCED MICRO-ANIMATIONS
+   SEASONAL FESTIVAL THEMES (HALLOWEEN, CHRISTMAS, VALENTINE'S, SONGKRAN)
    ========================================================================== */
 
 /* Spooky Mode Global Background */
@@ -949,6 +1068,43 @@ body.spooky-theme {
 body.spooky-theme .glass-card:hover {
   box-shadow: 0 20px 42px rgba(168, 85, 247, 0.28), 0 6px 16px rgba(255, 141, 168, 0.24);
   border-color: #d8b4fe;
+}
+
+body.christmas-theme {
+  background-color: #fffbfc;
+  background-image:
+    radial-gradient(at 12% 12%, rgba(220, 38, 38, 0.1) 0px, transparent 48%),
+    radial-gradient(at 88% 16%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(251, 191, 36, 0.12) 0px, transparent 52%);
+}
+
+body.christmas-theme .glass-card:hover {
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.16), 0 6px 16px rgba(16, 185, 129, 0.16);
+  border-color: #fca5a5;
+}
+
+body.valentines-theme {
+  background-color: #fff7fa;
+  background-image:
+    radial-gradient(at 15% 15%, rgba(244, 63, 94, 0.16) 0px, transparent 50%),
+    radial-gradient(at 85% 20%, rgba(251, 113, 133, 0.2) 0px, transparent 50%);
+}
+
+body.valentines-theme .glass-card:hover {
+  box-shadow: 0 20px 42px rgba(244, 63, 94, 0.22);
+  border-color: #fda4af;
+}
+
+body.songkran-theme {
+  background-color: #f8fcff;
+  background-image:
+    radial-gradient(at 12% 15%, rgba(56, 189, 248, 0.18) 0px, transparent 48%),
+    radial-gradient(at 88% 18%, rgba(244, 114, 182, 0.18) 0px, transparent 52%);
+}
+
+body.songkran-theme .glass-card:hover {
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2), 0 6px 16px rgba(244, 114, 182, 0.18);
+  border-color: #7dd3fc;
 }
 
 /* Keyframe Animations for Spooky Elements */
@@ -1603,39 +1759,39 @@ body.spooky-theme .glass-card:hover {
    SMALL MOBILE PHONES (max-width: 640px)
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
-  /* Floating Buttons Stack on Mobile: 14px clear vertical gap, zero overlap! */
+  /* Floating Buttons Stack Safely Above MobileBottomNav on Mobile */
   .beauty-concierge-floating-wrapper {
-    bottom: 16px !important;
-    right: 16px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
   }
   .beauty-concierge-fab {
-    width: 48px !important;
-    height: 48px !important;
+    width: 46px !important;
+    height: 46px !important;
   }
   .beauty-concierge-drawer {
-    bottom: 68px !important;
-    right: 16px !important;
-    left: 16px !important;
+    bottom: calc(130px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+    left: 14px !important;
     width: auto !important;
     max-width: 360px !important;
     margin: 0 auto !important;
   }
   /* Cart Drawer Mobile */
   .cart-drawer-header {
-    padding: 1rem 1rem !important;
+    padding: 0.9rem 1rem !important;
   }
   .cart-drawer-milestones {
-    padding: 0.75rem 1rem !important;
+    padding: 0.7rem 1rem !important;
   }
   .cart-drawer-body {
-    padding: 0.85rem 0.85rem !important;
+    padding: 0.85rem !important;
   }
   .cart-drawer-footer {
-    padding: 1rem 1rem !important;
+    padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom, 0px)) 1rem !important;
   }
   .trick-or-treat-floating-widget {
-    bottom: 16px !important;
-    left: 16px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 14px !important;
     right: auto !important;
     display: flex !important;
   }
@@ -1644,6 +1800,19 @@ body.spooky-theme .glass-card:hover {
     font-size: 0.72rem !important;
     gap: 0.35rem !important;
     border-radius: 9999px !important;
+  }
+  /* Consistent mobile placement for card wishlist & compare buttons */
+  .product-card-wishlist-btn {
+    top: 8px !important;
+    right: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .product-card-compare-btn {
+    top: 46px !important;
+    right: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
   }
 
   /* Hero slide compact typography for mobile */
@@ -1903,6 +2072,7 @@ body.spooky-theme .glass-card:hover {
     padding: 1.25rem 1rem !important;
     border-radius: 20px !important;
     max-height: 92vh !important;
+    max-height: 92dvh !important;
     width: calc(100% - 1.5rem) !important;
     margin: auto !important;
   }
@@ -1915,6 +2085,14 @@ body.spooky-theme .glass-card:hover {
 
 /* Extra small mobile screens (max-width: 380px) */
 @media (max-width: 380px) {
+  .product-card-footer {
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
+  }
+  .product-card-buy-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
   .hero-actions {
     flex-direction: column !important;
     gap: 0.45rem !important;
@@ -2232,6 +2410,105 @@ body.dark-theme {
   border-color: #ff8da8 !important;
   box-shadow: 0 4px 18px rgba(255, 141, 168, 0.35) !important;
 }
+
+/* Comprehensive Dark Mode Component Surface & Contrast Fixes */
+[data-theme="dark"] .brand-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav {
+  background: rgba(19, 23, 34, 0.96) !important;
+  border-top-color: rgba(255, 180, 210, 0.16) !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav-btn {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .mobile-bottom-nav-btn.is-active,
+[data-theme="dark"] .mobile-bottom-nav-btn:active {
+  color: #ff8da8 !important;
+  background: rgba(244, 63, 94, 0.18) !important;
+}
+
+[data-theme="dark"] .mobile-nav-drawer,
+[data-theme="dark"] .live-search-dropdown,
+[data-theme="dark"] .compare-floating-bar,
+[data-theme="dark"] .compare-modal-card,
+[data-theme="dark"] .compare-item-card,
+[data-theme="dark"] .coupon-ticket-card,
+[data-theme="dark"] .checkout-section-card,
+[data-theme="dark"] .checkout-summary-card,
+[data-theme="dark"] .tracking-section-card,
+[data-theme="dark"] .beauty-concierge-drawer,
+[data-theme="dark"] .mobile-sticky-atc-bar {
+  background: #161b27 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 180, 210, 0.18) !important;
+}
+
+[data-theme="dark"] .flash-sale-main-card,
+[data-theme="dark"] .routine-bundle-card,
+[data-theme="dark"] .product-filter-card,
+[data-theme="dark"] .review-wall-card,
+[data-theme="dark"] .ig-community-card,
+[data-theme="dark"] .faq-item-card,
+[data-theme="dark"] .brand-trust-card,
+[data-theme="dark"] .cart-item-card,
+[data-theme="dark"] .cart-drawer-header,
+[data-theme="dark"] .cart-drawer-body,
+[data-theme="dark"] .cart-drawer-footer {
+  background: #161b27 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 180, 210, 0.16) !important;
+}
+
+[data-theme="dark"] .flash-sale-header-pill,
+[data-theme="dark"] .routine-savings-pill,
+[data-theme="dark"] .showcase-tabs-pill,
+[data-theme="dark"] .load-more-card,
+[data-theme="dark"] .cart-drawer-milestones,
+[data-theme="dark"] .newsletter-input {
+  background: #1e2536 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 180, 210, 0.22) !important;
+}
+
+[data-theme="dark"] .routine-tab-btn:not(.active) {
+  background: #1a2030 !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 180, 210, 0.18) !important;
+}
+
+[data-theme="dark"] .bundle-item-box {
+  background: #1c2233 !important;
+  border-color: rgba(255, 180, 210, 0.18) !important;
+}
+
+[data-theme="dark"] .product-card-container {
+  background: #161b27 !important;
+  border-color: rgba(255, 180, 210, 0.15) !important;
+}
+
+[data-theme="dark"] .mobile-drawer-link-row {
+  color: #e2e8f0 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .live-search-item {
+  color: #f8fafc !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"] .live-search-item:hover {
+  background: rgba(255, 141, 168, 0.12) !important;
+}
+
+[data-theme="dark"] .toast {
+  background: #181e2c !important;
+  color: #f8fafc !important;
+}
+
 
 
 

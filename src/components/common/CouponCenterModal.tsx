@@ -220,6 +220,7 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
             return (
               <div
                 key={promo.code}
+                className="coupon-ticket-card"
                 style={{
                   display: 'flex',
                   borderRadius: '16px',
@@ -334,11 +335,11 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
                       )}
                     </div>
 
-                    <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1F2937', margin: '4px 0 2px' }}>
+                    <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', margin: '4px 0 2px' }}>
                       {promo.description}
                     </h4>
 
-                    <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#64748B', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
                       {promo.minSpend ? (
                         <span>
                           ยอดซื้อขั้นต่ำ ฿{promo.minSpend.toLocaleString()}{' '}
@@ -350,6 +351,16 @@ export const CouponCenterModal: React.FC<CouponCenterModalProps> = ({
                         </span>
                       ) : (
                         <span style={{ color: '#059669', fontWeight: 600 }}>ไม่มีขั้นต่ำ • ใช้ได้ทันที</span>
+                      )}
+                      {promo.expiresAt && (
+                        <span style={{ fontSize: '0.72rem', color: '#94A3B8' }}>
+                          • หมดอายุ {new Date(promo.expiresAt).toLocaleDateString('th-TH')}
+                        </span>
+                      )}
+                      {promo.onePerUser && (
+                        <span style={{ fontSize: '0.7rem', color: '#C73D62', fontWeight: 600 }}>
+                          • 1 สิทธิ์/บัญชี
+                        </span>
                       )}
                     </div>
                   </div>

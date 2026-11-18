@@ -83,6 +83,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             src={(product.images && product.images[0]) || DEFAULT_FALLBACK_IMAGE}
             alt={product.name}
             loading="lazy"
+            decoding="async"
             onError={handleImageError}
             style={{
               width: '100%',

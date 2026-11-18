@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, Ticket, Gift } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
+import { useCart, getEffectiveItemUnitPrice } from '../../context/CartContext';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
 
@@ -162,10 +162,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {cart.map((item) => {
-                const unitPrice = item.product.discount_price ?? item.product.price;
+                const baseUnitPrice = item.product.discount_price ?? item.product.price;
+                const unitPrice = getEffectiveItemUnitPrice(item);
                 return (
                   <div
                     key={item.product_id}
+                    className="cart-item-card"
                     style={{
                       display: 'flex',
                       gap: '0.85rem',
@@ -234,9 +236,30 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             <Trash2 size={16} />
                           </button>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#C73D62' }}>
-                            ฿{unitPrice.toLocaleString()}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px', flexWrap: 'wrap', gap: '4px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#C73D62' }}>
+                              ฿{unitPrice.toLocaleString()}
+                            </span>
+                            {item.bundleDiscountPercent && baseUnitPrice > unitPrice && (
+                              <span style={{ fontSize: '0.72rem', color: '#9CA3AF', textDecoration: 'line-through' }}>
+                                ฿{baseUnitPrice.toLocaleString()}
+                              </span>
+                            )}
+                            {item.bundleDiscountPercent && (
+                              <span
+                                style={{
+                                  fontSize: '0.66rem',
+                                  fontWeight: 700,
+                                  color: '#BE123C',
+                                  background: '#FFE4E6',
+                                  padding: '1px 6px',
+                                  borderRadius: '9999px',
+                                }}
+                              >
+                                เซตลด {item.bundleDiscountPercent}%
+                              </span>
+                            )}
                           </div>
                           {item.product.stock_quantity <= 0 ? (
                             <span style={{ fontSize: '0.68rem', color: '#C73D62', background: '#FEECEF', padding: '2px 8px', borderRadius: '9999px', fontWeight: 700 }}>
