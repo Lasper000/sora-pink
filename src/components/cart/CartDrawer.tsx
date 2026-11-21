@@ -119,15 +119,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
           </div>
 
           {/* Milestones Labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', marginTop: '6px', color: '#706064', flexWrap: 'wrap', gap: '4px' }}>
+          <div
+            className="cart-milestones-row"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: 'clamp(0.62rem, 2.6vw, 0.7rem)',
+              marginTop: '6px',
+              color: '#706064',
+              flexWrap: 'nowrap',
+              gap: '4px',
+            }}
+          >
             <span style={{ color: subtotal >= 500 ? '#C73D62' : '#A09296', fontWeight: subtotal >= 500 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 500 ? '●' : '○'} ส่งฟรี (฿500)
+              {subtotal >= 500 ? '●' : '○'} ส่งฟรี ฿500
             </span>
             <span style={{ color: subtotal >= 800 ? '#C73D62' : '#A09296', fontWeight: subtotal >= 800 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 800 ? '●' : '○'} ฟองน้ำแต่งหน้า (฿800)
+              {subtotal >= 800 ? '●' : '○'} ฟองน้ำ ฿800
             </span>
             <span style={{ color: subtotal >= 1200 ? '#C73D62' : '#A09296', fontWeight: subtotal >= 1200 ? 700 : 500, whiteSpace: 'nowrap' }}>
-              {subtotal >= 1200 ? '●' : '○'} กระเป๋า Atelier (฿1,200)
+              {subtotal >= 1200 ? '●' : '○'} กระเป๋า ฿1,200
             </span>
           </div>
         </div>
@@ -442,16 +454,20 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleApplyPromo} style={{ display: 'flex', gap: '0.5rem' }}>
+                <form onSubmit={handleApplyPromo} style={{ display: 'flex', gap: '0.5rem', minWidth: 0, width: '100%' }}>
                   <input
                     type="text"
                     placeholder="โค้ดส่วนลด (เช่น SORA50)"
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '0.82rem', padding: '0.5rem 1rem', borderRadius: '9999px', textTransform: 'uppercase' }}
+                    style={{ fontSize: '0.82rem', padding: '0.5rem 0.9rem', borderRadius: '9999px', textTransform: 'uppercase', flex: 1, minWidth: 0 }}
                   />
-                  <button type="submit" className="btn btn-outline btn-sm" style={{ borderRadius: '9999px', padding: '0.5rem 1.15rem', fontSize: '0.8rem' }}>
+                  <button
+                    type="submit"
+                    className="btn btn-outline btn-sm"
+                    style={{ borderRadius: '9999px', padding: '0.5rem 1rem', fontSize: '0.8rem', flexShrink: 0, whiteSpace: 'nowrap' }}
+                  >
                     ใช้โค้ด
                   </button>
                 </form>

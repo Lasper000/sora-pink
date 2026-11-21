@@ -237,16 +237,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
         className="modal-content modal-content-lg product-detail-modal-card"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Sticky Close Button so mobile scrolled users can close anytime */}
+        {/* Close Button: absolute top-right on desktop, sticky on mobile scroll */}
         <button
           onClick={onClose}
           aria-label="ปิดหน้าต่าง"
-          className="btn-icon btn-ghost"
+          className="btn-icon btn-ghost product-detail-close-btn"
           style={{
-            position: 'sticky',
-            top: '0.75rem',
-            float: 'right',
-            margin: '0.75rem 0.75rem -44px 0',
+            position: 'absolute',
+            top: '0.85rem',
+            right: '0.85rem',
             zIndex: 35,
             background: 'rgba(255, 255, 255, 0.94)',
             color: '#1F2937',

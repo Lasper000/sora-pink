@@ -497,7 +497,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     <div>
                       <label className="form-label">รหัสไปรษณีย์ (เติมจังหวัดอัตโนมัติ) *</label>
                       <input
@@ -558,7 +558,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                         onChange={(e) => setAddressLabel(e.target.value)}
                         placeholder="ป้ายชื่อ (เช่น บ้าน, คอนโด)"
                         className="form-input"
-                        style={{ padding: '0.32rem 0.7rem', fontSize: '0.78rem', width: '160px' }}
+                        style={{ padding: '0.32rem 0.7rem', fontSize: '0.78rem', width: '160px', maxWidth: '100%', minWidth: 0 }}
                       />
                     )}
                   </div>

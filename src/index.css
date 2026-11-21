@@ -1219,8 +1219,9 @@ body.songkran-theme .glass-card:hover {
 
 .hero-image-card {
   position: relative;
-  width: 320px;
-  height: 360px;
+  width: clamp(250px, 28vw, 320px);
+  max-width: 100%;
+  height: clamp(290px, 32vw, 360px);
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -1349,6 +1350,10 @@ body.songkran-theme .glass-card:hover {
 }
 
 /* Product Detail Modal */
+.product-detail-modal-card {
+  position: relative;
+}
+
 .product-detail-modal-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1421,7 +1426,20 @@ body.songkran-theme .glass-card:hover {
    -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
   .hero-slide-item {
-    padding: 2.25rem 3rem !important;
+    padding: 2.25rem 1.75rem 3.25rem 1.75rem !important;
+  }
+  .hero-slide-grid {
+    gap: 1.5rem !important;
+  }
+  .hero-nav-btn {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
   }
 }
 
@@ -1432,7 +1450,11 @@ body.songkran-theme .glass-card:hover {
   html, body, #root, main, section, footer {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: hidden !important;
+    overflow-x: hidden;
+    overflow-x: clip !important;
+  }
+  .desktop-only {
+    display: none !important;
   }
   header {
     width: 100% !important;
@@ -1610,6 +1632,13 @@ body.songkran-theme .glass-card:hover {
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
+  .product-detail-close-btn {
+    position: sticky !important;
+    top: 0.75rem !important;
+    right: auto !important;
+    float: right !important;
+    margin: 0.75rem 0.75rem -44px 0 !important;
+  }
   .product-detail-modal-grid {
     grid-template-columns: 1fr !important;
   }
@@ -1677,6 +1706,12 @@ body.songkran-theme .glass-card:hover {
     top: 6px !important;
     right: 6px !important;
   }
+  .product-card-compare-btn {
+    width: 32px !important;
+    height: 32px !important;
+    top: 44px !important;
+    right: 6px !important;
+  }
 
   /* User Profile Modal Mobile */
   .user-profile-tabs-bar {
@@ -1736,9 +1771,26 @@ body.songkran-theme .glass-card:hover {
   .ambient-ghosts-container {
     display: none !important;
   }
+  /* Floating Widgets Clear MobileBottomNav Across All <= 768px Viewports */
+  .beauty-concierge-floating-wrapper {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+  }
+  .beauty-concierge-fab {
+    width: 46px !important;
+    height: 46px !important;
+  }
+  .beauty-concierge-drawer {
+    bottom: calc(130px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+    left: 14px !important;
+    width: auto !important;
+    max-width: 360px !important;
+    margin: 0 auto !important;
+  }
   .trick-or-treat-floating-widget {
-    bottom: 16px !important;
-    left: 16px !important;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 14px !important;
     right: auto !important;
     display: flex !important;
   }
@@ -1969,7 +2021,7 @@ body.songkran-theme .glass-card:hover {
 
   /* Category Grid 2-columns on mobile */
   .category-grid-container {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
   .category-card-item {
@@ -1979,7 +2031,7 @@ body.songkran-theme .glass-card:hover {
 
   /* Flash Sale 2-columns on mobile */
   .flash-sale-grid-container {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
   .flash-sale-card {
@@ -2081,10 +2133,50 @@ body.songkran-theme .glass-card:hover {
   .skin-quiz-types-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* Dedicated Member Page Mobile Polish */
+  .member-topbar {
+    padding: 0.6rem 0 !important;
+  }
+  .member-topbar-subtitle {
+    display: none !important;
+  }
+  .member-hero-card {
+    padding: 1.35rem 1.15rem !important;
+    border-radius: 22px !important;
+  }
+  .member-points-box {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
 }
 
-/* Extra small mobile screens (max-width: 380px) */
-@media (max-width: 380px) {
+/* Compact Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .form-grid-2col {
+    grid-template-columns: 1fr !important;
+  }
+  .member-topbar-inner {
+    gap: 0.45rem !important;
+  }
+  .member-back-btn,
+  .member-cart-btn,
+  .member-auth-btn {
+    padding: 0.36rem 0.72rem !important;
+    font-size: 0.76rem !important;
+  }
+  .member-back-text-full,
+  .member-auth-text-full {
+    display: none !important;
+  }
+  .member-back-text-short,
+  .member-auth-text-short {
+    display: inline !important;
+  }
+}
+
+/* Narrow Phone Card Footer Wrap (max-width: 420px - includes iPhone 390px) */
+@media (max-width: 420px) {
   .product-card-footer {
     flex-wrap: wrap !important;
     gap: 0.4rem !important;
@@ -2093,6 +2185,14 @@ body.songkran-theme .glass-card:hover {
     width: 100% !important;
     justify-content: center !important;
   }
+  .flash-sale-add-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* Extra small mobile screens (max-width: 380px) */
+@media (max-width: 380px) {
   .hero-actions {
     flex-direction: column !important;
     gap: 0.45rem !important;
@@ -2120,6 +2220,9 @@ body.songkran-theme .glass-card:hover {
     grid-template-columns: minmax(0, 1fr) !important;
   }
   .category-grid-container {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .flash-sale-grid-container {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }

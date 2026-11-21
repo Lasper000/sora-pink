@@ -480,18 +480,19 @@ export const ShopByRoutine: React.FC<ShopByRoutineProps> = ({ products, onSelect
             padding: 0.75rem 1rem !important;
           }
         }
-        [data-theme="dark"] .routine-tab-btn {
-          background: rgba(24, 29, 43, 0.8) !important;
+        [data-theme="dark"] .routine-tab-btn:not(.active) {
+          background: rgba(24, 29, 43, 0.85) !important;
+          color: #cbd5e1 !important;
+          border-color: rgba(255, 180, 210, 0.18) !important;
         }
         [data-theme="dark"] .routine-tab-btn.active {
-          background: rgba(36, 44, 65, 0.95) !important;
+          background: linear-gradient(135deg, #DF5E7E 0%, #C73D62 100%) !important;
+          color: #FFFFFF !important;
+          border-color: transparent !important;
         }
         [data-theme="dark"] .bundle-item-box {
-          background: rgba(22, 27, 40, 0.85) !important;
-          border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-        [data-theme="dark"] .bundle-item-box div div {
-          background: rgba(18, 22, 34, 0.95) !important;
+          background: rgba(22, 27, 40, 0.88) !important;
+          border-color: rgba(255, 180, 210, 0.18) !important;
         }
       `}</style>
     </section>

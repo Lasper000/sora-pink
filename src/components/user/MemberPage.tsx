@@ -319,7 +319,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
         }}
       >
         <div
-          className="container"
+          className="container member-topbar-inner"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -328,40 +328,40 @@ export const MemberPage: React.FC<MemberPageProps> = ({
             flexWrap: 'wrap',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
             <button
               type="button"
               onClick={onBackToStore}
-              className="btn btn-outline btn-sm"
-              style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              className="btn btn-outline btn-sm member-back-btn"
+              style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', flexShrink: 0 }}
             >
-              <ArrowLeft size={15} /> กลับหน้าร้านค้า
+              <ArrowLeft size={15} /> <span className="member-back-text-full">กลับหน้าร้านค้า</span><span className="member-back-text-short" style={{ display: 'none' }}>ร้านค้า</span>
             </button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
               <img
                 src="/logo.png"
                 alt="SORA PINK"
-                style={{ width: 32, height: 32, borderRadius: '10px', objectFit: 'cover', border: '1px solid #FAD1DC' }}
+                style={{ width: 32, height: 32, borderRadius: '10px', objectFit: 'cover', border: '1px solid #FAD1DC', flexShrink: 0 }}
               />
-              <div>
-                <div style={{ fontWeight: 800, fontSize: '0.96rem', color: 'var(--text-primary)', lineHeight: 1.1 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-primary)', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
                   SORA CLUB
                 </div>
-                <div style={{ fontSize: '0.68rem', color: '#C73D62', fontWeight: 600, letterSpacing: '0.08em' }}>
+                <div className="member-topbar-subtitle" style={{ fontSize: '0.68rem', color: '#C73D62', fontWeight: 600, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
                   MEMBER PRIVILEGE CENTER
                 </div>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
             <button
               type="button"
               onClick={onOpenCart}
-              className="btn btn-primary btn-sm"
-              style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              className="btn btn-primary btn-sm member-cart-btn"
+              style={{ borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}
             >
-              <ShoppingBag size={15} /> ตะกร้า ({itemCount})
+              <ShoppingBag size={15} /> <span className="desktop-only">ตะกร้า</span> ({itemCount})
             </button>
             {profile ? (
               <button
@@ -371,7 +371,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
                   showToast('ออกจากระบบเรียบร้อยแล้วค่ะ', 'info');
                 }}
                 className="btn btn-ghost btn-sm"
-                style={{ color: '#DC2626', borderRadius: '9999px' }}
+                style={{ color: '#DC2626', borderRadius: '9999px', whiteSpace: 'nowrap' }}
                 title="ออกจากระบบ"
               >
                 <LogOut size={15} /> <span className="desktop-only">ออกจากระบบ</span>
@@ -380,10 +380,11 @@ export const MemberPage: React.FC<MemberPageProps> = ({
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="btn btn-outline btn-sm"
-                style={{ borderRadius: '9999px' }}
+                className="btn btn-outline btn-sm member-auth-btn"
+                style={{ borderRadius: '9999px', whiteSpace: 'nowrap' }}
               >
-                เข้าสู่ระบบ / สมัครฟรี
+                <span className="member-auth-text-full">เข้าสู่ระบบ / สมัครฟรี</span>
+                <span className="member-auth-text-short" style={{ display: 'none' }}>เข้าสู่ระบบ</span>
               </button>
             )}
           </div>
@@ -474,6 +475,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
             {/* Right Points / Login CTA */}
             {profile ? (
               <div
+                className="member-points-box"
                 style={{
                   background: 'rgba(255, 255, 255, 0.16)',
                   backdropFilter: 'blur(10px)',
@@ -481,6 +483,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
                   borderRadius: '20px',
                   padding: '1rem 1.35rem',
                   minWidth: '220px',
+                  boxSizing: 'border-box',
                 }}
               >
                 <div style={{ fontSize: '0.74rem', opacity: 0.9, letterSpacing: '0.05em' }}>คะแนนสะสมคงเหลือ</div>
@@ -546,7 +549,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(136px, 100%), 1fr))',
             gap: '0.85rem',
             marginBottom: '1.75rem',
           }}
@@ -678,7 +681,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
                 gap: '1.15rem',
               }}
             >
@@ -759,7 +762,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(290px, 100%), 1fr))', gap: '1rem' }}>
               {availableVouchers
                 .filter((p) => p.isActive !== false)
                 .map((promo) => {
@@ -1047,7 +1050,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: '1rem' }}>
                 {wishlist.map((prod) => (
                   <div
                     key={prod.id}
@@ -1113,7 +1116,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
 
         {/* TAB 5: PROFILE & SAVED ADDRESS BOOK */}
         {activeTab === 'profile' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))', gap: '1.25rem' }}>
             {/* Personal Profile Card */}
             <div className="glass-card profile-order-card" style={{ padding: '1.5rem', borderRadius: '22px', background: '#FFFFFF' }}>
               <h3 style={{ fontSize: '1.08rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1205,7 +1208,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
                     onChange={(e) => setNewAddr({ ...newAddr, label: e.target.value })}
                     className="form-input"
                   />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.55rem' }}>
+                  <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.55rem' }}>
                     <input
                       type="text"
                       required
@@ -1231,7 +1234,7 @@ export const MemberPage: React.FC<MemberPageProps> = ({
                     onChange={(e) => setNewAddr({ ...newAddr, address: e.target.value })}
                     className="form-textarea"
                   />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.55rem' }}>
+                  <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.55rem' }}>
                     <input
                       type="text"
                       inputMode="numeric"

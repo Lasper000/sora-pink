@@ -246,8 +246,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </div>
 
-      <div className="navbar-container" style={{ padding: '0.75rem 1.75rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
-        <div className="navbar-main-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', width: '100%' }}>
+      <div className="navbar-container" style={{ padding: '0.75rem 1.5rem', width: '100%', maxWidth: '1440px', margin: '0 auto', boxSizing: 'border-box' }}>
+        <div className="navbar-main-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.25rem', width: '100%' }}>
           {/* Brand Logo */}
           <a
             href="#"
@@ -437,7 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div
               ref={searchContainerRef}
               style={{
-                width: isSearchFocused ? '260px' : '210px',
+                width: isSearchFocused ? '230px' : '195px',
                 position: 'relative',
                 display: 'none',
                 transition: 'width 0.25s ease',
@@ -1441,12 +1441,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15) !important;
           background: #FFFFFF !important;
         }
-        @media (min-width: 992px) {
+        @media (min-width: 1080px) {
           .desktop-search { display: block !important; }
           .desktop-nav { display: flex !important; }
           .cart-text, .cart-total { display: inline !important; }
         }
-        @media (max-width: 991px) {
+        @media (max-width: 1079px) {
           .mobile-search { display: block !important; }
           .mobile-menu-btn { display: inline-flex !important; }
           .desktop-user-menu { display: none !important; }
@@ -1457,15 +1457,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           .cart-btn-main { padding: 0.42rem 0.65rem !important; gap: 0.3rem !important; }
           .navbar-main-row { gap: 0.5rem !important; }
         }
-        @media (max-width: 1280px) {
+        @media (max-width: 1380px) and (min-width: 1080px) {
+          .navbar-container { padding: 0.7rem 1.15rem !important; }
+          .navbar-main-row { gap: 0.9rem !important; }
+          .brand-subtitle { display: none !important; }
           .desktop-search { width: 175px !important; }
-          .desktop-nav { gap: 1rem !important; font-size: 0.88rem !important; }
-          .nav-quiz-btn { padding: 0.3rem 0.7rem !important; font-size: 0.78rem !important; }
+          .desktop-nav { gap: 1.1rem !important; font-size: 0.84rem !important; }
+          .nav-quiz-btn { padding: 0.32rem 0.75rem !important; font-size: 0.76rem !important; }
         }
-        @media (max-width: 1120px) {
+        @media (max-width: 1260px) and (min-width: 1080px) {
           .nav-quiz-btn { display: none !important; }
           .auth-btn-text { display: none !important; }
-          .desktop-search { width: 155px !important; }
+          .desktop-search { width: 165px !important; }
+          .desktop-nav { gap: 1rem !important; }
         }
         @media (max-width: 640px) {
           .navbar-container { padding: 0.45rem 0.65rem !important; }
