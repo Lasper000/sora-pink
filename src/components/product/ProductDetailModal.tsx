@@ -26,6 +26,7 @@ import { fetchReviewsByProductId, submitProductReview } from '../../services/api
 import { showToast } from '../common/Toast';
 import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 import { getProductShareUrl, copyToClipboard } from '../../utils/productRouting';
+import { COSMETIC_SHADES, isShadeSelectableProduct } from '../../utils/productShades';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -49,21 +50,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   // Feature 3: Swatch visualizer state
-  const isCosmeticOrShadeProduct =
-    Boolean(
-      product?.category?.slug === 'cosmetics' ||
-      product?.category_id === 'c1000000-0000-0000-0000-000000000001' ||
-      /lip|tint|blush|cushion|powder|shimmer|glow|ลิป|บลัช|คุชชั่น|แป้ง/i.test(product?.name || '')
-    );
+  const isCosmeticOrShadeProduct = isShadeSelectableProduct(product);
   const [selectedSkinTone, setSelectedSkinTone] = useState<'fair' | 'natural' | 'tan'>('fair');
   const [selectedSwatchIdx, setSelectedSwatchIdx] = useState(0);
 
-  const sampleSwatches = [
-    { name: '#01 Sakura Pink', hex: '#FF6B8B', undertone: 'Cool Rosy Pink (ชมพูซากุระระเรื่อ)', finish: 'Dewy Jelly Glow' },
-    { name: '#02 Muted Peach', hex: '#FB923C', undertone: 'Warm Peach Coral (พีชคอรัลละมุน)', finish: 'Velvet Satin' },
-    { name: '#03 Berry Glass', hex: '#BE123C', undertone: 'Deep Berry Wine (กุหลาบเบอร์รี่ฉ่ำ)', finish: 'Glass Shimmer' },
-    { name: '#04 Nude Almond', hex: '#C2847A', undertone: 'MLBB Nude (นู้ดธรรมชาติ)', finish: 'Soft Matte' },
-  ];
+  const sampleSwatches = COSMETIC_SHADES;
 
   // Feature 4: Frequently Bought Together bundle using real catalog products
   const complementaryProduct: Product | null = React.useMemo(() => {
@@ -156,7 +147,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
 
   const handleAddToCart = () => {
-    const res = addToCart(product, quantity);
+    const chosenShade = isCosmeticOrShadeProduct
+      ? sampleSwatches[selectedSwatchIdx]?.name
+      : undefined;
+    const res = addToCart(product, quantity, chosenShade);
     showToast(res.message, res.success ? 'success' : 'error');
   };
 

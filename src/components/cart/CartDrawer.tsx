@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight, Tag, Sparkles, Ticket, Gift } from 'lucide-react';
-import { useCart, getEffectiveItemUnitPrice } from '../../context/CartContext';
+import { useCart } from '../../context/CartContext';
+import { getEffectiveItemUnitPrice } from '../../utils/cartMath';
 import { showToast } from '../common/Toast';
 import { handleImageError } from '../../utils/imageFallback';
 
@@ -166,7 +167,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                 const unitPrice = getEffectiveItemUnitPrice(item);
                 return (
                   <div
-                    key={item.product_id}
+                    key={item.id}
                     className="cart-item-card"
                     style={{
                       display: 'flex',
@@ -217,7 +218,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             {item.product.name}
                           </h4>
                           <button
-                            onClick={() => removeFromCart(item.product_id)}
+                            onClick={() => removeFromCart(item.id)}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -236,6 +237,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                             <Trash2 size={16} />
                           </button>
                         </div>
+                        {item.selectedShade && (
+                          <div style={{ marginTop: '3px', marginBottom: '2px' }}>
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                fontSize: '0.68rem',
+                                fontWeight: 600,
+                                color: '#8C2E41',
+                                background: '#FFF0F4',
+                                border: '1px solid #FAD1DC',
+                                padding: '1px 7px',
+                                borderRadius: '9999px',
+                              }}
+                            >
+                              เฉดสี: {item.selectedShade}
+                            </span>
+                          </div>
+                        )}
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px', flexWrap: 'wrap', gap: '4px' }}>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: '0.92rem', fontWeight: 700, color: '#C73D62' }}>
@@ -290,7 +309,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                           }}
                         >
                           <button
-                            onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             style={{
                               width: '30px',
                               height: '30px',
@@ -309,12 +328,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onCheck
                           >
                             -
                           </button>
-                          <span style={{ width: '32px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600, color: '#2C2224' }}>
+                          <span style={{ width: '32px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => {
-                              const res = updateQuantity(item.product_id, item.quantity + 1);
+                              const res = updateQuantity(item.id, item.quantity + 1);
                               if (!res.success && res.message) showToast(res.message, 'error');
                             }}
                             disabled={item.quantity >= item.product.stock_quantity}

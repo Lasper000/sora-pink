@@ -24,6 +24,7 @@ import {
   Ticket,
   Bell,
   Send,
+  Upload,
 } from 'lucide-react';
 import {
   adminFetchAllOrders,
@@ -31,6 +32,7 @@ import {
   adminSaveProduct,
   adminDeleteProduct,
   adminVerifyOrderSlip,
+  adminUploadProductImage,
   fetchPromoCodes,
   getStoredPromoCodes,
   adminSavePromoCode,
@@ -100,6 +102,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const { role } = useAuth();
 
@@ -292,7 +296,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <ArrowLeft size={16} /> กลับหน้าร้านค้า
           </button>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1F2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Shield size={20} color="#0284C7" /> Sora Pink Admin Dashboard
             </h2>
             <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>
@@ -717,11 +721,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     style={{ width: 34, height: 34, borderRadius: 8, objectFit: 'cover', flexShrink: 0, border: '1px solid #F1F5F9' }}
                                   />
                                   <div style={{ minWidth: 0 }}>
-                                    <div style={{ fontWeight: 600, color: '#1E293B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                       {prod?.name || `รหัสสินค้า ${item.product_id}`}
                                     </div>
-                                    <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
-                                      ฿{item.price_at_purchase.toLocaleString()} × {item.quantity} ชิ้น
+                                    <div style={{ fontSize: '0.74rem', color: '#64748B', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+                                      <span>฿{item.price_at_purchase.toLocaleString()} × {item.quantity} ชิ้น</span>
+                                      {item.selected_shade && (
+                                        <span style={{ background: '#FFF0F4', color: '#C73D62', border: '1px solid #FAD1DC', padding: '0 6px', borderRadius: '9999px', fontWeight: 600 }}>
+                                          เฉดสี: {item.selected_shade}
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -1468,14 +1477,174 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div>
-                <label className="form-label">รูปภาพสินค้า URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={editingProduct.images?.[0] || ''}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, images: [e.target.value] })}
-                  className="form-input"
-                />
+                <label className="form-label">แกลเลอรีรูปภาพสินค้า (อัปโหลดตรง หรือเพิ่ม URL ได้หลายรูป)</label>
+
+                {/* Multi-image Gallery Preview */}
+                {(editingProduct.images || []).length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.65rem' }}>
+                    {(editingProduct.images || []).map((imgUrl, idx) => (
+                      <div
+                        key={`${imgUrl}-${idx}`}
+                        style={{
+                          position: 'relative',
+                          width: '74px',
+                          height: '74px',
+                          borderRadius: '12px',
+                          overflow: 'hidden',
+                          border: idx === 0 ? '2px solid #C73D62' : '1px solid #CBD5E1',
+                          background: '#F8FAFC',
+                        }}
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`รูปที่ ${idx + 1}`}
+                          onError={handleImageError}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                        {idx === 0 ? (
+                          <span
+                            style={{
+                              position: 'absolute',
+                              bottom: 2,
+                              left: 2,
+                              right: 2,
+                              background: 'rgba(199, 61, 98, 0.88)',
+                              color: '#FFFFFF',
+                              fontSize: '0.6rem',
+                              fontWeight: 700,
+                              textAlign: 'center',
+                              borderRadius: '6px',
+                            }}
+                          >
+                            รูปหลัก
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = [...(editingProduct.images || [])];
+                              const [picked] = current.splice(idx, 1);
+                              current.unshift(picked);
+                              setEditingProduct({ ...editingProduct, images: current });
+                            }}
+                            style={{
+                              position: 'absolute',
+                              bottom: 2,
+                              left: 2,
+                              right: 2,
+                              background: 'rgba(15, 23, 42, 0.72)',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              fontSize: '0.58rem',
+                              cursor: 'pointer',
+                              borderRadius: '6px',
+                              padding: '1px 0',
+                            }}
+                          >
+                            ตั้งหลัก
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = (editingProduct.images || []).filter((_, i) => i !== idx);
+                            setEditingProduct({ ...editingProduct, images: next });
+                          }}
+                          title="ลบรูปนี้"
+                          style={{
+                            position: 'absolute',
+                            top: 2,
+                            right: 2,
+                            width: 18,
+                            height: 18,
+                            borderRadius: '50%',
+                            background: 'rgba(220, 38, 38, 0.9)',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            padding: 0,
+                          }}
+                        >
+                          <X size={11} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Direct File Upload + Add URL row */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <label
+                    className="btn btn-outline btn-sm"
+                    style={{
+                      cursor: isUploadingImage ? 'wait' : 'pointer',
+                      borderRadius: '9999px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <Upload size={14} />
+                    {isUploadingImage ? 'กำลังอัปโหลด...' : 'อัปโหลดรูปจากเครื่อง'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      disabled={isUploadingImage}
+                      style={{ display: 'none' }}
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        if (files.length === 0) return;
+                        setIsUploadingImage(true);
+                        try {
+                          const uploadedUrls: string[] = [];
+                          for (const file of files) {
+                            const url = await adminUploadProductImage(file);
+                            uploadedUrls.push(url);
+                          }
+                          setEditingProduct((prev) =>
+                            prev ? { ...prev, images: [...(prev.images || []), ...uploadedUrls] } : prev
+                          );
+                          showToast(`อัปโหลดรูปสินค้า ${uploadedUrls.length} รูปเรียบร้อยแล้วค่ะ`, 'success');
+                        } catch {
+                          showToast('ไม่สามารถอัปโหลดรูปสินค้าได้ กรุณาลองใหม่', 'error');
+                        } finally {
+                          setIsUploadingImage(false);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                  </label>
+
+                  <input
+                    type="url"
+                    placeholder="หรือวางลิงก์รูป https://..."
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    className="form-input"
+                    style={{ flex: 1, minWidth: '180px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const clean = newImageUrl.trim();
+                      if (!clean) return;
+                      setEditingProduct({
+                        ...editingProduct,
+                        images: [...(editingProduct.images || []), clean],
+                      });
+                      setNewImageUrl('');
+                    }}
+                    className="btn btn-secondary btn-sm"
+                    style={{ borderRadius: '9999px', whiteSpace: 'nowrap' }}
+                  >
+                    + เพิ่ม URL
+                  </button>
+                </div>
               </div>
 
               <div>

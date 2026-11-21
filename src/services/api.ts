@@ -93,10 +93,44 @@ const mapSupabaseOrderRows = (
         product_id: oi.product_id,
         quantity: oi.quantity,
         price_at_purchase: oi.price_at_purchase,
+        selected_shade: oi.selected_shade || undefined,
         product: oi.products,
       })),
     };
   });
+};
+
+const PRIVATE_SLIP_PREFIX = 'storage://order-slips/';
+
+export const resolveOrderSlipUrl = async (rawSlipUrl?: string | null): Promise<string | null> => {
+  if (!rawSlipUrl) return null;
+  if (rawSlipUrl.startsWith(PRIVATE_SLIP_PREFIX) && isSupabaseConfigured()) {
+    const objectPath = rawSlipUrl.slice(PRIVATE_SLIP_PREFIX.length);
+    try {
+      const { data, error } = await supabase.storage
+        .from('order-slips')
+        .createSignedUrl(objectPath, 3600);
+      if (!error && data?.signedUrl) {
+        return data.signedUrl;
+      }
+    } catch {
+      // Fall back safely
+    }
+    return null;
+  }
+  return rawSlipUrl;
+};
+
+const hydrateOrderSlips = async (orders: Order[]): Promise<Order[]> => {
+  return Promise.all(
+    orders.map(async (o) => {
+      if (o.slip_url && o.slip_url.startsWith(PRIVATE_SLIP_PREFIX)) {
+        const signed = await resolveOrderSlipUrl(o.slip_url);
+        return { ...o, slip_url: signed || o.slip_url };
+      }
+      return o;
+    })
+  );
 };
 
 // ----------------------------------------------------------------------------
@@ -452,11 +486,13 @@ export const placeNewOrder = async (
     product_id: item.product_id,
     quantity: item.quantity,
     price_at_purchase: getEffectiveCartUnitPrice(item),
+    selected_shade: item.selectedShade,
     product: item.product,
   }));
 
-  // Upload slip image to Supabase Storage bucket ('order-slips') if connected
-  let finalSlipUrl = slipUrl || null;
+  // Upload slip image to private Supabase Storage bucket ('order-slips') if connected
+  let dbSlipRef = slipUrl || null;
+  let displaySlipUrl = slipUrl || null;
   if (isSupabaseConfigured() && slipUrl && slipUrl.startsWith('data:image/')) {
     try {
       const res = await fetch(slipUrl);
@@ -467,9 +503,12 @@ export const placeNewOrder = async (
         .from('order-slips')
         .upload(filePath, blob, { contentType: blob.type, upsert: true });
       if (!uploadErr) {
-        const { data: pubData } = supabase.storage.from('order-slips').getPublicUrl(filePath);
-        if (pubData?.publicUrl) {
-          finalSlipUrl = pubData.publicUrl;
+        dbSlipRef = `${PRIVATE_SLIP_PREFIX}${filePath}`;
+        const { data: signedData } = await supabase.storage
+          .from('order-slips')
+          .createSignedUrl(filePath, 3600);
+        if (signedData?.signedUrl) {
+          displaySlipUrl = signedData.signedUrl;
         }
       }
     } catch {
@@ -488,67 +527,98 @@ export const placeNewOrder = async (
     payment_status: 'pending',
     order_status: 'pending', // Requires admin inspection & confirmation before proceeding
     tracking_number: null,
-    slip_url: finalSlipUrl,
+    slip_url: displaySlipUrl,
     admin_verified: false,
     verified_at: null,
     created_at: new Date().toISOString(),
     items: orderItems,
   };
 
-  // If Supabase is connected and authenticated (non-demo/guest), insert order & order_items
+  // If Supabase is connected and authenticated (non-demo/guest), prefer Server-Verified RPC first
   if (isSupabaseConfigured() && userId && !userId.startsWith('guest-') && !userId.startsWith('usr-')) {
     try {
-      const basePayload: any = {
-        user_id: userId,
-        total_amount: totalAmount,
-        discount_amount: discountAmount,
-        shipping_fee: shippingFee,
-        shipping_address: shippingAddress,
-        payment_method: paymentMethod,
-        payment_status: 'pending',
-        order_status: 'pending',
-      };
+      const rpcItems = items.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        bundle_discount_percent: item.bundleDiscountPercent || 0,
+        selected_shade: item.selectedShade || null,
+      }));
 
-      let dbOrder: any = null;
-      const { data: richOrder, error: richErr } = await supabase
-        .from('orders')
-        .insert({
-          ...basePayload,
-          slip_url: finalSlipUrl,
-          admin_verified: false,
-        })
-        .select()
-        .single();
+      const { data: rpcOrderId, error: rpcErr } = await supabase.rpc('place_verified_order', {
+        p_items: rpcItems,
+        p_shipping_address: shippingAddress,
+        p_payment_method: paymentMethod,
+        p_slip_url: dbSlipRef,
+        p_promo_code: appliedPromoCode || null,
+      });
 
-      if (!richErr && richOrder) {
-        dbOrder = richOrder;
+      if (!rpcErr && rpcOrderId) {
+        orderData.id = String(rpcOrderId);
+        orderData.items = orderItems.map((oi) => ({ ...oi, order_id: String(rpcOrderId) }));
       } else {
-        // Fallback in case slip_url / admin_verified column is not yet migrated in PostgreSQL
-        const { data: fallbackOrder, error: fallbackErr } = await supabase
+        // Graceful fallback to direct insert if RPC hasn't been deployed on live Supabase yet
+        const basePayload: any = {
+          user_id: userId,
+          total_amount: totalAmount,
+          discount_amount: discountAmount,
+          shipping_fee: shippingFee,
+          shipping_address: shippingAddress,
+          payment_method: paymentMethod,
+          payment_status: 'pending',
+          order_status: 'pending',
+        };
+
+        let dbOrder: any = null;
+        const { data: richOrder, error: richErr } = await supabase
           .from('orders')
-          .insert(basePayload)
+          .insert({
+            ...basePayload,
+            slip_url: dbSlipRef,
+            admin_verified: false,
+          })
           .select()
           .single();
-        if (!fallbackErr && fallbackOrder) {
-          dbOrder = fallbackOrder;
-        } else if (fallbackErr) {
-          console.warn('Supabase place order insert error:', fallbackErr.message);
-        }
-      }
 
-      if (dbOrder) {
-        orderData.id = dbOrder.id;
-        orderData.items = orderItems.map((oi) => ({ ...oi, order_id: dbOrder.id }));
-        const dbItems = items.map((item) => ({
-          order_id: dbOrder.id,
-          product_id: item.product_id,
-          quantity: item.quantity,
-          price_at_purchase: getEffectiveCartUnitPrice(item),
-        }));
-        // Automatic stock deduction trigger will run in PostgreSQL
-        const { error: itemsErr } = await supabase.from('order_items').insert(dbItems);
-        if (itemsErr) {
-          console.warn('Supabase order_items insert error:', itemsErr.message);
+        if (!richErr && richOrder) {
+          dbOrder = richOrder;
+        } else {
+          const { data: fallbackOrder, error: fallbackErr } = await supabase
+            .from('orders')
+            .insert(basePayload)
+            .select()
+            .single();
+          if (!fallbackErr && fallbackOrder) {
+            dbOrder = fallbackOrder;
+          } else if (fallbackErr) {
+            console.warn('Supabase place order insert error:', fallbackErr.message);
+          }
+        }
+
+        if (dbOrder) {
+          orderData.id = dbOrder.id;
+          orderData.items = orderItems.map((oi) => ({ ...oi, order_id: dbOrder.id }));
+          const dbItems = items.map((item) => ({
+            order_id: dbOrder.id,
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price_at_purchase: getEffectiveCartUnitPrice(item),
+            selected_shade: item.selectedShade || null,
+          }));
+          const { error: itemsErr } = await supabase.from('order_items').insert(dbItems);
+          if (itemsErr) {
+            // Retry without selected_shade if column not migrated yet
+            const { error: retryErr } = await supabase.from('order_items').insert(
+              items.map((item) => ({
+                order_id: dbOrder.id,
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price_at_purchase: getEffectiveCartUnitPrice(item),
+              }))
+            );
+            if (retryErr) {
+              console.warn('Supabase order_items insert error:', retryErr.message);
+            }
+          }
         }
       }
     } catch (err) {
@@ -611,14 +681,139 @@ export const fetchOrders = async (userId?: string): Promise<Order[]> => {
       if (error) throw error;
       if (data) {
         const sbOrders = mapSupabaseOrderRows(data, localMetaMap);
-        return mergeOrdersDedup(sbOrders, matchingLocalOrders);
+        return hydrateOrderSlips(mergeOrdersDedup(sbOrders, matchingLocalOrders));
       }
     } catch (err) {
       console.warn('Supabase fetch orders error:', err);
     }
   }
 
-  return matchingLocalOrders;
+  return hydrateOrderSlips(matchingLocalOrders);
+};
+
+/**
+ * Customer self-cancellation for pending orders (restores stock atomically)
+ */
+export const customerCancelOrder = async (
+  orderId: string,
+  userId?: string
+): Promise<{ success: boolean; message: string }> => {
+  const localOrders = getStoredData<Order[]>(STORAGE_KEYS.ORDERS, []);
+  const targetOrder = localOrders.find((o) => o.id === orderId);
+
+  if (targetOrder && targetOrder.order_status !== 'pending') {
+    return {
+      success: false,
+      message: 'สามารถยกเลิกได้เฉพาะคำสั่งซื้อที่อยู่ระหว่างรอตรวจสอบเท่านั้นค่ะ',
+    };
+  }
+
+  if (isSupabaseConfigured() && !orderId.startsWith('SP-') && userId && !userId.startsWith('usr-')) {
+    try {
+      const { error } = await supabase.rpc('customer_cancel_pending_order', {
+        p_order_id: orderId,
+      });
+      if (error) {
+        console.warn('Supabase customer cancel RPC note:', error.message);
+      }
+    } catch (err) {
+      console.warn('Supabase cancel error:', err);
+    }
+  }
+
+  // Restore local stock if order exists locally and wasn't already cancelled
+  if (targetOrder && targetOrder.order_status === 'pending' && targetOrder.items) {
+    const currentProducts = getStoredData<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    const restoredProducts = currentProducts.map((p) => {
+      const returnedItem = targetOrder.items?.find((i) => i.product_id === p.id);
+      if (returnedItem) {
+        return { ...p, stock_quantity: p.stock_quantity + returnedItem.quantity };
+      }
+      return p;
+    });
+    setStoredData(STORAGE_KEYS.PRODUCTS, restoredProducts);
+  }
+
+  const updatedOrders = localOrders.map((o) =>
+    o.id === orderId
+      ? {
+          ...o,
+          order_status: 'cancelled' as const,
+          payment_status: 'failed' as const,
+          updated_at: new Date().toISOString(),
+        }
+      : o
+  );
+  setStoredData(STORAGE_KEYS.ORDERS, updatedOrders);
+
+  return { success: true, message: 'ยกเลิกคำสั่งซื้อและคืนสต็อกสินค้าเรียบร้อยแล้วค่ะ' };
+};
+
+/**
+ * Admin Product Image Uploader (Compresses + Uploads to Supabase Storage 'product-images')
+ */
+export const adminUploadProductImage = async (file: File): Promise<string> => {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์รูปภาพได้'));
+    reader.readAsDataURL(file);
+  });
+
+  // Compress to <= 900px JPEG for fast mobile loading
+  const compressedDataUrl = await new Promise<string>((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const MAX_DIM = 900;
+        let { width, height } = img;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(dataUrl);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      } catch {
+        resolve(dataUrl);
+      }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+
+  if (isSupabaseConfigured()) {
+    try {
+      const res = await fetch(compressedDataUrl);
+      const blob = await res.blob();
+      const filePath = `catalog/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
+      if (!error) {
+        const { data: pub } = supabase.storage.from('product-images').getPublicUrl(filePath);
+        if (pub?.publicUrl) {
+          return pub.publicUrl;
+        }
+      }
+    } catch {
+      // Safe fallback to compressed data URL
+    }
+  }
+
+  return compressedDataUrl;
 };
 
 // ----------------------------------------------------------------------------
@@ -645,13 +840,13 @@ export const adminFetchAllOrders = async (): Promise<Order[]> => {
       if (data) {
         const sbOrders = mapSupabaseOrderRows(data, localMetaMap);
         // Merge Supabase orders with local-only Guest/offline orders so admins never lose visibility
-        return mergeOrdersDedup(sbOrders, localOrders);
+        return hydrateOrderSlips(mergeOrdersDedup(sbOrders, localOrders));
       }
     } catch (err) {
       console.warn('Supabase admin orders error:', err);
     }
   }
-  return localOrders;
+  return hydrateOrderSlips(localOrders);
 };
 
 export const adminUpdateOrderStatus = async (

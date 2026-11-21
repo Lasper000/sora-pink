@@ -73,23 +73,70 @@ export function findProductFromList(products: Product[], param: string): Product
 }
 
 /**
- * Update browser title with product name
+ * Update browser title with product name and optionally inject Product JSON-LD for SEO
  */
-export function setDocumentProductTitle(productName?: string): void {
+export function setDocumentProductTitle(productName?: string, product?: Product): void {
   if (typeof document === 'undefined') return;
   if (productName) {
     document.title = `${productName} | SORA PINK โซระ พิ้งค์`;
   } else {
     document.title = DEFAULT_PAGE_TITLE;
   }
+
+  const existing = document.getElementById('sora-product-jsonld');
+  if (!product) {
+    if (existing) existing.remove();
+    return;
+  }
+
+  const price = product.discount_price ?? product.price;
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.images || [],
+    description: product.description,
+    sku: product.id,
+    brand: { '@type': 'Brand', name: 'SORA PINK' },
+    offers: {
+      '@type': 'Offer',
+      url: getProductShareUrl(product.id),
+      priceCurrency: 'THB',
+      price: Number(price).toFixed(2),
+      availability:
+        product.stock_quantity > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+    },
+    ...(product.rating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: Number(product.rating).toFixed(1),
+            reviewCount: Math.max(1, product.review_count || 1),
+          },
+        }
+      : {}),
+  };
+
+  let scriptEl = existing as HTMLScriptElement | null;
+  if (!scriptEl) {
+    scriptEl = document.createElement('script');
+    scriptEl.id = 'sora-product-jsonld';
+    scriptEl.type = 'application/ld+json';
+    document.head.appendChild(scriptEl);
+  }
+  scriptEl.textContent = JSON.stringify(schemaData);
 }
 
 /**
- * Reset browser title back to default
+ * Reset browser title back to default and remove Product JSON-LD
  */
 export function resetDocumentTitle(): void {
   if (typeof document === 'undefined') return;
   document.title = DEFAULT_PAGE_TITLE;
+  const existing = document.getElementById('sora-product-jsonld');
+  if (existing) existing.remove();
 }
 
 /**

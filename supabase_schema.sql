@@ -346,25 +346,224 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order ON public.order_items(order_id)
 CREATE INDEX IF NOT EXISTS idx_order_items_product ON public.order_items(product_id);
 
 -- ============================================================================
--- SUPABASE STORAGE CONFIGURATION
+-- SUPABASE STORAGE CONFIGURATION & SERVER-SIDE COMMERCE RPCS
 -- ============================================================================
--- สร้างบัคเก็ต 'product-images', 'avatars' และ 'order-slips' ในหน้า Supabase Storage
+-- Migration safety: Shade/Variant columns for cart_items and order_items
+ALTER TABLE public.cart_items ADD COLUMN IF NOT EXISTS selected_shade VARCHAR(80);
+ALTER TABLE public.order_items ADD COLUMN IF NOT EXISTS selected_shade VARCHAR(80);
+
+-- Server-Side Verified Order Placement RPC (prevents client price/promo tampering)
+CREATE OR REPLACE FUNCTION public.place_verified_order(
+    p_items JSONB,
+    p_shipping_address JSONB,
+    p_payment_method VARCHAR,
+    p_slip_url TEXT DEFAULT NULL,
+    p_promo_code VARCHAR DEFAULT NULL
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_user_id UUID := auth.uid();
+    v_item JSONB;
+    v_prod RECORD;
+    v_qty INTEGER;
+    v_bundle_pct NUMERIC;
+    v_unit_price DECIMAL(10, 2);
+    v_subtotal DECIMAL(10, 2) := 0;
+    v_discount DECIMAL(10, 2) := 0;
+    v_shipping DECIMAL(10, 2) := 50;
+    v_total DECIMAL(10, 2) := 0;
+    v_promo RECORD;
+    v_order_id UUID;
+BEGIN
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Authentication required';
+    END IF;
+
+    IF p_items IS NULL OR jsonb_array_length(p_items) = 0 THEN
+        RAISE EXCEPTION 'Order items cannot be empty';
+    END IF;
+
+    -- 1. Validate stock & compute authoritative subtotal
+    FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
+    LOOP
+        v_qty := GREATEST(1, COALESCE((v_item->>'quantity')::INTEGER, 1));
+        v_bundle_pct := LEAST(30, GREATEST(0, COALESCE((v_item->>'bundle_discount_percent')::NUMERIC, 0)));
+
+        SELECT * INTO v_prod
+        FROM public.products
+        WHERE id = (v_item->>'product_id')::UUID
+        FOR UPDATE;
+
+        IF NOT FOUND OR v_prod.is_active = FALSE THEN
+            RAISE EXCEPTION 'Product not available: %', v_item->>'product_id';
+        END IF;
+
+        IF v_prod.stock_quantity < v_qty THEN
+            RAISE EXCEPTION 'Insufficient stock for %', v_prod.name;
+        END IF;
+
+        v_unit_price := COALESCE(v_prod.discount_price, v_prod.price);
+        IF v_bundle_pct > 0 THEN
+            v_unit_price := ROUND(v_unit_price * (1 - (v_bundle_pct / 100.0)));
+        END IF;
+
+        v_subtotal := v_subtotal + (v_unit_price * v_qty);
+    END LOOP;
+
+    -- 2. Validate promo code server-side if provided
+    IF p_promo_code IS NOT NULL AND LENGTH(TRIM(p_promo_code)) > 0 THEN
+        SELECT * INTO v_promo
+        FROM public.promo_codes
+        WHERE code = UPPER(TRIM(p_promo_code)) AND is_active = TRUE
+        FOR UPDATE;
+
+        IF FOUND THEN
+            IF (v_promo.expires_at IS NULL OR v_promo.expires_at >= NOW())
+               AND (v_promo.max_uses IS NULL OR COALESCE(v_promo.used_count, 0) < v_promo.max_uses)
+               AND v_subtotal >= COALESCE(v_promo.min_spend, 0) THEN
+                IF v_promo.discount_amount IS NOT NULL AND v_promo.discount_amount > 0 THEN
+                    v_discount := LEAST(v_subtotal, v_promo.discount_amount);
+                ELSIF v_promo.discount_percent IS NOT NULL AND v_promo.discount_percent > 0 THEN
+                    v_discount := LEAST(v_subtotal, ROUND(v_subtotal * (v_promo.discount_percent / 100.0)));
+                END IF;
+                IF v_promo.free_shipping THEN
+                    v_shipping := 0;
+                END IF;
+                UPDATE public.promo_codes
+                SET used_count = COALESCE(used_count, 0) + 1, updated_at = NOW()
+                WHERE code = v_promo.code;
+            END IF;
+        END IF;
+    END IF;
+
+    IF v_subtotal >= 500 THEN
+        v_shipping := 0;
+    END IF;
+
+    v_total := GREATEST(0, v_subtotal - v_discount + v_shipping);
+
+    -- 3. Insert verified order
+    INSERT INTO public.orders (
+        user_id, total_amount, discount_amount, shipping_fee,
+        shipping_address, payment_method, payment_status, order_status,
+        slip_url, admin_verified
+    )
+    VALUES (
+        v_user_id, v_total, v_discount, v_shipping,
+        p_shipping_address, p_payment_method, 'pending', 'pending',
+        p_slip_url, FALSE
+    )
+    RETURNING id INTO v_order_id;
+
+    -- 4. Insert order items (existing trigger deducts stock automatically)
+    FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
+    LOOP
+        v_qty := GREATEST(1, COALESCE((v_item->>'quantity')::INTEGER, 1));
+        v_bundle_pct := LEAST(30, GREATEST(0, COALESCE((v_item->>'bundle_discount_percent')::NUMERIC, 0)));
+
+        SELECT * INTO v_prod FROM public.products WHERE id = (v_item->>'product_id')::UUID;
+        v_unit_price := COALESCE(v_prod.discount_price, v_prod.price);
+        IF v_bundle_pct > 0 THEN
+            v_unit_price := ROUND(v_unit_price * (1 - (v_bundle_pct / 100.0)));
+        END IF;
+
+        INSERT INTO public.order_items (order_id, product_id, quantity, price_at_purchase, selected_shade)
+        VALUES (
+            v_order_id,
+            v_prod.id,
+            v_qty,
+            v_unit_price,
+            NULLIF(TRIM(COALESCE(v_item->>'selected_shade', '')), '')
+        );
+    END LOOP;
+
+    RETURN v_order_id;
+END;
+$$;
+
+-- Customer Self-Cancel Pending Order RPC (restores stock atomically)
+CREATE OR REPLACE FUNCTION public.customer_cancel_pending_order(p_order_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_order RECORD;
+    v_item RECORD;
+BEGIN
+    SELECT * INTO v_order
+    FROM public.orders
+    WHERE id = p_order_id
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Order not found';
+    END IF;
+
+    IF v_order.user_id <> auth.uid() AND NOT public.is_admin() THEN
+        RAISE EXCEPTION 'Not authorized to cancel this order';
+    END IF;
+
+    IF v_order.order_status <> 'pending' THEN
+        RAISE EXCEPTION 'Only pending orders can be cancelled by customer';
+    END IF;
+
+    UPDATE public.orders
+    SET order_status = 'cancelled', payment_status = 'failed', updated_at = NOW()
+    WHERE id = p_order_id;
+
+    FOR v_item IN SELECT product_id, quantity FROM public.order_items WHERE order_id = p_order_id
+    LOOP
+        UPDATE public.products
+        SET stock_quantity = stock_quantity + v_item.quantity, updated_at = NOW()
+        WHERE id = v_item.product_id;
+    END LOOP;
+
+    RETURN TRUE;
+END;
+$$;
+
+-- สร้างบัคเก็ต 'product-images', 'avatars' (public) และ 'order-slips' (PRIVATE เพื่อ PDPA)
 INSERT INTO storage.buckets (id, name, public)
 VALUES 
     ('product-images', 'product-images', true),
     ('avatars', 'avatars', true),
-    ('order-slips', 'order-slips', true)
-ON CONFLICT (id) DO NOTHING;
+    ('order-slips', 'order-slips', false)
+ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public;
 
--- Policies สำหรับ Storage
+-- Policies สำหรับ Storage (Idempotent)
+DROP POLICY IF EXISTS "Public Read for product-images" ON storage.objects;
 CREATE POLICY "Public Read for product-images" ON storage.objects FOR SELECT USING (bucket_id = 'product-images');
+DROP POLICY IF EXISTS "Admins Upload for product-images" ON storage.objects;
 CREATE POLICY "Admins Upload for product-images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'product-images' AND public.is_admin());
 
+DROP POLICY IF EXISTS "Public Read for avatars" ON storage.objects;
 CREATE POLICY "Public Read for avatars" ON storage.objects FOR SELECT USING (bucket_id = 'avatars');
+DROP POLICY IF EXISTS "Users Upload own avatar" ON storage.objects;
 CREATE POLICY "Users Upload own avatar" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.uid() IS NOT NULL);
 
-CREATE POLICY "Public Read for order-slips" ON storage.objects FOR SELECT USING (bucket_id = 'order-slips');
-CREATE POLICY "Anyone can upload order-slips" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'order-slips');
+-- Private PDPA-Safe Slip Policies: เฉพาะเจ้าของโฟลเดอร์หรือ Admin เท่านั้นที่อ่านสลิปได้
+DROP POLICY IF EXISTS "Public Read for order-slips" ON storage.objects;
+DROP POLICY IF EXISTS "Owner or Admin Read for order-slips" ON storage.objects;
+CREATE POLICY "Owner or Admin Read for order-slips" ON storage.objects
+    FOR SELECT USING (
+        bucket_id = 'order-slips' AND (
+            (storage.foldername(name))[1] = auth.uid()::text OR public.is_admin()
+        )
+    );
+DROP POLICY IF EXISTS "Anyone can upload order-slips" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users upload own order-slips" ON storage.objects;
+CREATE POLICY "Authenticated users upload own order-slips" ON storage.objects
+    FOR INSERT WITH CHECK (
+        bucket_id = 'order-slips' AND (
+            (storage.foldername(name))[1] = auth.uid()::text OR public.is_admin()
+        )
+    );
 
 -- หมายเหตุสำหรับเจ้าของร้านค้า:
 -- หากต้องการตั้งค่า User ตัวเองให้เป็น Admin ให้รันคำสั่งด้านล่าง (ใส่ Email หรือ User ID ของคุณ):

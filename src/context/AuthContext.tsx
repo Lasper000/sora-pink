@@ -37,40 +37,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null;
   });
   const [role, setRole] = useState<UserRole>(() => (profile?.role === 'admin' ? 'admin' : 'customer'));
-  const [isLoading, setIsLoading] = useState(true);
   const isConfigured = isSupabaseConfigured();
+  const [isLoading, setIsLoading] = useState(isConfigured);
 
-  useEffect(() => {
-    if (!isConfigured) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Check active Supabase session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user);
-        loadSupabaseProfile(session.user.id, session.user);
-      }
-      setIsLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-        loadSupabaseProfile(session.user.id, session.user);
-      } else {
-        setUser(null);
-        setProfile(null);
-        setRole('customer');
-        localStorage.removeItem('sora_current_profile');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [isConfigured]);
-
-  const loadSupabaseProfile = async (userId: string, authUser: any) => {
+  const loadSupabaseProfile = React.useCallback(async (userId: string, authUser: any) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -96,7 +66,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Profile load error:', e);
       setRole('customer');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!isConfigured) {
+      return;
+    }
+
+    // Check active Supabase session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadSupabaseProfile(session.user.id, session.user);
+      }
+      setIsLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadSupabaseProfile(session.user.id, session.user);
+      } else {
+        setUser(null);
+        setProfile(null);
+        setRole('customer');
+        localStorage.removeItem('sora_current_profile');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [isConfigured, loadSupabaseProfile]);
 
   const loginWithGoogle = async () => {
     if (isConfigured) {

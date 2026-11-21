@@ -106,6 +106,18 @@ export const signUpWithEmail = async (email: string, password: string, fullName:
 };
 
 /**
+ * ส่งอีเมลรีเซ็ตรหัสผ่าน (Forgot Password)
+ */
+export const resetPasswordForEmail = async (email: string) => {
+  if (!isSupabaseConfigured()) {
+    return { data: null, error: new Error('Supabase not configured') };
+  }
+  return await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin,
+  });
+};
+
+/**
  * ออกจากระบบ
  */
 export const signOut = async () => {

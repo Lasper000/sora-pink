@@ -97,7 +97,7 @@ export const TrickOrTreatModal: React.FC<TrickOrTreatModalProps> = ({ isOpen, on
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-content"
+        className="modal-content trick-or-treat-card"
         onClick={(e) => e.stopPropagation()}
         style={{
           padding: '2.25rem',
@@ -136,7 +136,7 @@ export const TrickOrTreatModal: React.FC<TrickOrTreatModalProps> = ({ isOpen, on
           >
             <CutePumpkinIcon size={16} /> ดีลพิเศษต้อนรับฮาโลวีน
           </div>
-          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1F2937' }}>
+          <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             Trick or Treat!
           </h3>
           <p style={{ fontSize: '0.9rem', color: '#6B7280', maxWidth: '360px', margin: '0 auto' }}>
@@ -158,7 +158,7 @@ export const TrickOrTreatModal: React.FC<TrickOrTreatModalProps> = ({ isOpen, on
                     {box.renderIcon(52)}
                   </div>
                   <div className="mystery-box-text">
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1F2937' }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                       {box.name}
                     </div>
                     <div style={{ fontSize: '0.74rem', color: '#9CA3AF', marginTop: '2px' }}>
@@ -202,6 +202,7 @@ export const TrickOrTreatModal: React.FC<TrickOrTreatModalProps> = ({ isOpen, on
 
             {/* Promo Code Box */}
             <div
+              className="trick-or-treat-code-box"
               style={{
                 background: '#FFFFFF',
                 border: '2px dashed #F43F5E',

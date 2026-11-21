@@ -13,11 +13,12 @@ import {
   Sparkles,
   Printer,
   Award,
+  XCircle,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
-import { fetchOrders } from '../../services/api';
+import { fetchOrders, customerCancelOrder } from '../../services/api';
 import { showToast } from '../common/Toast';
 import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
 import { printOrderReceipt } from '../../utils/printDocuments';
@@ -29,6 +30,7 @@ interface UserProfileModalProps {
   onSelectProduct?: (product: Product) => void;
   onOpenAuth?: () => void;
   onTrackOrder?: (order: Order) => void;
+  onOrderCancelled?: () => void;
 }
 
 export const UserProfileModal: React.FC<UserProfileModalProps> = ({
@@ -38,6 +40,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onSelectProduct,
   onOpenAuth,
   onTrackOrder,
+  onOrderCancelled,
 }) => {
   const { profile, updateProfile } = useAuth();
   const { wishlist, toggleWishlist } = useWishlist();
@@ -47,6 +50,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [copiedTracking, setCopiedTracking] = useState<string | null>(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
 
   // Profile form state
   const [name, setName] = useState(profile?.full_name || '');
@@ -90,6 +94,21 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     setCopiedTracking(num);
     showToast(`คัดลอกเลขพัสดุ "${num}" สำเร็จ!`, 'success');
     setTimeout(() => setCopiedTracking(null), 2500);
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm(`คุณต้องการยกเลิกคำสั่งซื้อ #${orderId} ใช่หรือไม่?`)) return;
+    setCancellingOrderId(orderId);
+    try {
+      const res = await customerCancelOrder(orderId, profile?.id);
+      showToast(res.message, res.success ? 'info' : 'error');
+      if (res.success) {
+        await loadOrders();
+        onOrderCancelled?.();
+      }
+    } finally {
+      setCancellingOrderId(null);
+    }
   };
 
   const getStatusBadge = (order: Order) => {
@@ -339,6 +358,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   {orders.map((order) => (
                     <div
                       key={order.id}
+                      className="profile-order-card"
                       style={{
                         padding: '1.25rem',
                         borderRadius: '16px',
@@ -355,12 +375,12 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                           alignItems: 'center',
                           gap: '0.75rem',
                           marginBottom: '0.85rem',
-                          borderBottom: '1px solid #F3F4F6',
+                          borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
                           paddingBottom: '0.75rem',
                         }}
                       >
                         <div>
-                          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1F2937' }}>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                             หมายเลขคำสั่งซื้อ: <span style={{ color: '#0284C7', wordBreak: 'break-all' }}>{order.id}</span>
                           </div>
                           <div style={{ fontSize: '0.78rem', color: '#9CA3AF' }}>
@@ -378,6 +398,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                       {/* Ordered Items List */}
                       {order.items && order.items.length > 0 && (
                         <div
+                          className="profile-order-items-box"
                           style={{
                             marginBottom: '0.85rem',
                             padding: '0.65rem 0.85rem',
@@ -408,9 +429,16 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                                     onError={handleImageError}
                                     style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', flexShrink: 0, border: '1px solid #FCE7F3' }}
                                   />
-                                  <span style={{ color: '#374151', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {item.product?.name || 'สินค้าสกินแคร์'}
-                                  </span>
+                                  <div style={{ minWidth: 0 }}>
+                                    <div style={{ color: 'var(--text-primary)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                      {item.product?.name || 'สินค้าสกินแคร์'}
+                                    </div>
+                                    {item.selected_shade && (
+                                      <div style={{ fontSize: '0.7rem', color: '#C73D62', fontWeight: 600 }}>
+                                        เฉดสี: {item.selected_shade}
+                                      </div>
+                                    )}
+                                  </div>
                                   <span style={{ color: '#6B7280', flexShrink: 0 }}>×{item.quantity}</span>
                                 </div>
                                 <span style={{ fontWeight: 700, color: '#BE123C', flexShrink: 0 }}>
@@ -498,6 +526,28 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                             <Printer size={13} /> ใบเสร็จรับเงิน
                           </button>
 
+                          {order.order_status === 'pending' && (
+                            <button
+                              type="button"
+                              disabled={cancellingOrderId === order.id}
+                              onClick={() => handleCancelOrder(order.id)}
+                              className="btn btn-outline btn-sm"
+                              style={{
+                                borderRadius: '9999px',
+                                padding: '0.32rem 0.8rem',
+                                fontSize: '0.76rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                borderColor: '#FECACA',
+                                color: '#DC2626',
+                              }}
+                            >
+                              <XCircle size={13} />
+                              {cancellingOrderId === order.id ? 'กำลังยกเลิก...' : 'ยกเลิกออเดอร์'}
+                            </button>
+                          )}
+
                           {onTrackOrder && order.order_status !== 'cancelled' && (
                             <button
                               onClick={() => onTrackOrder(order)}
@@ -543,6 +593,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   {wishlist.map((item) => (
                     <div
                       key={item.id}
+                      className="profile-wishlist-card"
                       style={{
                         padding: '0.85rem',
                         borderRadius: '16px',

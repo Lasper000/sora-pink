@@ -127,6 +127,7 @@ export const SkinQuizModal: React.FC<SkinQuizModalProps> = ({ isOpen, onClose, o
                 <div
                   key={item.type}
                   onClick={() => setSelectedSkin(item.type)}
+                  className={`skin-quiz-option ${active ? 'is-active' : ''}`}
                   style={{
                     padding: '0.85rem 1rem',
                     borderRadius: '18px',
@@ -136,7 +137,7 @@ export const SkinQuizModal: React.FC<SkinQuizModalProps> = ({ isOpen, onClose, o
                     transition: 'all 0.2s ease',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.88rem', color: active ? '#BE123C' : '#1F2937' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.88rem', color: active ? '#BE123C' : 'var(--text-primary)' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>{item.icon}</span> {item.label}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.2rem', lineHeight: 1.3 }}>

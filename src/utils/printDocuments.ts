@@ -122,6 +122,7 @@ export const printOrderReceipt = (order: Order): void => {
         <td style="padding: 10px 12px; border-bottom: 1px solid #FCE7F3; text-align: center;">${idx + 1}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #FCE7F3; font-weight: 600;">
           ${escapeHtml(item.product?.name || `รหัสสินค้า ${item.product_id}`)}
+          ${item.selected_shade ? `<div style="font-size: 11px; color: #C73D62; font-weight: 500; margin-top: 2px;">เฉดสี: ${escapeHtml(item.selected_shade)}</div>` : ''}
         </td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #FCE7F3; text-align: center;">${item.quantity}</td>
         <td style="padding: 10px 12px; border-bottom: 1px solid #FCE7F3; text-align: right;">฿${item.price_at_purchase.toLocaleString()}</td>
@@ -367,7 +368,7 @@ export const printShippingLabel = (order: Order): void => {
       (item, idx) => `
       <tr>
         <td style="padding: 6px 8px; border: 1px solid #CBD5E1; text-align: center;">${idx + 1}</td>
-        <td style="padding: 6px 8px; border: 1px solid #CBD5E1; font-weight: 600;">${escapeHtml(item.product?.name || item.product_id)}</td>
+        <td style="padding: 6px 8px; border: 1px solid #CBD5E1; font-weight: 600;">${escapeHtml(item.product?.name || item.product_id)}${item.selected_shade ? ` <span style="color:#C73D62;">(${escapeHtml(item.selected_shade)})</span>` : ''}</td>
         <td style="padding: 6px 8px; border: 1px solid #CBD5E1; text-align: center; font-size: 16px; font-weight: 700;">${item.quantity}</td>
       </tr>
     `

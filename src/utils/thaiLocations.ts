@@ -103,20 +103,18 @@ const POSTAL_PREFIX_TO_PROVINCE: Record<string, string> = {
  */
 export function resolveProvinceFromPostalCode(postalCode: string): string | null {
   const digits = postalCode.replace(/\D/g, '');
-  if (digits.length < 2) return null;
+  if (digits.length !== 5) return null;
 
-  if (digits.length === 5) {
-    const code = Number(digits);
-    // Samut Prakan shares 10xxx range (10130, 10270, 10280, 10290, 10540-10570)
-    if (
-      code === 10130 ||
-      code === 10270 ||
-      code === 10280 ||
-      code === 10290 ||
-      (code >= 10540 && code <= 10570)
-    ) {
-      return 'สมุทรปราการ';
-    }
+  const code = Number(digits);
+  // Samut Prakan shares 10xxx range (10130, 10270, 10280, 10290, 10540-10570)
+  if (
+    code === 10130 ||
+    code === 10270 ||
+    code === 10280 ||
+    code === 10290 ||
+    (code >= 10540 && code <= 10570)
+  ) {
+    return 'สมุทรปราการ';
   }
 
   return POSTAL_PREFIX_TO_PROVINCE[digits.slice(0, 2)] || null;

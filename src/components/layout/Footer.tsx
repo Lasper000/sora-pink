@@ -2,13 +2,34 @@ import React, { useState } from 'react';
 import { ShieldCheck, HeartHandshake, Truck, RotateCcw, Send, Check, Sparkles } from 'lucide-react';
 import { showToast } from '../common/Toast';
 
+import type { PolicyTopic } from '../common/PolicyModal';
+
 interface FooterProps {
   onOpenAdmin?: () => void;
+  onSelectCategory?: (categoryId: string) => void;
+  onOpenPolicy?: (topic: PolicyTopic) => void;
+  onOpenSkinQuiz?: () => void;
+  onOpenOrders?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onOpenAdmin,
+  onSelectCategory,
+  onOpenPolicy,
+  onOpenSkinQuiz,
+  onOpenOrders,
+}) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  const handleCategoryClick = (categoryId: string) => {
+    if (onSelectCategory) {
+      onSelectCategory(categoryId);
+    } else {
+      const el = document.getElementById('categories');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,11 +269,47 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               Collections
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#706064' }}>
-              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none', transition: 'color 0.2s' }}>เมคอัพและเครื่องสำอาง (Cosmetics)</a></li>
-              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>สกินแคร์ดูแลผิวหน้า (Facial Care)</a></li>
-              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>ผลิตภัณฑ์บำรุงผิวกาย (Body Curation)</a></li>
-              <li><a href="#categories" style={{ color: '#706064', textDecoration: 'none' }}>ทรีตเมนต์เส้นผม (Hair Rituals)</a></li>
-              <li><a href="#flash-sale" style={{ color: '#C73D62', textDecoration: 'none', fontWeight: 600 }}>ข้อเสนอพิเศษ (Private Offers)</a></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('c1000000-0000-0000-0000-000000000001')}
+                  className="footer-link-btn"
+                >
+                  เมคอัพและเครื่องสำอาง (Cosmetics)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('c1000000-0000-0000-0000-000000000002')}
+                  className="footer-link-btn"
+                >
+                  สกินแคร์ดูแลผิวหน้า (Facial Care)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('c1000000-0000-0000-0000-000000000003')}
+                  className="footer-link-btn"
+                >
+                  ผลิตภัณฑ์บำรุงผิวกาย (Body Curation)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleCategoryClick('c1000000-0000-0000-0000-000000000004')}
+                  className="footer-link-btn"
+                >
+                  ทรีตเมนต์เส้นผม (Hair Rituals)
+                </button>
+              </li>
+              <li>
+                <a href="#flash-sale" style={{ color: '#C73D62', textDecoration: 'none', fontWeight: 600 }}>
+                  ข้อเสนอพิเศษ (Private Offers)
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -264,18 +321,38 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 fontSize: '0.82rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color: '#2C2224',
+                color: 'var(--text-primary)',
                 marginBottom: '1.25rem',
               }}
             >
               Concierge Service
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#706064' }}>
-              <li>ติดตามสถานะคำสั่งซื้อ (Order Tracking)</li>
-              <li>เงื่อนไขการจัดส่งและเปลี่ยนคืน</li>
-              <li>คำปรึกษาการเลือกสกินแคร์เฉพาะบุคคล</li>
-              <li>ฝ่ายบริการลูกค้า (09:00 - 20:00 น.)</li>
-              <li>คำถามที่พบบ่อย (Client Inquiries)</li>
+              <li>
+                <button type="button" onClick={() => onOpenOrders?.()} className="footer-link-btn">
+                  ติดตามสถานะคำสั่งซื้อ (Order Tracking)
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={() => onOpenPolicy?.('shipping')} className="footer-link-btn">
+                  เงื่อนไขการจัดส่งและเปลี่ยนคืน
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={() => onOpenSkinQuiz?.()} className="footer-link-btn">
+                  คำปรึกษาการเลือกสกินแคร์เฉพาะบุคคล
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={() => onOpenPolicy?.('privacy')} className="footer-link-btn">
+                  นโยบายความเป็นส่วนตัว (PDPA)
+                </button>
+              </li>
+              <li>
+                <a href="#faq-section" className="footer-link-btn" style={{ textDecoration: 'none' }}>
+                  คำถามที่พบบ่อย (Client Inquiries)
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -352,8 +429,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             color: '#9E8D92',
           }}
         >
-          <div>
-            © 2026 SORA PINK ATELIER. ALL RIGHTS RESERVED.
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+            <span>© 2026 SORA PINK ATELIER. ALL RIGHTS RESERVED.</span>
+            {onOpenPolicy && (
+              <>
+                <button type="button" onClick={() => onOpenPolicy('privacy')} className="footer-link-btn" style={{ fontSize: '0.75rem', color: '#9E8D92' }}>
+                  • นโยบาย PDPA
+                </button>
+                <button type="button" onClick={() => onOpenPolicy('terms')} className="footer-link-btn" style={{ fontSize: '0.75rem', color: '#9E8D92' }}>
+                  • เงื่อนไขการใช้งาน
+                </button>
+              </>
+            )}
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}
@@ -363,7 +450,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                   color: '#9E8D92',
                   fontSize: '0.75rem',
                   cursor: 'pointer',
-                  marginLeft: '10px',
                   padding: 0,
                   transition: 'color 0.2s',
                   letterSpacing: '0.04em',

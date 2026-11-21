@@ -25,6 +25,11 @@ import { SpookyEffects } from './components/common/SpookyEffects';
 import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { getActiveSeasonalFestival } from './utils/seasonalTheme';
+import type { PolicyTopic } from './components/common/PolicyModal';
+
+const PolicyModal = lazy(() =>
+  import('./components/common/PolicyModal').then((m) => ({ default: m.PolicyModal }))
+);
 
 const SkinQuizModal = lazy(() =>
   import('./components/home/SkinQuizModal').then((m) => ({ default: m.SkinQuizModal }))
@@ -109,6 +114,7 @@ const MainStore: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState<number>(24);
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [policyTopic, setPolicyTopic] = useState<PolicyTopic | null>(null);
 
   const handleToggleCompare = (product: Product) => {
     setCompareList((prev) => {
@@ -130,7 +136,7 @@ const MainStore: React.FC = () => {
   const handleSelectProduct = (product: Product | null, pushHistory = true) => {
     if (product) {
       setSelectedProduct(product);
-      setDocumentProductTitle(product.name);
+      setDocumentProductTitle(product.name, product);
       if (pushHistory) {
         const targetPath = `/product/${product.id}`;
         // Push state only if URL isn't already pointing to this product
@@ -170,7 +176,7 @@ const MainStore: React.FC = () => {
       const matched = findProductFromList(products, targetParam);
       if (matched) {
         setSelectedProduct(matched);
-        setDocumentProductTitle(matched.name);
+        setDocumentProductTitle(matched.name, matched);
       } else {
         showToast('ไม่พบสินค้าที่ระบุ หรือสินค้านี้อาจหมดหรือสิ้นสุดการจำหน่ายแล้ว', 'info');
         window.history.replaceState({}, '', '/');
@@ -246,7 +252,8 @@ const MainStore: React.FC = () => {
       isCouponCenterOpen ||
       trackingOrder ||
       isCompareOpen ||
-      isTrickOrTreatOpen
+      isTrickOrTreatOpen ||
+      policyTopic
   );
   useEffect(() => {
     document.body.classList.toggle('modal-open-lock', hasOpenOverlay);
@@ -779,7 +786,25 @@ const MainStore: React.FC = () => {
       </main>
 
       {/* Brand Footer */}
-      <Footer onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined} />
+      <Footer
+        onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined}
+        onSelectCategory={(catId) => {
+          handleUpdateFilter({ categoryId: catId });
+          const el = document.getElementById('all-products');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
+        onOpenPolicy={(topic) => setPolicyTopic(topic)}
+        onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
+        onOpenOrders={() => {
+          if (!profile) {
+            setIsAuthOpen(true);
+            showToast('กรุณาเข้าสู่ระบบเพื่อตรวจสอบคำสั่งซื้อค่ะ', 'info');
+            return;
+          }
+          setProfileTab('orders');
+          setIsProfileOpen(true);
+        }}
+      />
 
       {/* Mobile Sticky Bottom Navigation */}
       <MobileBottomNav
@@ -900,6 +925,13 @@ const MainStore: React.FC = () => {
           onSelectProduct={(p) => handleSelectProduct(p)}
           onOpenAuth={() => setIsAuthOpen(true)}
           onTrackOrder={(o) => setTrackingOrder(o)}
+          onOrderCancelled={loadData}
+        />
+
+        <PolicyModal
+          topic={policyTopic}
+          onClose={() => setPolicyTopic(null)}
+          onSwitchTopic={(t) => setPolicyTopic(t)}
         />
 
         <CouponCenterModal

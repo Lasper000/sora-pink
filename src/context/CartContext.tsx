@@ -6,19 +6,24 @@ import {
   validatePromoCode,
 } from '../services/api';
 import { getActiveSeasonalFestival } from '../utils/seasonalTheme';
+import { getEffectiveItemUnitPrice } from '../utils/cartMath';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => { success: boolean; message: string };
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    selectedShade?: string
+  ) => { success: boolean; message: string };
   addBundleToCart: (
     products: Product[],
     discountPercent: number,
     bundleLabel: string
   ) => { success: boolean; message: string };
-  updateQuantity: (productId: string, quantity: number) => { success: boolean; message?: string };
-  removeFromCart: (productId: string) => void;
+  updateQuantity: (itemIdOrProductId: string, quantity: number) => { success: boolean; message?: string };
+  removeFromCart: (itemIdOrProductId: string) => void;
   clearCart: () => void;
   itemCount: number;
   subtotal: number;
@@ -39,13 +44,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'sora_pink_cart';
 const VOUCHER_STORAGE_KEY = 'sora_pink_vouchers';
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-export const getEffectiveItemUnitPrice = (item: CartItem): number => {
-  const base = item.product.discount_price ?? item.product.price;
-  return item.bundleDiscountPercent
-    ? Math.round(base * (1 - item.bundleDiscountPercent / 100))
-    : base;
-};
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isConfigured } = useAuth();
@@ -234,47 +232,51 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // เพิ่มลงตะกร้าพร้อมตรวจสอบสต็อก
-  const addToCart = (product: Product, quantity = 1): { success: boolean; message: string } => {
+  // เพิ่มลงตะกร้าพร้อมตรวจสอบสต็อก (รองรับการแยกเฉดสี selectedShade)
+  const addToCart = (
+    product: Product,
+    quantity = 1,
+    selectedShade?: string
+  ): { success: boolean; message: string } => {
     if (product.stock_quantity <= 0) {
       return { success: false, message: 'ขออภัย สินค้าหมดชั่วคราว' };
     }
 
-    const existingIndex = cart.findIndex((item) => item.product_id === product.id);
+    const cleanShade = selectedShade?.trim() || undefined;
+    const totalSameProductInCart = cart
+      .filter((item) => item.product_id === product.id)
+      .reduce((sum, item) => sum + item.quantity, 0);
+
+    if (totalSameProductInCart + quantity > product.stock_quantity) {
+      return {
+        success: false,
+        message: `ไม่สามารถเพิ่มสินค้าได้เกินสต็อกคงเหลือ (${product.stock_quantity} ชิ้น)`,
+      };
+    }
+
+    const existingIndex = cart.findIndex(
+      (item) => item.product_id === product.id && (item.selectedShade || '') === (cleanShade || '')
+    );
+    const shadeLabel = cleanShade ? ` (${cleanShade})` : '';
 
     if (existingIndex > -1) {
-      const currentQty = cart[existingIndex].quantity;
-      const newQty = currentQty + quantity;
-
-      if (newQty > product.stock_quantity) {
-        return {
-          success: false,
-          message: `ไม่สามารถเพิ่มสินค้าได้เกินสต็อกคงเหลือ (${product.stock_quantity} ชิ้น)`,
-        };
-      }
-
+      const newQty = cart[existingIndex].quantity + quantity;
       const updated = [...cart];
       updated[existingIndex] = { ...updated[existingIndex], quantity: newQty, product };
       setCart(updated);
-      syncCartItemToSupabase(product.id, newQty);
-      return { success: true, message: `เพิ่ม "${product.name}" ในตะกร้าแล้ว (${newQty} ชิ้น)` };
+      syncCartItemToSupabase(product.id, totalSameProductInCart + quantity);
+      return { success: true, message: `เพิ่ม "${product.name}${shadeLabel}" ในตะกร้าแล้ว (${newQty} ชิ้น)` };
     } else {
-      if (quantity > product.stock_quantity) {
-        return {
-          success: false,
-          message: `สต็อกคงเหลือไม่เพียงพอ (คงเหลือ ${product.stock_quantity} ชิ้น)`,
-        };
-      }
-
       const newItem: CartItem = {
         id: 'cart-' + Math.random().toString(36).substring(2, 9),
         product_id: product.id,
         quantity,
         product,
+        selectedShade: cleanShade,
       };
       setCart([...cart, newItem]);
-      syncCartItemToSupabase(product.id, quantity);
-      return { success: true, message: `เพิ่ม "${product.name}" ในตะกร้าแล้ว` };
+      syncCartItemToSupabase(product.id, totalSameProductInCart + quantity);
+      return { success: true, message: `เพิ่ม "${product.name}${shadeLabel}" ในตะกร้าแล้ว` };
     }
   };
 
@@ -342,31 +344,44 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   };
 
-  // ปรับจำนวนสินค้าในตะกร้า
-  const updateQuantity = (productId: string, quantity: number): { success: boolean; message?: string } => {
+  // ปรับจำนวนสินค้าในตะกร้า (รองรับทั้ง CartItem.id และ product_id)
+  const updateQuantity = (
+    itemIdOrProductId: string,
+    quantity: number
+  ): { success: boolean; message?: string } => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(itemIdOrProductId);
       return { success: true };
     }
 
-    const item = cart.find((i) => i.product_id === productId);
+    const item = cart.find((i) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId);
     if (!item) return { success: false };
 
-    if (quantity > item.product.stock_quantity) {
+    const otherShadesQty = cart
+      .filter((i) => i.product_id === item.product_id && i.id !== item.id)
+      .reduce((sum, i) => sum + i.quantity, 0);
+
+    if (otherShadesQty + quantity > item.product.stock_quantity) {
       return {
         success: false,
         message: `สต็อกคงเหลือเพียง ${item.product.stock_quantity} ชิ้นเท่านั้น`,
       };
     }
 
-    setCart(cart.map((i) => (i.product_id === productId ? { ...i, quantity } : i)));
-    syncCartItemToSupabase(productId, quantity);
+    setCart(cart.map((i) => (i.id === item.id ? { ...i, quantity } : i)));
+    syncCartItemToSupabase(item.product_id, otherShadesQty + quantity);
     return { success: true };
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(cart.filter((item) => item.product_id !== productId));
-    syncCartItemToSupabase(productId, 0);
+  const removeFromCart = (itemIdOrProductId: string) => {
+    const target = cart.find((i) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId);
+    if (!target) return;
+    const remaining = cart.filter((item) => item.id !== target.id);
+    setCart(remaining);
+    const remainingSameProdQty = remaining
+      .filter((i) => i.product_id === target.product_id)
+      .reduce((sum, i) => sum + i.quantity, 0);
+    syncCartItemToSupabase(target.product_id, remainingSameProdQty);
   };
 
   const clearCart = () => {

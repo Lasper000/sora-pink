@@ -54,6 +54,7 @@ export interface CartItem {
   product_id: string;
   quantity: number;
   product: Product;
+  selectedShade?: string;
   bundleDiscountPercent?: number;
   bundleLabel?: string;
 }
@@ -89,6 +90,7 @@ export interface OrderItem {
   product_id: string;
   quantity: number;
   price_at_purchase: number;
+  selected_shade?: string;
   product?: Product;
 }
 

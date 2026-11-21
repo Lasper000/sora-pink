@@ -5,6 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { showToast } from '../common/Toast';
 import { handleImageError, DEFAULT_FALLBACK_IMAGE } from '../../utils/imageFallback';
+import { COSMETIC_SHADES, isShadeSelectableProduct } from '../../utils/productShades';
 
 interface ProductCardProps {
   product: Product;
@@ -40,7 +41,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleAddToCartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const res = addToCart(product, 1);
+    const chosenShade = isShadeSelectableProduct(product)
+      ? COSMETIC_SHADES[selectedShade]?.name
+      : undefined;
+    const res = addToCart(product, 1, chosenShade);
     showToast(res.message, res.success ? 'success' : 'error');
   };
 
@@ -336,21 +340,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Makeup Shades Swatch Preview */}
-          {product.category_id === 'c1000000-0000-0000-0000-000000000001' && (
+          {isShadeSelectableProduct(product) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', margin: '2px 0 6px 0' }}>
               <span style={{ fontSize: '0.66rem', color: '#8F8881', letterSpacing: '0.04em' }}>เฉดสี:</span>
-              {['#8C2E41', '#B96677', '#C87D88', '#DF9EA8'].map((color, idx) => (
+              {COSMETIC_SHADES.map((shade, idx) => (
                 <span
-                  key={color}
+                  key={shade.name}
+                  title={shade.name}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedShade(idx);
                   }}
                   style={{
-                    width: '11px',
-                    height: '11px',
+                    width: '12px',
+                    height: '12px',
                     borderRadius: '50%',
-                    background: color,
+                    background: shade.hex,
                     border: selectedShade === idx ? '2px solid #1C1917' : '1px solid #FFFFFF',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
                     cursor: 'pointer',
