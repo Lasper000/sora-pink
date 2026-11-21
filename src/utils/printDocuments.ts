@@ -263,11 +263,14 @@ export const printOrderReceipt = (order: Order): void => {
       </div>
       <div class="receipt-card">
         <div class="header">
-          <div>
-            <h1 class="brand-title">SORA PINK</h1>
-            <div style="font-size: 12.5px; color: #706064; margin-top: 4px;">
-              SORA PINK OFFICIAL STORE (โซระ พิ้งค์ สกินแคร์ & คอสเมติกส์)<br/>
-              ใบสรุปคำสั่งซื้อ / ใบเสร็จรับเงินดิจิทัล (Official Order Receipt)
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="${typeof window !== 'undefined' ? window.location.origin : ''}/logo.png" alt="SORA PINK" style="width: 48px; height: 48px; border-radius: 14px; object-fit: cover; border: 1px solid #FAD1DC; flex-shrink: 0;" />
+            <div>
+              <h1 class="brand-title">SORA PINK</h1>
+              <div style="font-size: 12.5px; color: #706064; margin-top: 4px;">
+                SORA PINK OFFICIAL STORE (โซระ พิ้งค์ สกินแคร์ & คอสเมติกส์)<br/>
+                ใบสรุปคำสั่งซื้อ / ใบเสร็จรับเงินดิจิทัล (Official Order Receipt)
+              </div>
             </div>
           </div>
           <div style="text-align: right;">

@@ -184,31 +184,46 @@ export const Footer: React.FC<FooterProps> = ({
         >
           {/* Brand Info */}
           <div style={{ gridColumn: 'span 1' }}>
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div
-                className="font-serif"
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+              <img
+                src="/logo.png"
+                alt="SORA PINK Logo"
                 style={{
-                  fontSize: '1.6rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.12em',
-                  color: '#2C2224',
-                  textTransform: 'uppercase',
-                  lineHeight: 1,
-                  marginBottom: '0.4rem',
+                  width: 46,
+                  height: 46,
+                  borderRadius: '14px',
+                  objectFit: 'cover',
+                  border: '1px solid #FAD1DC',
+                  boxShadow: '0 4px 14px rgba(216, 74, 110, 0.22)',
+                  flexShrink: 0,
                 }}
-              >
-                SORA PINK
-              </div>
-              <div
-                style={{
-                  fontSize: '0.68rem',
-                  letterSpacing: '0.2em',
-                  color: '#C73D62',
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                }}
-              >
-                Atelier de Beauté • Seoul & Bangkok
+              />
+              <div>
+                <div
+                  className="font-serif"
+                  style={{
+                    fontSize: '1.6rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.12em',
+                    color: 'var(--text-primary)',
+                    textTransform: 'uppercase',
+                    lineHeight: 1,
+                    marginBottom: '0.4rem',
+                  }}
+                >
+                  SORA PINK
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    letterSpacing: '0.2em',
+                    color: '#C73D62',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                  }}
+                >
+                  Atelier de Beauté • Seoul & Bangkok
+                </div>
               </div>
             </div>
             <p style={{ fontSize: '0.85rem', color: '#706064', lineHeight: 1.8, marginBottom: '1.25rem' }}>

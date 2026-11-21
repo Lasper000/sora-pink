@@ -272,6 +272,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 boxShadow: '0 4px 14px rgba(216, 74, 110, 0.28)',
                 border: '1px solid #FAD1DC',
                 position: 'relative',
+                overflow: 'hidden',
               }}
             >
               {isHalloweenMode ? (
@@ -279,9 +280,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <CutePumpkinIcon size={20} />
                 </span>
               ) : (
-                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 700, letterSpacing: '0.02em', color: '#FFFFFF' }}>
-                  S
-                </span>
+                <img
+                  src="/logo.png"
+                  alt="SORA PINK Logo"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
               )}
             </div>
             <div>
