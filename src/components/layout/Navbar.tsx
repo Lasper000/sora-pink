@@ -16,6 +16,7 @@ import {
   Moon,
   Ticket,
   ArrowRight,
+  Crown,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -31,6 +32,7 @@ interface NavbarProps {
   onOpenWishlist: () => void;
   onOpenAuth: () => void;
   onOpenProfile: () => void;
+  onOpenMemberPage?: () => void;
   onOpenAdmin: () => void;
   onOpenCouponCenter?: () => void;
   onOpenSkinQuiz: () => void;
@@ -49,6 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenWishlist,
   onOpenAuth,
   onOpenProfile,
+  onOpenMemberPage,
   onOpenAdmin,
   onOpenCouponCenter,
   onOpenSkinQuiz,
@@ -384,6 +387,28 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               คอลเลกชันทั้งหมด
             </a>
+            {onOpenMemberPage && (
+              <button
+                type="button"
+                onClick={onOpenMemberPage}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  color: '#C73D62',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontWeight: 700,
+                  fontSize: 'inherit',
+                  fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Crown size={14} color="#C73D62" /> <span>Sora Club</span>
+              </button>
+            )}
             <button
               onClick={onOpenSkinQuiz}
               className="btn btn-outline btn-sm nav-quiz-btn"
@@ -871,6 +896,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <Package size={16} /> คำสั่งซื้อและโปรไฟล์
                     </button>
 
+                    {onOpenMemberPage && (
+                      <button
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          onOpenMemberPage();
+                        }}
+                        className="btn btn-ghost"
+                        style={{
+                          justifyContent: 'flex-start',
+                          padding: '0.5rem 0.75rem',
+                          fontSize: '0.88rem',
+                          color: '#C73D62',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <Crown size={16} color="#C73D62" /> หน้าสมาชิก SORA CLUB
+                      </button>
+                    )}
+
                     {onOpenCouponCenter && (
                       <button
                         onClick={() => {
@@ -1183,6 +1227,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <Layers size={16} color="#0284C7" />
                   <span>หมวดหมู่สินค้า</span>
                 </a>
+                {onOpenMemberPage && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenMemberPage();
+                    }}
+                    className="btn btn-ghost mobile-drawer-link-row"
+                    style={{
+                      justifyContent: 'flex-start',
+                      fontSize: '0.95rem',
+                      fontWeight: 700,
+                      color: '#C73D62',
+                      padding: '0.65rem 0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <Crown size={16} color="#C73D62" />
+                    <span>หน้าสมาชิก SORA CLUB</span>
+                  </button>
+                )}
                 {onOpenCouponCenter && (
                   <button
                     onClick={() => {

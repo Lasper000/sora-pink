@@ -26,9 +26,13 @@ import { CutePumpkinIcon } from './components/common/HalloweenArtwork';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { getActiveSeasonalFestival } from './utils/seasonalTheme';
 import type { PolicyTopic } from './components/common/PolicyModal';
+import type { MemberTab } from './components/user/MemberPage';
 
 const PolicyModal = lazy(() =>
   import('./components/common/PolicyModal').then((m) => ({ default: m.PolicyModal }))
+);
+const MemberPage = lazy(() =>
+  import('./components/user/MemberPage').then((m) => ({ default: m.MemberPage }))
 );
 
 const SkinQuizModal = lazy(() =>
@@ -115,6 +119,32 @@ const MainStore: React.FC = () => {
   const [compareList, setCompareList] = useState<Product[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [policyTopic, setPolicyTopic] = useState<PolicyTopic | null>(null);
+  const [isMemberPageOpen, setIsMemberPageOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return /^\/member\/?$/i.test(window.location.pathname) || window.location.hash === '#member';
+  });
+  const [memberTab, setMemberTab] = useState<MemberTab>('benefits');
+
+  const openMemberPage = (tab: MemberTab = 'benefits') => {
+    setMemberTab(tab);
+    setIsMemberPageOpen(true);
+    setSelectedProduct(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined' && !/^\/member\/?$/i.test(window.location.pathname)) {
+      window.history.pushState({ isMemberPage: true }, '', '/member');
+    }
+    if (typeof document !== 'undefined') {
+      document.title = 'SORA CLUB สมาชิก & สิทธิพิเศษ | SORA PINK โซระ พิ้งค์';
+    }
+  };
+
+  const closeMemberPage = () => {
+    setIsMemberPageOpen(false);
+    resetDocumentTitle();
+    if (typeof window !== 'undefined' && (/^\/member\/?$/i.test(window.location.pathname) || window.location.hash === '#member')) {
+      window.history.replaceState({}, '', '/');
+    }
+  };
 
   const handleToggleCompare = (product: Product) => {
     setCompareList((prev) => {
@@ -188,12 +218,20 @@ const MainStore: React.FC = () => {
   // Browser Back / Forward navigation sync (popstate)
   useEffect(() => {
     const handlePopState = () => {
+      if (/^\/member\/?$/i.test(window.location.pathname) || window.location.hash === '#member') {
+        setIsMemberPageOpen(true);
+        setSelectedProduct(null);
+        document.title = 'SORA CLUB สมาชิก & สิทธิพิเศษ | SORA PINK โซระ พิ้งค์';
+        return;
+      }
+      setIsMemberPageOpen(false);
+
       const targetParam = getProductIdFromUrl();
       if (targetParam && products.length > 0) {
         const matched = findProductFromList(products, targetParam);
         if (matched) {
           setSelectedProduct(matched);
-          setDocumentProductTitle(matched.name);
+          setDocumentProductTitle(matched.name, matched);
           return;
         }
       }
@@ -205,10 +243,12 @@ const MainStore: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [products]);
 
-  // Allow store owner to open admin panel via URL hash #admin (Admin role required)
+  // Allow store owner to open admin panel via URL hash #admin (Admin role required) & #member support
   useEffect(() => {
     const checkHash = () => {
-      if (window.location.hash === '#admin') {
+      if (window.location.hash === '#member') {
+        setIsMemberPageOpen(true);
+      } else if (window.location.hash === '#admin') {
         if (role === 'admin') {
           setIsAdminOpen(true);
         } else {
@@ -421,43 +461,47 @@ const MainStore: React.FC = () => {
       {/* Toast Alert Container */}
       <ToastContainer />
 
-      {/* Navigation Header */}
-      <Navbar
-        onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => {
-          setProfileTab('wishlist');
-          setIsProfileOpen(true);
-        }}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onOpenProfile={() => {
-          if (!profile) {
-            setIsAuthOpen(true);
-            showToast('กรุณาเข้าสู่ระบบด้วย Google หรืออีเมล เพื่อดูโปรไฟล์ค่ะ', 'info');
-            return;
-          }
-          setProfileTab('orders');
-          setIsProfileOpen(true);
-        }}
-        onOpenAdmin={() => {
-          if (role === 'admin') {
-            setIsAdminOpen(true);
-          } else {
-            showToast('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าใช้งานได้', 'error');
-          }
-        }}
-        onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
-        onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
-        onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
-        isHalloweenMode={isHalloweenMode}
-        activeFestival={activeSeasonalFestival}
-        searchQuery={filters.searchQuery}
-        onSearchChange={(q) => handleUpdateFilter({ searchQuery: q })}
-        products={products}
-        onSelectProduct={(p) => handleSelectProduct(p)}
-      />
+      {isMemberPageOpen ? (
+        <Suspense fallback={<div style={{ padding: '4rem', textAlign: 'center', color: '#706064' }}>กำลังโหลดหน้าสมาชิก SORA CLUB...</div>}>
+          <MemberPage
+            initialTab={memberTab}
+            onBackToStore={closeMemberPage}
+            onOpenAuth={() => setIsAuthOpen(true)}
+            onOpenCart={() => setIsCartOpen(true)}
+            onSelectProduct={(p) => handleSelectProduct(p)}
+            onTrackOrder={(o) => setTrackingOrder(o)}
+            onOrderCancelled={loadData}
+          />
+        </Suspense>
+      ) : (
+        <>
+          {/* Navigation Header */}
+          <Navbar
+            onOpenCart={() => setIsCartOpen(true)}
+            onOpenWishlist={() => openMemberPage('wishlist')}
+            onOpenAuth={() => setIsAuthOpen(true)}
+            onOpenProfile={() => openMemberPage(profile ? 'orders' : 'benefits')}
+            onOpenMemberPage={() => openMemberPage('benefits')}
+            onOpenAdmin={() => {
+              if (role === 'admin') {
+                setIsAdminOpen(true);
+              } else {
+                showToast('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเข้าใช้งานได้', 'error');
+              }
+            }}
+            onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
+            onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
+            onOpenTrickOrTreat={() => setIsTrickOrTreatOpen(true)}
+            isHalloweenMode={isHalloweenMode}
+            activeFestival={activeSeasonalFestival}
+            searchQuery={filters.searchQuery}
+            onSearchChange={(q) => handleUpdateFilter({ searchQuery: q })}
+            products={products}
+            onSelectProduct={(p) => handleSelectProduct(p)}
+          />
 
-      {/* Main Content Area */}
-      <main style={{ flex: 1 }}>
+          {/* Main Content Area */}
+          <main style={{ flex: 1 }}>
         {/* Hero Banner Carousel */}
         <HeroBanner
           onShopNow={() => {
@@ -785,42 +829,42 @@ const MainStore: React.FC = () => {
         <FAQSection onOpenSkinQuiz={() => setIsSkinQuizOpen(true)} />
       </main>
 
-      {/* Brand Footer */}
-      <Footer
-        onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined}
-        onSelectCategory={(catId) => {
-          handleUpdateFilter({ categoryId: catId });
-          const el = document.getElementById('all-products');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-        onOpenPolicy={(topic) => setPolicyTopic(topic)}
-        onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
-        onOpenOrders={() => {
-          if (!profile) {
-            setIsAuthOpen(true);
-            showToast('กรุณาเข้าสู่ระบบเพื่อตรวจสอบคำสั่งซื้อค่ะ', 'info');
-            return;
-          }
-          setProfileTab('orders');
-          setIsProfileOpen(true);
-        }}
-      />
+          {/* Brand Footer */}
+          <Footer
+            onOpenAdmin={role === 'admin' ? () => setIsAdminOpen(true) : undefined}
+            onSelectCategory={(catId) => {
+              handleUpdateFilter({ categoryId: catId });
+              const el = document.getElementById('all-products');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            onOpenPolicy={(topic) => setPolicyTopic(topic)}
+            onOpenSkinQuiz={() => setIsSkinQuizOpen(true)}
+            onOpenOrders={() => openMemberPage('orders')}
+            onOpenMemberPage={() => openMemberPage('benefits')}
+          />
+        </>
+      )}
 
       {/* Mobile Sticky Bottom Navigation */}
       <MobileBottomNav
         itemCount={itemCount}
+        currentSection={isMemberPageOpen ? 'member' : 'home'}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenCouponCenter={() => setIsCouponCenterOpen(true)}
-        onOpenProfile={() => {
-          if (!profile) {
-            setIsAuthOpen(true);
-            showToast('กรุณาเข้าสู่ระบบด้วย Google หรืออีเมล เพื่อดูโปรไฟล์ค่ะ', 'info');
+        onOpenProfile={() => openMemberPage(profile ? 'benefits' : 'benefits')}
+        onNavigateSection={(id) => {
+          if (isMemberPageOpen) {
+            closeMemberPage();
+            setTimeout(() => {
+              if (!id) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                const el = document.getElementById(id);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }, 60);
             return;
           }
-          setProfileTab('orders');
-          setIsProfileOpen(true);
-        }}
-        onNavigateSection={(id) => {
           if (!id) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           } else {

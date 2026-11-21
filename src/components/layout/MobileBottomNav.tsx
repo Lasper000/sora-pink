@@ -67,10 +67,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       <button
         type="button"
         onClick={onOpenProfile}
-        className="mobile-bottom-nav-btn"
+        className={`mobile-bottom-nav-btn ${currentSection === 'member' ? 'is-active' : ''}`}
       >
-        <User size={20} strokeWidth={2} />
-        <span>โปรไฟล์</span>
+        <User size={20} strokeWidth={currentSection === 'member' ? 2.4 : 2} />
+        <span>สมาชิก</span>
       </button>
     </nav>
   );

@@ -2589,6 +2589,24 @@ body.dark-theme {
   color: #e2e8f0;
 }
 
+/* Dedicated Member Page Dark Mode & Mobile Tweaks */
+[data-theme="dark"] .member-topbar {
+  background: rgba(19, 23, 34, 0.94) !important;
+  border-bottom-color: rgba(255, 180, 210, 0.16) !important;
+}
+
+[data-theme="dark"] .member-stat-card,
+[data-theme="dark"] .member-tier-card {
+  background: #161b27 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 180, 210, 0.18) !important;
+}
+
+.member-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+
 
 
 

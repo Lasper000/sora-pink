@@ -10,6 +10,7 @@ interface FooterProps {
   onOpenPolicy?: (topic: PolicyTopic) => void;
   onOpenSkinQuiz?: () => void;
   onOpenOrders?: () => void;
+  onOpenMemberPage?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -18,6 +19,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenPolicy,
   onOpenSkinQuiz,
   onOpenOrders,
+  onOpenMemberPage,
 }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -343,6 +345,13 @@ export const Footer: React.FC<FooterProps> = ({
               Concierge Service
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#706064' }}>
+              {onOpenMemberPage && (
+                <li>
+                  <button type="button" onClick={onOpenMemberPage} className="footer-link-btn" style={{ color: '#C73D62', fontWeight: 600 }}>
+                    สิทธิพิเศษสมาชิก (Sora Club Member)
+                  </button>
+                </li>
+              )}
               <li>
                 <button type="button" onClick={() => onOpenOrders?.()} className="footer-link-btn">
                   ติดตามสถานะคำสั่งซื้อ (Order Tracking)
